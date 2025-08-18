@@ -19,15 +19,37 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Show repo layout (debug)
+        run: |
+          pwd
+          ls -la
+          node -v || true
+          npm -v || true
+
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
-      # If you don't have a package-lock.json, npm ci fails — fall back to npm install
-      - run: npm ci || npm install
-      - run: npm run build
-      # SPA fallback so refreshes don't 404
-      - name: Add 404 fallback
+          node-version: 20   # 18 or 20 are fine; 20 is current LTS
+          cache: npm
+
+      - name: Install deps (robust)
+        env:
+          NPM_CONFIG_LEGACY_PEER_DEPS: "true"   # avoid peer-dep explosions
+        run: |
+          if [ -f package-lock.json ]; then
+            echo "Lockfile found → npm ci"
+            npm ci
+          else
+            echo "No lockfile → npm install"
+            npm install
+          fi
+
+      - name: Build
+        run: npm run build
+
+      - name: SPA fallback (404)
         run: cp dist/index.html dist/404.html
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
