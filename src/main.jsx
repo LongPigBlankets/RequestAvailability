@@ -2,8 +2,16 @@
 import { createRoot } from "react-dom/client";
 import App from "./App";
 
-createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+console.log("[main] loaded");
+
+const el = document.getElementById("root");
+if (!el) {
+  console.error("[main] #root not found");
+} else {
+  createRoot(el).render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );
+  console.log("[main] rendered");
+}
