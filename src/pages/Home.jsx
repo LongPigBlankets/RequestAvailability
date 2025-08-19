@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import elephant from "../assets/elephant.jpg";
+import Breadcrumbs from "../components/Breadcrumbs";
+import { PRODUCT_TITLE } from "../constants";
 
 export default function Home() {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
@@ -50,10 +52,12 @@ export default function Home() {
       </div>
 
       <div className="content">
+        <Breadcrumbs />
+      </div>
+
+      <div className="content">
         <div className="product-id">118107722</div>
-        <h1 className="title">
-          A Visit to Port Lympne Reserve, Truck Safari and Afternoon Tea for Two
-        </h1>
+        <h1 className="title">{PRODUCT_TITLE}</h1>
         <div className="location">
           📍 The Aspinall Foundation, Nr Ashford Kent, Lympne Hythe, CT21 4PD
         </div>
