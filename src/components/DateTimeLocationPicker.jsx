@@ -16,8 +16,8 @@ export default function DateTimeLocationPicker({
   
   // Use external state if provided, otherwise use internal state
   const [internalSelectedDates, setInternalSelectedDates] = useState(() => new Set());
-  const selectedDates = externalSelectedDates || internalSelectedDates;
-  const setSelectedDates = externalSetSelectedDates || setInternalSelectedDates;
+  const selectedDates = externalSelectedDates !== undefined ? externalSelectedDates : internalSelectedDates;
+  const setSelectedDates = externalSetSelectedDates !== undefined ? externalSetSelectedDates : setInternalSelectedDates;
   
   const [favouriteDates, setFavouriteDates] = useState(() => new Set());
   const [showMaxWarning, setShowMaxWarning] = useState(false);

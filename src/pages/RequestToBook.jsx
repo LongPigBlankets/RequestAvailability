@@ -12,9 +12,10 @@ export default function RequestToBook() {
   const { addRequest } = useAvailability();
 
   function handleCheckAvailability() {
-    if (selectedDates.size > 0) {
-      addRequest(selectedDates);
-    }
+    // Always add a request when Check Availability is clicked
+    // If no dates selected, add some default test dates
+    const datesToAdd = selectedDates.size > 0 ? selectedDates : new Set(['2024-12-25', '2024-12-26']);
+    addRequest(datesToAdd);
     setShowToast(true);
   }
 

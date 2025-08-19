@@ -11,7 +11,16 @@ export function useAvailability() {
 }
 
 export function AvailabilityProvider({ children }) {
-  const [requests, setRequests] = useState([]);
+  const [requests, setRequests] = useState(() => {
+    // Load from localStorage on initialization
+    try {
+      const saved = localStorage.getItem('availabilityRequests');
+      return saved ? JSON.parse(saved) : [];
+    } catch (error) {
+      console.error('Error loading saved requests:', error);
+      return [];
+    }
+  });
 
   const predefinedNames = [
     'John Smith',
@@ -31,15 +40,33 @@ export function AvailabilityProvider({ children }) {
       id: requestNumber,
       userName,
       dates: Array.from(selectedDates),
-      timestamp: new Date()
+      timestamp: new Date().toISOString()
     };
 
-    setRequests(prev => [...prev, newRequest]);
+    setRequests(prev => {
+      const updated = [...prev, newRequest];
+      
+      // Save to localStorage
+      try {
+        localStorage.setItem('availabilityRequests', JSON.stringify(updated));
+      } catch (error) {
+        console.error('Error saving to localStorage:', error);
+      }
+      
+      return updated;
+    });
+  };
+
+  const clearRequests = () => {
+    setRequests([]);
+    localStorage.removeItem('availabilityRequests');
+    console.log('Cleared all requests');
   };
 
   const value = {
     requests,
-    addRequest
+    addRequest,
+    clearRequests
   };
 
   return (
