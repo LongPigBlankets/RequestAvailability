@@ -66,7 +66,7 @@ body {
 
 .main-image {
   position: relative;
-  height: 320px;
+  height: clamp(220px, 50vw, 420px);
   overflow: hidden;
 }
 
@@ -108,7 +108,7 @@ body {
 }
 
 .title {
-  font-size: 28px;
+  font-size: clamp(20px, 5vw, 32px);
   font-weight: 800;
   line-height: 1.25;
   letter-spacing: 0.2px;
@@ -165,7 +165,7 @@ body {
 }
 
 .description {
-  font-size: 16px;
+  font-size: clamp(14px, 2.6vw, 18px);
   color: #475569;
 }
 
@@ -208,11 +208,7 @@ body {
   box-shadow: 0 6px 14px rgba(14, 165, 164, 0.25);
 }
 
-@media (max-width: 420px) {
-  .title {
-    font-size: 24px;
-  }
-}
+/* Removed fixed small-screen title size in favor of fluid clamp scaling */
 
 /* Booking Overlay / Modal */
 .booking-overlay {
@@ -271,6 +267,13 @@ body {
 @media (min-width: 769px) {
   .booking-panel {
     animation: slideIn 220ms ease-out;
+    height: 100vh;
+    max-height: none;
+    align-self: stretch;
+    border-radius: 0;
+  }
+  .booking-overlay {
+    align-items: stretch;
   }
 }
 
