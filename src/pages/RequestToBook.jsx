@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import elephant from "../assets/elephant.jpg";
 import Breadcrumbs from "../components/Breadcrumbs";
 import { PRODUCT_TITLE } from "../constants";
@@ -6,6 +6,12 @@ import DateTimeLocationPicker from "../components/DateTimeLocationPicker";
 import Footer from "../components/Footer";
 
 export default function RequestToBook() {
+  const [showToast, setShowToast] = useState(false);
+
+  function handleCheckAvailability() {
+    setShowToast(true);
+  }
+
   return (
     <div className="app has-footer">
       <div className="header" role="banner">
@@ -64,11 +70,20 @@ export default function RequestToBook() {
 
       <div className="ctaBar">
         <div className="ctaInner">
-          <button className="cta-button" type="button">
-            Request Availability
+          <button className="cta-button" type="button" onClick={handleCheckAvailability}>
+            Check Availability
           </button>
         </div>
       </div>
+
+      {showToast && (
+        <div className="toast toast-success" role="status" aria-live="polite">
+          <div className="toast-content">
+            Your request has been sent to Port Lympne. Please allow up to 24 hours for them to review. We will email back with their response.
+          </div>
+          <button className="toast-close" aria-label="Close notification" onClick={() => setShowToast(false)}>×</button>
+        </div>
+      )}
 
       <Footer />
     </div>

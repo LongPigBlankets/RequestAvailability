@@ -5,12 +5,14 @@ export default function DateTimeLocationPicker() {
   const [isLocationMenuOpen, setIsLocationMenuOpen] = useState(false);
   const locationWrapperRef = useRef(null);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const MAX_SELECTED_DATES = 5;
   const [currentMonth, setCurrentMonth] = useState(() => {
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), 1);
   });
   const [selectedDates, setSelectedDates] = useState(() => new Set());
   const [favouriteDates, setFavouriteDates] = useState(() => new Set());
+  const [showMaxWarning, setShowMaxWarning] = useState(false);
 
   const monthLabel = currentMonth.toLocaleString(undefined, {
     month: "long",
@@ -60,9 +62,13 @@ export default function DateTimeLocationPicker() {
       const next = new Set(prev);
       if (next.has(iso)) {
         next.delete(iso);
-      } else {
-        next.add(iso);
+        return next;
       }
+      if (next.size >= MAX_SELECTED_DATES) {
+        setShowMaxWarning(true);
+        return next;
+      }
+      next.add(iso);
       return next;
     });
   }
@@ -124,6 +130,12 @@ export default function DateTimeLocationPicker() {
     mql.addEventListener('change', syncOpen);
     return () => mql.removeEventListener('change', syncOpen);
   }, []);
+
+  useEffect(() => {
+    if (selectedDates.size <= MAX_SELECTED_DATES) {
+      setShowMaxWarning(false);
+    }
+  }, [selectedDates]);
 
   return (
     <div className="location-picker">
@@ -236,6 +248,12 @@ export default function DateTimeLocationPicker() {
               })}
             </div>
           </div>
+
+          {showMaxWarning && (
+            <div className="calendar-warning" role="alert" aria-live="assertive">
+              Please select a maximum of 5 dates
+            </div>
+          )}
 
           {selectedDates.size > 0 && (
             <div className="selected-dates-summary" aria-live="polite">

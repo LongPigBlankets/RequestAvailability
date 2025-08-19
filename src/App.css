@@ -483,6 +483,16 @@ body {
   padding: 8px 4px 0 4px;
 }
 
+.calendar-warning {
+  margin-top: 8px;
+  padding: 10px 12px;
+  background: #fff7ed; /* warm warning background */
+  color: #b45309; /* amber-700 */
+  border: 1px solid #fed7aa; /* amber-200 */
+  border-radius: 12px;
+  font-size: 14px;
+}
+
 .calendar-header {
   display: flex;
   align-items: center;
@@ -591,6 +601,43 @@ body {
 .footer {
   height: 32px;
   background: #9ca3af; /* medium grey */
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 960px;
+  width: calc(100% - 32px);
+  padding: 12px 14px;
+  border: 1px solid transparent;
+  border-radius: 12px; /* rounded sides */
+}
+
+.toast-success {
+  background: #dcfce7; /* green-100 */
+  color: #065f46; /* emerald-800 */
+  border-color: #bbf7d0; /* green-200 */
+}
+
+.toast-content {
+  padding-right: 8px;
+}
+
+.toast-close {
+  appearance: none;
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  color: inherit;
 }
 
 /* Desktop layout adjustments for request-to-book controls */
