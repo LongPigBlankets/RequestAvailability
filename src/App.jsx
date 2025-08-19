@@ -109,7 +109,7 @@ export default function App() {
       <div style={pageStyles.ctaBar}>
         <div style={pageStyles.ctaInner}>
           <button type="button" style={pageStyles.ctaButton}>
-            Request availability
+            request availability
           </button>
         </div>
       </div>
