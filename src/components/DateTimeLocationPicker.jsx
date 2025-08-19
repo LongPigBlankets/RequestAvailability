@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 export default function DateTimeLocationPicker() {
   const [selectedLocation, setSelectedLocation] = useState("Port Lympne Kent");
+  const [isLocationMenuOpen, setIsLocationMenuOpen] = useState(false);
+  const locationWrapperRef = useRef(null);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(() => {
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), 1);
   });
   const [selectedDates, setSelectedDates] = useState(() => new Set());
+  const [favouriteDates, setFavouriteDates] = useState(() => new Set());
 
   const monthLabel = currentMonth.toLocaleString(undefined, {
     month: "long",
@@ -71,19 +74,83 @@ export default function DateTimeLocationPicker() {
       ? "1 date selected"
       : `${selectedCount} dates selected`;
 
+  function formatHuman(date) {
+    const day = date.getDate();
+    const month = date.toLocaleString(undefined, { month: "long" });
+    const j = day % 10, k = day % 100;
+    const suffix = (j === 1 && k !== 11)
+      ? "st"
+      : (j === 2 && k !== 12)
+        ? "nd"
+        : (j === 3 && k !== 13)
+          ? "rd"
+          : "th";
+    return `${day}${suffix} of ${month}`;
+  }
+
+  function toggleFavourite(iso) {
+    setFavouriteDates((prev) => {
+      const next = new Set(prev);
+      if (next.has(iso)) {
+        next.delete(iso);
+      } else {
+        next.add(iso);
+      }
+      return next;
+    });
+  }
+
+  // Close the custom location dropdown when clicking outside
+  useEffect(() => {
+    function handleDocClick(ev) {
+      if (!locationWrapperRef.current) return;
+      if (!locationWrapperRef.current.contains(ev.target)) {
+        setIsLocationMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleDocClick);
+    return () => document.removeEventListener("mousedown", handleDocClick);
+  }, []);
+
   return (
     <div className="location-picker">
-      <label htmlFor="location-select" className="location-label">Location</label>
-      <select
-        id="location-select"
-        className="location-select"
-        value={selectedLocation}
-        onChange={(e) => setSelectedLocation(e.target.value)}
-      >
-        <option value="Port Lympne Kent">Port Lympne Kent</option>
-        <option value="Port Lympne Hampshire">Port Lympne Hampshire</option>
-        <option value="Port Lympne Essex">Port Lympne Essex</option>
-      </select>
+      <label htmlFor="location-button" className="location-label">Location</label>
+      <div className="location-select-wrapper" ref={locationWrapperRef}>
+        <button
+          id="location-button"
+          type="button"
+          className="location-select"
+          aria-haspopup="listbox"
+          aria-expanded={isLocationMenuOpen}
+          onClick={() => setIsLocationMenuOpen((o) => !o)}
+        >
+          {selectedLocation}
+          <span className="chevron" aria-hidden>{isLocationMenuOpen ? "▲" : "▼"}</span>
+        </button>
+        {isLocationMenuOpen && (
+          <div className="location-dropdown" role="listbox" aria-label="Choose location">
+            {[
+              "Port Lympne Kent",
+              "Port Lympne Hampshire",
+              "Port Lympne Essex",
+            ].map((loc) => (
+              <button
+                type="button"
+                role="option"
+                key={loc}
+                aria-selected={selectedLocation === loc}
+                className={`location-option${selectedLocation === loc ? " selected" : ""}`}
+                onClick={() => {
+                  setSelectedLocation(loc);
+                  setIsLocationMenuOpen(false);
+                }}
+              >
+                {loc}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
 
       <div className="date-picker">
         <label className="location-label" htmlFor="date-toggle">Dates</label>
@@ -151,6 +218,35 @@ export default function DateTimeLocationPicker() {
             })}
           </div>
         </div>
+
+        {selectedDates.size > 0 && (
+          <div className="selected-dates-summary" aria-live="polite">
+            {Array.from(selectedDates)
+              .map((iso) => ({ iso, date: new Date(iso) }))
+              .sort((a, b) => a.date - b.date)
+              .map(({ iso, date }) => (
+                <div key={iso} className="summary-item">
+                  <div className="summary-date">{formatHuman(date)}</div>
+                  <div className="summary-actions">
+                    <button
+                      type="button"
+                      className={`summary-btn favourite${favouriteDates.has(iso) ? " active" : ""}`}
+                      onClick={() => toggleFavourite(iso)}
+                    >
+                      Favourite
+                    </button>
+                    <button
+                      type="button"
+                      className="summary-btn remove"
+                      onClick={() => toggleDate(iso)}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              ))}
+          </div>
+        )}
       </div>
     </div>
   );

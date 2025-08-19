@@ -389,13 +389,49 @@ body {
   color: #334155;
 }
 
+.location-select-wrapper {
+  position: relative; /* anchor dropdown to the control (mobile fix) */
+}
+
 .location-select {
   width: 100%;
   padding: 12px;
   border-radius: 12px;
   border: 1px solid #e5e7eb;
   font-size: 16px;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
 }
+
+.location-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+  z-index: 50;
+  overflow: hidden;
+}
+
+.location-option {
+  width: 100%;
+  text-align: left;
+  padding: 12px 14px;
+  background: #ffffff;
+  border: none;
+  border-bottom: 1px solid #f1f5f9;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.location-option:last-child { border-bottom: none; }
+.location-option.selected { background: #f8fafc; font-weight: 600; }
 
 /* Date picker */
 .date-picker {
@@ -418,6 +454,7 @@ body {
 .date-toggle .chevron {
   margin-left: 10px;
 }
+.location-select .chevron { margin-left: 10px; }
 
 .calendar {
   overflow: hidden;
@@ -473,7 +510,7 @@ body {
 .calendar-day {
   height: 36px;
   border-radius: 10px;
-  border: 1px solid #e5e7eb;
+  border: none; /* remove default borders from days */
   background: #ffffff;
   display: inline-flex;
   align-items: center;
@@ -485,7 +522,50 @@ body {
 .calendar-day.selected {
   background: #0ea5a4; /* CTA color */
   color: #ffffff;
-  border-color: #0ea5a4;
+  border: 1px solid #0ea5a4; /* keep selected state unchanged */
   box-shadow: 0 4px 10px rgba(14, 165, 164, 0.2);
+}
+
+/* Selected dates summary */
+.selected-dates-summary {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.summary-date {
+  font-weight: 600;
+}
+
+.summary-actions { display: flex; gap: 8px; }
+
+.summary-btn {
+  padding: 6px 10px;
+  border-radius: 9999px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.summary-btn.favourite.active {
+  background: #fef3c7;
+  border-color: #f59e0b;
+}
+
+.summary-btn.remove {
+  background: #fff1f2;
+  border-color: #fda4af;
 }
 
