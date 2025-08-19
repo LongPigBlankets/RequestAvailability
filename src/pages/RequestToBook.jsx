@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import elephant from "../assets/elephant.jpg";
 import Breadcrumbs from "../components/Breadcrumbs";
 import { PRODUCT_TITLE } from "../constants";
@@ -7,8 +7,30 @@ import Footer from "../components/Footer";
 
 export default function RequestToBook() {
   const [showToast, setShowToast] = useState(false);
+  const datePickerRef = useRef(null);
 
   function handleCheckAvailability() {
+    // Get selected dates from the DateTimeLocationPicker component
+    const selectedDates = datePickerRef.current?.getSelectedDates();
+    
+    if (selectedDates && selectedDates.length > 0) {
+      // Get existing availability requests from session storage
+      const existingRequests = JSON.parse(sessionStorage.getItem('availabilityRequests') || '[]');
+      
+      // Create new request entry
+      const newRequest = {
+        id: Date.now(), // Simple ID based on timestamp
+        dates: selectedDates,
+        timestamp: new Date().toISOString()
+      };
+      
+      // Add to existing requests
+      const updatedRequests = [...existingRequests, newRequest];
+      
+      // Store back in session storage
+      sessionStorage.setItem('availabilityRequests', JSON.stringify(updatedRequests));
+    }
+    
     setShowToast(true);
   }
 
@@ -65,7 +87,7 @@ export default function RequestToBook() {
 
       {/* Booking controls area (desktop: below description, above CTA) */}
       <div className="content">
-        <DateTimeLocationPicker />
+        <DateTimeLocationPicker ref={datePickerRef} />
       </div>
 
       <div className="ctaBar">

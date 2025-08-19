@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from "react";
 
-export default function DateTimeLocationPicker() {
+const DateTimeLocationPicker = forwardRef((props, ref) => {
   const [selectedLocation, setSelectedLocation] = useState("Port Lympne Kent");
   const [isLocationMenuOpen, setIsLocationMenuOpen] = useState(false);
   const locationWrapperRef = useRef(null);
@@ -13,6 +13,19 @@ export default function DateTimeLocationPicker() {
   const [selectedDates, setSelectedDates] = useState(() => new Set());
   const [favouriteDates, setFavouriteDates] = useState(() => new Set());
   const [showMaxWarning, setShowMaxWarning] = useState(false);
+
+  // Expose getSelectedDates method to parent component
+  useImperativeHandle(ref, () => ({
+    getSelectedDates: () => {
+      return Array.from(selectedDates).map(iso => {
+        const date = new Date(iso);
+        return {
+          iso,
+          formatted: formatHuman(date)
+        };
+      });
+    }
+  }));
 
   const monthLabel = currentMonth.toLocaleString(undefined, {
     month: "long",
@@ -288,5 +301,9 @@ export default function DateTimeLocationPicker() {
       </div>
     </div>
   );
-}
+});
+
+DateTimeLocationPicker.displayName = 'DateTimeLocationPicker';
+
+export default DateTimeLocationPicker;
 

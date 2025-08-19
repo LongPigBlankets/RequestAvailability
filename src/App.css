@@ -658,3 +658,73 @@ body {
   }
 }
 
+
+
+/* Supplier Page Styles */
+.requests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.request-item {
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.user-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 12px;
+}
+
+.requested-dates {
+  margin-bottom: 12px;
+}
+
+.requested-dates strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #374151;
+  font-weight: 600;
+}
+
+.dates-list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.date-item {
+  background: #3b82f6;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.request-timestamp {
+  font-size: 12px;
+  color: #64748b;
+  font-style: italic;
+}
+
+@media (min-width: 768px) {
+  .requests-list {
+    gap: 32px;
+  }
+  
+  .request-item {
+    padding: 24px;
+  }
+  
+  .user-name {
+    font-size: 20px;
+  }
+}
