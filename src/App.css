@@ -5,7 +5,7 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-family: 'Droid Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   background-color: #ffffff;
   color: #0f172a;
   line-height: 1.5;
@@ -476,6 +476,13 @@ body {
   max-height: 420px; /* allows full panel height to slide open */
 }
 
+.calendar-caption {
+  font-size: 14px;
+  font-weight: 700;
+  color: #334155;
+  padding: 8px 4px 0 4px;
+}
+
 .calendar-header {
   display: flex;
   align-items: center;
@@ -519,7 +526,8 @@ body {
 
 .calendar-day {
   height: 36px;
-  border-radius: 10px;
+  width: 36px;
+  border-radius: 9999px;
   border: none; /* remove default borders from days */
   background: #ffffff;
   display: inline-flex;
@@ -527,12 +535,12 @@ body {
   justify-content: center;
   font-size: 14px;
   cursor: pointer;
+  justify-self: center;
 }
 
 .calendar-day.selected {
   background: #0ea5a4; /* CTA color */
   color: #ffffff;
-  border: 1px solid #0ea5a4; /* keep selected state unchanged */
   box-shadow: 0 4px 10px rgba(14, 165, 164, 0.2);
 }
 

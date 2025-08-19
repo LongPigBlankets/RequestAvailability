@@ -185,6 +185,7 @@ export default function DateTimeLocationPicker() {
           </button>
 
           <div className={`calendar ${isCalendarOpen ? "open" : ""}`}>
+            <div className="calendar-caption">Select up to 5 dates</div>
             <div className="calendar-header">
               <button
                 type="button"
@@ -250,14 +251,15 @@ export default function DateTimeLocationPicker() {
                         className={`summary-btn favourite${favouriteDates.has(iso) ? " active" : ""}`}
                         onClick={() => toggleFavourite(iso)}
                       >
-                        Favourite
+                        ⭐ Favourite
                       </button>
                       <button
                         type="button"
                         className="summary-btn remove"
+                        aria-label="Remove date"
                         onClick={() => toggleDate(iso)}
                       >
-                        Remove
+                        <span aria-hidden>🗑</span>
                       </button>
                     </div>
                   </div>
