@@ -12,7 +12,8 @@ body {
 }
 
 .app {
-  max-width: 480px;
+  max-width: 100%;
+  width: 100%;
   margin: 0 auto;
   background: #ffffff;
   min-height: 100vh;
@@ -68,6 +69,8 @@ body {
   position: relative;
   height: clamp(220px, 50vw, 420px);
   overflow: hidden;
+  max-width: clamp(480px, 92vw, 1120px);
+  margin: 0 auto;
 }
 
 .main-image img {
@@ -99,6 +102,8 @@ body {
 
 .content {
   padding: 20px;
+  max-width: clamp(480px, 92vw, 1120px);
+  margin: 0 auto;
 }
 
 .product-id {
@@ -177,7 +182,7 @@ body {
 }
 
 .ctaInner {
-  max-width: 480px;
+  max-width: 480px; /* keep CTA constrained */
   margin: 0 auto;
 }
 
@@ -229,7 +234,7 @@ body {
   position: relative;
   background: #ffffff;
   width: 100%;
-  max-width: 480px;
+  max-width: min(520px, 92vw);
   margin-left: auto;
   display: flex;
   flex-direction: column;
