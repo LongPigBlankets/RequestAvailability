@@ -114,6 +114,10 @@ export default function DateTimeLocationPicker() {
 
   return (
     <div className="location-picker">
+      <div className="picker-heading" aria-hidden="true">
+        <span className="picker-icon" aria-hidden>📍</span>
+        <strong>Choose Location</strong>
+      </div>
       <label htmlFor="location-button" className="location-label">Location</label>
       <div className="location-select-wrapper" ref={locationWrapperRef}>
         <button
@@ -153,6 +157,10 @@ export default function DateTimeLocationPicker() {
       </div>
 
       <div className="date-picker">
+        <div className="picker-heading" aria-hidden="true">
+          <span className="picker-icon" aria-hidden>📅</span>
+          <strong>Select up to 5 dates</strong>
+        </div>
         <label className="location-label" htmlFor="date-toggle">Dates</label>
         <button
           id="date-toggle"
@@ -233,14 +241,16 @@ export default function DateTimeLocationPicker() {
                       className={`summary-btn favourite${favouriteDates.has(iso) ? " active" : ""}`}
                       onClick={() => toggleFavourite(iso)}
                     >
-                      Favourite
+                      <span aria-hidden>⭐</span> Favourite
                     </button>
                     <button
                       type="button"
                       className="summary-btn remove"
                       onClick={() => toggleDate(iso)}
+                      aria-label="Remove this date"
+                      title="Remove this date"
                     >
-                      Remove
+                      <span aria-hidden>🗑️</span>
                     </button>
                   </div>
                 </div>

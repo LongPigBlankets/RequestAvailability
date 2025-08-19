@@ -508,22 +508,24 @@ body {
 }
 
 .calendar-day {
+  width: 36px;
   height: 36px;
-  border-radius: 10px;
-  border: none; /* remove default borders from days */
-  background: #ffffff;
+  border-radius: 9999px;
+  border: none;
+  background: transparent;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 14px;
   cursor: pointer;
+  justify-self: center;
 }
 
 .calendar-day.selected {
-  background: #0ea5a4; /* CTA color */
-  color: #ffffff;
-  border: 1px solid #0ea5a4; /* keep selected state unchanged */
-  box-shadow: 0 4px 10px rgba(14, 165, 164, 0.2);
+  background: transparent;
+  color: inherit;
+  outline: 2px solid #0ea5a4;
+  outline-offset: 0;
 }
 
 /* Selected dates summary */
@@ -560,12 +562,53 @@ body {
 }
 
 .summary-btn.favourite.active {
-  background: #fef3c7;
+  background: linear-gradient(90deg, #facc15 0%, #fffbea 100%);
   border-color: #f59e0b;
+  color: #0f172a;
 }
 
 .summary-btn.remove {
   background: #fff1f2;
   border-color: #fda4af;
+}
+
+/* Picker headings with icons */
+.picker-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 4px 0;
+  font-weight: 700;
+}
+
+.picker-icon { font-size: 16px; line-height: 1; }
+
+/* Request To Book page layout: right sidebar picker on desktop */
+.page-request-to-book .main-content-grid {
+  display: block;
+}
+
+@media (min-width: 1024px) {
+  .page-request-to-book .main-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 24px;
+    align-items: start;
+  }
+  .page-request-to-book .booking-sidebar {
+    position: sticky;
+    top: 20px;
+  }
+  .page-request-to-book .booking-sidebar .date-toggle { display: none; }
+  .page-request-to-book .booking-sidebar .calendar {
+    max-height: none; /* keep calendar always open on desktop */
+    overflow: visible;
+  }
+}
+
+/* Page-specific footer */
+.site-footer {
+  height: 32px;
+  background: #9ca3af;
 }
 
