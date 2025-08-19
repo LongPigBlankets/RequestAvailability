@@ -209,6 +209,10 @@ body {
   background: linear-gradient(180deg, rgba(255,255,255,0) 0%, #ffffff 10%);
   padding: 14px 16px 18px 16px;
 }
+/* Lift sticky CTA above footer so footer is visible */
+.has-footer .ctaBar {
+  bottom: 32px;
+}
 
 .ctaInner {
   max-width: 480px; /* keep CTA constrained */
@@ -382,6 +386,12 @@ body {
   gap: 8px;
   margin-top: 8px;
   padding-bottom: 16px; /* extra padding under the DateTimeLocationPicker */
+}
+
+.location-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 6px;
 }
 
 .location-label {
@@ -567,5 +577,29 @@ body {
 .summary-btn.remove {
   background: #fff1f2;
   border-color: #fda4af;
+}
+
+/* Footer */
+.footer {
+  height: 32px;
+  background: #9ca3af; /* medium grey */
+}
+
+/* Desktop layout adjustments for request-to-book controls */
+@media (min-width: 1024px) {
+  .location-picker {
+    grid-template-columns: 1fr 1fr; /* left: location, right: calendar */
+    gap: 24px;
+    align-items: start;
+  }
+  .location-panel { order: 1; }
+  .calendar-panel { order: 2; }
+
+  /* Always show calendar on desktop and remove accordion-like behavior */
+  .date-toggle { display: none; }
+  .calendar {
+    max-height: none;
+    overflow: visible;
+  }
 }
 

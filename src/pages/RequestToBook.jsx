@@ -3,10 +3,11 @@ import elephant from "../assets/elephant.jpg";
 import Breadcrumbs from "../components/Breadcrumbs";
 import { PRODUCT_TITLE } from "../constants";
 import DateTimeLocationPicker from "../components/DateTimeLocationPicker";
+import Footer from "../components/Footer";
 
 export default function RequestToBook() {
   return (
-    <div className="app">
+    <div className="app has-footer">
       <div className="header" role="banner">
         <button className="nav-button" aria-label="Go back">
           <span className="arrow-left">←</span>
@@ -56,15 +57,20 @@ export default function RequestToBook() {
         </p>
       </div>
 
+      {/* Booking controls area (desktop: below description, above CTA) */}
+      <div className="content">
+        <DateTimeLocationPicker />
+      </div>
+
       <div className="ctaBar">
         <div className="ctaInner">
-          <div className="availability-notice">
-            <div className="availability-text">Limited Availability!</div>
-            <div className="book-text">Choose Location to Request</div>
-          </div>
-          <DateTimeLocationPicker />
+          <button className="cta-button" type="button">
+            Request Availability
+          </button>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }

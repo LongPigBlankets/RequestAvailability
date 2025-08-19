@@ -112,141 +112,159 @@ export default function DateTimeLocationPicker() {
     return () => document.removeEventListener("mousedown", handleDocClick);
   }, []);
 
+  // Ensure the calendar is always open on desktop
+  useEffect(() => {
+    const mql = window.matchMedia('(min-width: 1024px)');
+    const syncOpen = () => {
+      if (mql.matches) {
+        setIsCalendarOpen(true);
+      }
+    };
+    syncOpen();
+    mql.addEventListener('change', syncOpen);
+    return () => mql.removeEventListener('change', syncOpen);
+  }, []);
+
   return (
     <div className="location-picker">
-      <label htmlFor="location-button" className="location-label">Location</label>
-      <div className="location-select-wrapper" ref={locationWrapperRef}>
-        <button
-          id="location-button"
-          type="button"
-          className="location-select"
-          aria-haspopup="listbox"
-          aria-expanded={isLocationMenuOpen}
-          onClick={() => setIsLocationMenuOpen((o) => !o)}
-        >
-          {selectedLocation}
-          <span className="chevron" aria-hidden>{isLocationMenuOpen ? "▲" : "▼"}</span>
-        </button>
-        {isLocationMenuOpen && (
-          <div className="location-dropdown" role="listbox" aria-label="Choose location">
-            {[
-              "Port Lympne Kent",
-              "Port Lympne Hampshire",
-              "Port Lympne Essex",
-            ].map((loc) => (
-              <button
-                type="button"
-                role="option"
-                key={loc}
-                aria-selected={selectedLocation === loc}
-                className={`location-option${selectedLocation === loc ? " selected" : ""}`}
-                onClick={() => {
-                  setSelectedLocation(loc);
-                  setIsLocationMenuOpen(false);
-                }}
-              >
-                {loc}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <div className="date-picker">
-        <label className="location-label" htmlFor="date-toggle">Dates</label>
-        <button
-          id="date-toggle"
-          type="button"
-          className="date-toggle"
-          aria-expanded={isCalendarOpen}
-          onClick={() => setIsCalendarOpen((o) => !o)}
-        >
-          <span>{selectedSummary}</span>
-          <span className="chevron" aria-hidden>
-            {isCalendarOpen ? "▲" : "▼"}
-          </span>
-        </button>
-
-        <div className={`calendar ${isCalendarOpen ? "open" : ""}`}>
-          <div className="calendar-header">
-            <button
-              type="button"
-              className="calendar-nav"
-              aria-label="Previous month"
-              onClick={() => setCurrentMonth((m) => addMonths(m, -1))}
-            >
-              ‹
-            </button>
-            <div className="calendar-title">{monthLabel}</div>
-            <button
-              type="button"
-              className="calendar-nav"
-              aria-label="Next month"
-              onClick={() => setCurrentMonth((m) => addMonths(m, 1))}
-            >
-              ›
-            </button>
-          </div>
-
-          <div className="calendar-weekdays">
-            <div>Sun</div>
-            <div>Mon</div>
-            <div>Tue</div>
-            <div>Wed</div>
-            <div>Thu</div>
-            <div>Fri</div>
-            <div>Sat</div>
-          </div>
-
-          <div className="calendar-grid">
-            {cells.map((cell) => {
-              if (cell.type === "blank") {
-                return <div key={cell.key} className="calendar-blank" />;
-              }
-              const isSelected = selectedDates.has(cell.iso);
-              return (
+      <div className="location-panel">
+        <div className="location-title"><span aria-hidden>📍</span> Choose Location</div>
+        <label htmlFor="location-button" className="location-label">Location</label>
+        <div className="location-select-wrapper" ref={locationWrapperRef}>
+          <button
+            id="location-button"
+            type="button"
+            className="location-select"
+            aria-haspopup="listbox"
+            aria-expanded={isLocationMenuOpen}
+            onClick={() => setIsLocationMenuOpen((o) => !o)}
+          >
+            {selectedLocation}
+            <span className="chevron" aria-hidden>{isLocationMenuOpen ? "▲" : "▼"}</span>
+          </button>
+          {isLocationMenuOpen && (
+            <div className="location-dropdown" role="listbox" aria-label="Choose location">
+              {[
+                "Port Lympne Kent",
+                "Port Lympne Hampshire",
+                "Port Lympne Essex",
+              ].map((loc) => (
                 <button
                   type="button"
-                  key={cell.key}
-                  className={`calendar-day${isSelected ? " selected" : ""}`}
-                  onClick={() => toggleDate(cell.iso)}
-                  aria-pressed={isSelected}
+                  role="option"
+                  key={loc}
+                  aria-selected={selectedLocation === loc}
+                  className={`location-option${selectedLocation === loc ? " selected" : ""}`}
+                  onClick={() => {
+                    setSelectedLocation(loc);
+                    setIsLocationMenuOpen(false);
+                  }}
                 >
-                  {cell.number}
+                  {loc}
                 </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {selectedDates.size > 0 && (
-          <div className="selected-dates-summary" aria-live="polite">
-            {Array.from(selectedDates)
-              .map((iso) => ({ iso, date: new Date(iso) }))
-              .sort((a, b) => a.date - b.date)
-              .map(({ iso, date }) => (
-                <div key={iso} className="summary-item">
-                  <div className="summary-date">{formatHuman(date)}</div>
-                  <div className="summary-actions">
-                    <button
-                      type="button"
-                      className={`summary-btn favourite${favouriteDates.has(iso) ? " active" : ""}`}
-                      onClick={() => toggleFavourite(iso)}
-                    >
-                      Favourite
-                    </button>
-                    <button
-                      type="button"
-                      className="summary-btn remove"
-                      onClick={() => toggleDate(iso)}
-                    >
-                      Remove
-                    </button>
-                  </div>
-                </div>
               ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="calendar-panel">
+        <div className="date-picker">
+          <label className="location-label" htmlFor="date-toggle">Dates</label>
+          <button
+            id="date-toggle"
+            type="button"
+            className="date-toggle"
+            aria-expanded={isCalendarOpen}
+            onClick={() => setIsCalendarOpen((o) => !o)}
+          >
+            <span>{selectedSummary}</span>
+            <span className="chevron" aria-hidden>
+              {isCalendarOpen ? "▲" : "▼"}
+            </span>
+          </button>
+
+          <div className={`calendar ${isCalendarOpen ? "open" : ""}`}>
+            <div className="calendar-header">
+              <button
+                type="button"
+                className="calendar-nav"
+                aria-label="Previous month"
+                onClick={() => setCurrentMonth((m) => addMonths(m, -1))}
+              >
+                ‹
+              </button>
+              <div className="calendar-title">{monthLabel}</div>
+              <button
+                type="button"
+                className="calendar-nav"
+                aria-label="Next month"
+                onClick={() => setCurrentMonth((m) => addMonths(m, 1))}
+              >
+                ›
+              </button>
+            </div>
+
+            <div className="calendar-weekdays">
+              <div>Sun</div>
+              <div>Mon</div>
+              <div>Tue</div>
+              <div>Wed</div>
+              <div>Thu</div>
+              <div>Fri</div>
+              <div>Sat</div>
+            </div>
+
+            <div className="calendar-grid">
+              {cells.map((cell) => {
+                if (cell.type === "blank") {
+                  return <div key={cell.key} className="calendar-blank" />;
+                }
+                const isSelected = selectedDates.has(cell.iso);
+                return (
+                  <button
+                    type="button"
+                    key={cell.key}
+                    className={`calendar-day${isSelected ? " selected" : ""}`}
+                    onClick={() => toggleDate(cell.iso)}
+                    aria-pressed={isSelected}
+                  >
+                    {cell.number}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        )}
+
+          {selectedDates.size > 0 && (
+            <div className="selected-dates-summary" aria-live="polite">
+              {Array.from(selectedDates)
+                .map((iso) => ({ iso, date: new Date(iso) }))
+                .sort((a, b) => a.date - b.date)
+                .map(({ iso, date }) => (
+                  <div key={iso} className="summary-item">
+                    <div className="summary-date">{formatHuman(date)}</div>
+                    <div className="summary-actions">
+                      <button
+                        type="button"
+                        className={`summary-btn favourite${favouriteDates.has(iso) ? " active" : ""}`}
+                        onClick={() => toggleFavourite(iso)}
+                      >
+                        Favourite
+                      </button>
+                      <button
+                        type="button"
+                        className="summary-btn remove"
+                        onClick={() => toggleDate(iso)}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
