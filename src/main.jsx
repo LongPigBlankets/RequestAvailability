@@ -2,6 +2,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
+import { AvailabilityProvider } from "./contexts/AvailabilityContext";
 
 console.log("[main] loaded");
 
@@ -12,7 +13,9 @@ if (!el) {
   createRoot(el).render(
     <React.StrictMode>
       <BrowserRouter>
-        <App />
+        <AvailabilityProvider>
+          <App />
+        </AvailabilityProvider>
       </BrowserRouter>
     </React.StrictMode>
   );

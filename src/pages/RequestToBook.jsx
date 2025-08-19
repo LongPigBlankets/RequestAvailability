@@ -4,11 +4,17 @@ import Breadcrumbs from "../components/Breadcrumbs";
 import { PRODUCT_TITLE } from "../constants";
 import DateTimeLocationPicker from "../components/DateTimeLocationPicker";
 import Footer from "../components/Footer";
+import { useAvailability } from "../contexts/AvailabilityContext";
 
 export default function RequestToBook() {
   const [showToast, setShowToast] = useState(false);
+  const [selectedDates, setSelectedDates] = useState(new Set());
+  const { addRequest } = useAvailability();
 
   function handleCheckAvailability() {
+    if (selectedDates.size > 0) {
+      addRequest(selectedDates);
+    }
     setShowToast(true);
   }
 
@@ -65,7 +71,10 @@ export default function RequestToBook() {
 
       {/* Booking controls area (desktop: below description, above CTA) */}
       <div className="content">
-        <DateTimeLocationPicker />
+        <DateTimeLocationPicker 
+          selectedDates={selectedDates}
+          setSelectedDates={setSelectedDates}
+        />
       </div>
 
       <div className="ctaBar">

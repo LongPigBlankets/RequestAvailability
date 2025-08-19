@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 
-export default function DateTimeLocationPicker() {
+export default function DateTimeLocationPicker({ 
+  selectedDates: externalSelectedDates, 
+  setSelectedDates: externalSetSelectedDates 
+}) {
   const [selectedLocation, setSelectedLocation] = useState("Port Lympne Kent");
   const [isLocationMenuOpen, setIsLocationMenuOpen] = useState(false);
   const locationWrapperRef = useRef(null);
@@ -10,7 +13,12 @@ export default function DateTimeLocationPicker() {
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), 1);
   });
-  const [selectedDates, setSelectedDates] = useState(() => new Set());
+  
+  // Use external state if provided, otherwise use internal state
+  const [internalSelectedDates, setInternalSelectedDates] = useState(() => new Set());
+  const selectedDates = externalSelectedDates || internalSelectedDates;
+  const setSelectedDates = externalSetSelectedDates || setInternalSelectedDates;
+  
   const [favouriteDates, setFavouriteDates] = useState(() => new Set());
   const [showMaxWarning, setShowMaxWarning] = useState(false);
 
