@@ -1,4 +1,6 @@
-import React from "react";
+﻿import React from "react";
+import ProductCard from "./components/ProductImage.jsx";
+import elephant from "./assets/elephant.jpg";
 
 export default function App() {
   const pageStyles = {
@@ -83,16 +85,12 @@ export default function App() {
     },
   };
 
-  const safariElephantImageUrl =
-    "https://images.unsplash.com/photo-1464773329917-1f17d81e16c3?q=80&w=1470&auto=format&fit=crop";
-
   return (
     <div style={pageStyles.container}>
       <main style={pageStyles.content}>
         <div style={pageStyles.headerImageWrapper}>
           <img
-            src={safariElephantImageUrl}
-            alt="Safari landscape with an elephant"
+            src={elephant} alt="Safari landscape with an elephant" height={280} width="100%" 
             style={pageStyles.headerImage}
           />
         </div>
