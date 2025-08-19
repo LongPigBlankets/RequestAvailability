@@ -1,8 +1,28 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import elephant from "./assets/elephant.jpg";
 
 export default function App() {
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
+
+  useEffect(() => {
+    function onKeyDown(event) {
+      if (event.key === "Escape") {
+        setIsBookingOpen(false);
+      }
+    }
+    if (isBookingOpen) {
+      document.body.style.overflow = "hidden";
+      window.addEventListener("keydown", onKeyDown);
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = "";
+    };
+  }, [isBookingOpen]);
+
   return (
     <div className="app">
       <div className="header" role="banner">
@@ -58,9 +78,69 @@ export default function App() {
             <div className="availability-text">Limited Availability!</div>
             <div className="book-text">Book Your Experience Today</div>
           </div>
-          <button className="cta-button" type="button">Book Now</button>
+          <button
+            className="cta-button"
+            type="button"
+            onClick={() => setIsBookingOpen(true)}
+          >
+            Book Now
+          </button>
         </div>
       </div>
+
+      {isBookingOpen && (
+        <div
+          className="booking-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="bookingTitle"
+          onClick={() => setIsBookingOpen(false)}
+        >
+          <div className="booking-backdrop"></div>
+          <div
+            className="booking-panel"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="booking-header">
+              <h3 id="bookingTitle" className="booking-title">Book now</h3>
+              <button
+                className="booking-close"
+                aria-label="Close"
+                onClick={() => setIsBookingOpen(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="booking-body">
+              <div className="booking-details-heading">Booking details</div>
+              <p className="booking-description">
+                Use these booking details to check availability and secure your spot. Have your voucher number and pin code read to complete your booking!
+              </p>
+
+              <div className="booking-info">
+                <div className="booking-info-row">
+                  <span className="booking-info-icon" aria-hidden="true">📍</span>
+                  <span>Port Lympne, Kent, England</span>
+                </div>
+                <div className="booking-info-row">
+                  <span className="booking-info-icon" aria-hidden="true">✉️</span>
+                  <span>info@supplier.co.uk</span>
+                </div>
+              </div>
+
+              <div className="booking-cta">
+                <button
+                  type="button"
+                  className="cta-button"
+                  onClick={() => setIsBookingOpen(false)}
+                >
+                  Request Availability
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
