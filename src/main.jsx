@@ -1,5 +1,6 @@
-﻿import React from "react";
+import React from "react";
 import { createRoot } from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 
 console.log("[main] loaded");
@@ -10,7 +11,9 @@ if (!el) {
 } else {
   createRoot(el).render(
     <React.StrictMode>
-      <App />
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
     </React.StrictMode>
   );
   console.log("[main] rendered");
