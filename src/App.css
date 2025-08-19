@@ -522,10 +522,8 @@ body {
 }
 
 .calendar-day.selected {
-  background: transparent;
-  color: inherit;
-  outline: 2px solid #0ea5a4;
-  outline-offset: 0;
+  background: #0ea5a4;
+  color: #ffffff;
 }
 
 /* Selected dates summary */
@@ -583,27 +581,20 @@ body {
 
 .picker-icon { font-size: 16px; line-height: 1; }
 
-/* Request To Book page layout: right sidebar picker on desktop */
-.page-request-to-book .main-content-grid {
-  display: block;
-}
-
+/* Request To Book page layout: pickers below description, split left/right on desktop */
 @media (min-width: 1024px) {
-  .page-request-to-book .main-content-grid {
+  .page-request-to-book .pickers-row .location-picker {
     display: grid;
-    grid-template-columns: 1fr 360px;
+    grid-template-columns: 1fr 1fr;
     gap: 24px;
     align-items: start;
   }
-  .page-request-to-book .booking-sidebar {
-    position: sticky;
-    top: 20px;
-  }
-  .page-request-to-book .booking-sidebar .date-toggle { display: none; }
-  .page-request-to-book .booking-sidebar .calendar {
-    max-height: none; /* keep calendar always open on desktop */
-    overflow: visible;
-  }
+  .page-request-to-book .pickers-row .location-picker > .picker-heading:first-child { grid-column: 1; }
+  .page-request-to-book .pickers-row .location-picker > .location-label { grid-column: 1; }
+  .page-request-to-book .pickers-row .location-picker > .location-select-wrapper { grid-column: 1; }
+  .page-request-to-book .pickers-row .location-picker > .date-picker { grid-column: 2; grid-row: 1 / span 3; }
+  .page-request-to-book .pickers-row .date-picker .date-toggle { display: none; }
+  .page-request-to-book .pickers-row .date-picker .calendar { max-height: none; overflow: visible; }
 }
 
 /* Page-specific footer */

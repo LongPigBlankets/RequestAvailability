@@ -35,31 +35,30 @@ export default function RequestToBook() {
       </div>
 
       <div className="content">
-        <div className="main-content-grid">
-          <div className="content-main">
-            <div className="product-id">118107722</div>
-            <h1 className="title">{PRODUCT_TITLE}</h1>
-            <div className="location">
-              📍 The Aspinall Foundation, Nr Ashford Kent, Lympne Hythe, CT21 4PD
-            </div>
-            <div className="validity">
-              <span className="use-by">Use by 19th Aug 2026</span>
-              <span className="extend" role="button" tabIndex={0}>Extend</span>
-            </div>
-            <div className="flexibility">
-              🔁 <span className="flexible-text">Fully Flexible</span>
-            </div>
-            <div className="divider"></div>
-            <h2 className="section-title">About the experience</h2>
-            <p className="description">
-              Explore the vast 600-acre expanse of Port Lympne Reserve and its historic landscape,
-              then unwind with a relaxing afternoon tea. Meet incredible animals up close and enjoy 
-              a memorable day out in nature.
-            </p>
+        <div className="content-main">
+          <div className="product-id">118107722</div>
+          <h1 className="title">{PRODUCT_TITLE}</h1>
+          <div className="location">
+            📍 The Aspinall Foundation, Nr Ashford Kent, Lympne Hythe, CT21 4PD
           </div>
-          <aside className="booking-sidebar" aria-label="Booking options">
-            <DateTimeLocationPicker />
-          </aside>
+          <div className="validity">
+            <span className="use-by">Use by 19th Aug 2026</span>
+            <span className="extend" role="button" tabIndex={0}>Extend</span>
+          </div>
+          <div className="flexibility">
+            🔁 <span className="flexible-text">Fully Flexible</span>
+          </div>
+          <div className="divider"></div>
+          <h2 className="section-title">About the experience</h2>
+          <p className="description">
+            Explore the vast 600-acre expanse of Port Lympne Reserve and its historic landscape,
+            then unwind with a relaxing afternoon tea. Meet incredible animals up close and enjoy 
+            a memorable day out in nature.
+          </p>
+        </div>
+
+        <div className="pickers-row">
+          <DateTimeLocationPicker />
         </div>
       </div>
 
