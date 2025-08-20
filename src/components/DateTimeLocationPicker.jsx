@@ -14,7 +14,7 @@ const DateTimeLocationPicker = forwardRef((props, ref) => {
   const [favouriteDates, setFavouriteDates] = useState(() => new Set());
   const [showMaxWarning, setShowMaxWarning] = useState(false);
 
-  // Expose getSelectedDates method to parent component
+  // Expose getSelectedDates and getFavouriteDates methods to parent component
   useImperativeHandle(ref, () => ({
     getSelectedDates: () => {
       return Array.from(selectedDates).map(iso => {
@@ -24,6 +24,9 @@ const DateTimeLocationPicker = forwardRef((props, ref) => {
           formatted: formatHuman(date)
         };
       });
+    },
+    getFavouriteDates: () => {
+      return favouriteDates;
     }
   }));
 
