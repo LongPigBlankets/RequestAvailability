@@ -97,7 +97,7 @@ export default function RequestToBook() {
       <div className="ctaBar">
         <div className="ctaInner">
           <button className="cta-button" type="button" onClick={handleCheckAvailability}>
-            Check Availability
+            Send Request
           </button>
         </div>
       </div>
