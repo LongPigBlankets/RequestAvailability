@@ -10,17 +10,21 @@ export default function RequestToBook() {
   const datePickerRef = useRef(null);
 
   function handleCheckAvailability() {
-    // Get selected dates from the DateTimeLocationPicker component
+    // Get selected dates and favourite information from the DateTimeLocationPicker component
     const selectedDates = datePickerRef.current?.getSelectedDates();
+    const favouriteDates = datePickerRef.current?.getFavouriteDates();
     
     if (selectedDates && selectedDates.length > 0) {
       // Get existing availability requests from session storage
       const existingRequests = JSON.parse(sessionStorage.getItem('availabilityRequests') || '[]');
       
-      // Create new request entry
+      // Create new request entry with favourite information
       const newRequest = {
         id: Date.now(), // Simple ID based on timestamp
-        dates: selectedDates,
+        dates: selectedDates.map(date => ({
+          ...date,
+          isFavourite: favouriteDates && favouriteDates.has(date.iso)
+        })),
         timestamp: new Date().toISOString()
       };
       

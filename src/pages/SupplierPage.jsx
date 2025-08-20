@@ -61,8 +61,15 @@ export default function SupplierPage() {
                   <strong>Requested dates:</strong>
                   <ul className="dates-list">
                     {request.dates.map((dateInfo, dateIndex) => (
-                      <li key={dateIndex} className="date-item">
-                        {dateInfo.formatted}
+                      <li key={dateIndex} className="date-item-wrapper">
+                        <div className="favourited-label-space">
+                          {dateInfo.isFavourite && (
+                            <div className="favourited-label">favourited</div>
+                          )}
+                        </div>
+                        <div className="date-item">
+                          {dateInfo.formatted}
+                        </div>
                       </li>
                     ))}
                   </ul>
