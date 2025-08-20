@@ -4,6 +4,7 @@ import Footer from "../components/Footer";
 
 export default function SupplierPage() {
   const [availabilityRequests, setAvailabilityRequests] = useState([]);
+  const [requestStates, setRequestStates] = useState({});
 
   // Predefined user names for the first 5 users
   const getUserName = (index) => {
@@ -20,6 +21,44 @@ export default function SupplierPage() {
     }
     
     return `User ${index + 1}`;
+  };
+
+  // Generate email from name
+  const getUserEmail = (name) => {
+    const parts = name.toLowerCase().split(' ');
+    if (parts.length >= 2) {
+      return `${parts[0]}.${parts[1]}@email.com`;
+    }
+    return `${parts[0]}@email.com`;
+  };
+
+  // Handle rejecting all dates for a request
+  const handleRejectAll = (requestId) => {
+    setRequestStates(prev => ({
+      ...prev,
+      [requestId]: { status: 'rejected', selectedDateIndex: null }
+    }));
+  };
+
+  // Handle accepting a specific date
+  const handleAcceptDate = (requestId, dateIndex) => {
+    setRequestStates(prev => ({
+      ...prev,
+      [requestId]: { status: 'accepted', selectedDateIndex: dateIndex }
+    }));
+  };
+
+  // Handle radio button selection (doesn't accept yet, just selects)
+  const handleDateSelection = (requestId, dateIndex) => {
+    const currentState = requestStates[requestId];
+    if (currentState?.status === 'rejected' || currentState?.status === 'accepted') {
+      return; // Don't allow changes if already decided
+    }
+    
+    setRequestStates(prev => ({
+      ...prev,
+      [requestId]: { ...prev[requestId], selectedDateIndex: dateIndex }
+    }));
   };
 
   useEffect(() => {
@@ -54,31 +93,96 @@ export default function SupplierPage() {
           <p className="description">No availability requests yet.</p>
         ) : (
           <div className="requests-list">
-            {availabilityRequests.map((request, index) => (
-              <div key={request.id} className="request-item">
-                <h3 className="user-name">{getUserName(index)}</h3>
-                <div className="requested-dates">
-                  <strong>Requested dates:</strong>
-                  <ul className="dates-list">
-                    {request.dates.map((dateInfo, dateIndex) => (
-                      <li key={dateIndex} className="date-item-wrapper">
-                        <div className="favourited-label-space">
-                          {dateInfo.isFavourite && (
-                            <div className="favourited-label">favourited</div>
+            {availabilityRequests.map((request, index) => {
+              const userName = getUserName(index);
+              const requestState = requestStates[request.id] || {};
+              const isRejected = requestState.status === 'rejected';
+              const isAccepted = requestState.status === 'accepted';
+              const selectedDateIndex = requestState.selectedDateIndex;
+              
+              return (
+                <div key={request.id} className="request-item">
+                  <div className="user-info">
+                    <h3 className="user-name">{userName}</h3>
+                    <div className="contact-info">
+                      <div className="phone-info">
+                        <span className="contact-label">Phone:</span>
+                        <span className="contact-value">07123456789</span>
+                      </div>
+                      <div className="email-info">
+                        <span className="contact-label">Email:</span>
+                        <span className="contact-value">{getUserEmail(userName)}</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="requested-dates">
+                    <strong>Requested dates:</strong>
+                    <ul className="dates-list">
+                      {request.dates.map((dateInfo, dateIndex) => {
+                        const isSelected = selectedDateIndex === dateIndex;
+                        const isThisAccepted = isAccepted && isSelected;
+                        const isDisabled = isRejected || (isAccepted && !isSelected);
+                        
+                        return (
+                          <li key={dateIndex} className={`date-item-wrapper ${isDisabled ? 'disabled' : ''} ${isThisAccepted ? 'accepted' : ''}`}>
+                            <div className="favourited-label-space">
+                              {dateInfo.isFavourite && (
+                                <div className="favourited-label">favourited</div>
+                              )}
+                            </div>
+                            <div className="date-selection">
+                              <input
+                                type="radio"
+                                name={`request-${request.id}`}
+                                checked={isSelected}
+                                onChange={() => handleDateSelection(request.id, dateIndex)}
+                                disabled={isDisabled}
+                                className="date-radio"
+                              />
+                              <div className={`date-item ${isThisAccepted ? 'accepted' : ''} ${isDisabled ? 'disabled' : ''}`}>
+                                {dateInfo.formatted}
+                              </div>
+                            </div>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                    
+                    <div className="date-actions">
+                      {!isRejected && !isAccepted && (
+                        <>
+                          <button 
+                            className="reject-all-btn"
+                            onClick={() => handleRejectAll(request.id)}
+                          >
+                            Reject All Dates
+                          </button>
+                          {selectedDateIndex !== null && selectedDateIndex !== undefined && (
+                            <button 
+                              className="accept-selected-btn"
+                              onClick={() => handleAcceptDate(request.id, selectedDateIndex)}
+                            >
+                              Accept Selected Date
+                            </button>
                           )}
-                        </div>
-                        <div className="date-item">
-                          {dateInfo.formatted}
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
+                        </>
+                      )}
+                      {isRejected && (
+                        <div className="status-message rejected">All dates rejected</div>
+                      )}
+                      {isAccepted && (
+                        <div className="status-message accepted">Date accepted</div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="request-timestamp">
+                    Requested: {new Date(request.timestamp).toLocaleString()}
+                  </div>
                 </div>
-                <div className="request-timestamp">
-                  Requested: {new Date(request.timestamp).toLocaleString()}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

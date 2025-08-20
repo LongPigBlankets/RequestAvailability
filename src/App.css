@@ -742,6 +742,131 @@ body {
   font-style: italic;
 }
 
+/* Contact information styles */
+.user-info {
+  margin-bottom: 16px;
+}
+
+.contact-info {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.phone-info,
+.email-info {
+  display: flex;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.contact-label {
+  font-weight: 500;
+  color: #64748b;
+  min-width: 50px;
+}
+
+.contact-value {
+  color: #1e293b;
+}
+
+/* Date selection styles */
+.date-selection {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.date-radio {
+  margin: 0;
+  cursor: pointer;
+}
+
+.date-radio:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Date item states */
+.date-item.accepted {
+  background: #22c55e !important;
+  color: white;
+}
+
+.date-item.disabled {
+  background: #94a3b8 !important;
+  color: #64748b !important;
+  cursor: not-allowed;
+}
+
+.date-item-wrapper.disabled {
+  opacity: 0.6;
+}
+
+.date-item-wrapper.accepted .date-item {
+  background: #22c55e !important;
+  color: white;
+}
+
+/* Action buttons */
+.date-actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.reject-all-btn,
+.accept-selected-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.reject-all-btn {
+  background: #ef4444;
+  color: white;
+}
+
+.reject-all-btn:hover {
+  background: #dc2626;
+}
+
+.accept-selected-btn {
+  background: #22c55e;
+  color: white;
+}
+
+.accept-selected-btn:hover {
+  background: #16a34a;
+}
+
+/* Status messages */
+.status-message {
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.status-message.rejected {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.status-message.accepted {
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+}
+
 @media (min-width: 768px) {
   .requests-list {
     gap: 32px;
