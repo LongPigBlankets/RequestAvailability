@@ -755,3 +755,68 @@ body {
     font-size: 20px;
   }
 }
+
+
+/* Calendar title section */
+.calendar-title-section {
+  margin-bottom: 8px;
+}
+
+/* Desktop two-month calendar layout */
+.calendar-desktop-container {
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+}
+
+.calendar-month {
+  flex: 1;
+  min-width: 0;
+}
+
+.calendar-nav-spacer {
+  width: 24px; /* Same width as nav button for alignment */
+}
+
+/* Update desktop calendar styles for two-month view */
+@media (min-width: 1024px) {
+  .calendar-desktop-container {
+    max-height: none;
+  }
+  
+  .calendar.open {
+    max-height: none;
+  }
+}
+
+/* Calendar title section */
+.calendar-title-section {
+  margin-bottom: 8px;
+}
+
+/* Desktop two-month calendar layout */
+.calendar-desktop-container {
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+}
+
+.calendar-month {
+  flex: 1;
+  min-width: 0;
+}
+
+.calendar-nav-spacer {
+  width: 24px; /* Same width as nav button for alignment */
+}
+
+/* Update desktop calendar styles for two-month view */
+@media (min-width: 1024px) {
+  .calendar-desktop-container {
+    max-height: none;
+  }
+  
+  .calendar.open {
+    max-height: none;
+  }
+}

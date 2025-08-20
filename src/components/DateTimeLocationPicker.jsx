@@ -10,6 +10,7 @@ const DateTimeLocationPicker = forwardRef((props, ref) => {
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), 1);
   });
+  const [isDesktop, setIsDesktop] = useState(false);
   const [selectedDates, setSelectedDates] = useState(() => new Set());
   const [favouriteDates, setFavouriteDates] = useState(() => new Set());
   const [showMaxWarning, setShowMaxWarning] = useState(false);
@@ -134,11 +135,13 @@ const DateTimeLocationPicker = forwardRef((props, ref) => {
     return () => document.removeEventListener("mousedown", handleDocClick);
   }, []);
 
-  // Ensure the calendar is always open on desktop
+  // Ensure the calendar is always open on desktop and track desktop state
   useEffect(() => {
     const mql = window.matchMedia('(min-width: 1024px)');
     const syncOpen = () => {
-      if (mql.matches) {
+      const isDesktopView = mql.matches;
+      setIsDesktop(isDesktopView);
+      if (isDesktopView) {
         setIsCalendarOpen(true);
       }
     };
@@ -197,6 +200,9 @@ const DateTimeLocationPicker = forwardRef((props, ref) => {
       </div>
 
       <div className="calendar-panel">
+        <div className="calendar-title-section">
+          <div className="location-title"><span aria-hidden>📅</span> Choose Dates</div>
+        </div>
         <div className="date-picker">
           <label className="location-label" htmlFor="date-toggle">Dates</label>
           <button
@@ -214,55 +220,150 @@ const DateTimeLocationPicker = forwardRef((props, ref) => {
 
           <div className={`calendar ${isCalendarOpen ? "open" : ""}`}>
             <div className="calendar-caption">Select up to 5 dates</div>
-            <div className="calendar-header">
-              <button
-                type="button"
-                className="calendar-nav"
-                aria-label="Previous month"
-                onClick={() => setCurrentMonth((m) => addMonths(m, -1))}
-              >
-                ‹
-              </button>
-              <div className="calendar-title">{monthLabel}</div>
-              <button
-                type="button"
-                className="calendar-nav"
-                aria-label="Next month"
-                onClick={() => setCurrentMonth((m) => addMonths(m, 1))}
-              >
-                ›
-              </button>
-            </div>
-
-            <div className="calendar-weekdays">
-              <div>Sun</div>
-              <div>Mon</div>
-              <div>Tue</div>
-              <div>Wed</div>
-              <div>Thu</div>
-              <div>Fri</div>
-              <div>Sat</div>
-            </div>
-
-            <div className="calendar-grid">
-              {cells.map((cell) => {
-                if (cell.type === "blank") {
-                  return <div key={cell.key} className="calendar-blank" />;
-                }
-                const isSelected = selectedDates.has(cell.iso);
-                return (
+            {isDesktop ? (
+              <div className="calendar-desktop-container">
+                {/* First Month */}
+                <div className="calendar-month">
+                  <div className="calendar-header">
+                    <button
+                      type="button"
+                      className="calendar-nav"
+                      aria-label="Previous month"
+                      onClick={() => setCurrentMonth((m) => addMonths(m, -1))}
+                    >
+                      ‹
+                    </button>
+                    <div className="calendar-title">{monthLabel}</div>
+                    <div className="calendar-nav-spacer"></div>
+                  </div>
+                  <div className="calendar-weekdays">
+                    <div>Sun</div>
+                    <div>Mon</div>
+                    <div>Tue</div>
+                    <div>Wed</div>
+                    <div>Thu</div>
+                    <div>Fri</div>
+                    <div>Sat</div>
+                  </div>
+                  <div className="calendar-grid">
+                    {cells.map((cell) => {
+                      if (cell.type === "blank") {
+                        return <div key={cell.key} className="calendar-blank" />;
+                      }
+                      const isSelected = selectedDates.has(cell.iso);
+                      return (
+                        <button
+                          type="button"
+                          key={cell.key}
+                          className={`calendar-day${isSelected ? " selected" : ""}`}
+                          onClick={() => toggleDate(cell.iso)}
+                          aria-pressed={isSelected}
+                        >
+                          {cell.number}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+                {/* Second Month */}
+                <div className="calendar-month">
+                  <div className="calendar-header">
+                    <div className="calendar-nav-spacer"></div>
+                    <div className="calendar-title">{addMonths(currentMonth, 1).toLocaleString(undefined, {
+                      month: "long",
+                      year: "numeric",
+                    })}</div>
+                    <button
+                      type="button"
+                      className="calendar-nav"
+                      aria-label="Next month"
+                      onClick={() => setCurrentMonth((m) => addMonths(m, 1))}
+                    >
+                      ›
+                    </button>
+                  </div>
+                  <div className="calendar-weekdays">
+                    <div>Sun</div>
+                    <div>Mon</div>
+                    <div>Tue</div>
+                    <div>Wed</div>
+                    <div>Thu</div>
+                    <div>Fri</div>
+                    <div>Sat</div>
+                  </div>
+                  <div className="calendar-grid">
+                    {buildMonthGrid(addMonths(currentMonth, 1)).map((cell) => {
+                      if (cell.type === "blank") {
+                        return <div key={cell.key} className="calendar-blank" />;
+                      }
+                      const isSelected = selectedDates.has(cell.iso);
+                      return (
+                        <button
+                          type="button"
+                          key={cell.key}
+                          className={`calendar-day${isSelected ? " selected" : ""}`}
+                          onClick={() => toggleDate(cell.iso)}
+                          aria-pressed={isSelected}
+                        >
+                          {cell.number}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* Mobile single month view */
+              <>
+                <div className="calendar-header">
                   <button
                     type="button"
-                    key={cell.key}
-                    className={`calendar-day${isSelected ? " selected" : ""}`}
-                    onClick={() => toggleDate(cell.iso)}
-                    aria-pressed={isSelected}
+                    className="calendar-nav"
+                    aria-label="Previous month"
+                    onClick={() => setCurrentMonth((m) => addMonths(m, -1))}
                   >
-                    {cell.number}
+                    ‹
                   </button>
-                );
-              })}
-            </div>
+                  <div className="calendar-title">{monthLabel}</div>
+                  <button
+                    type="button"
+                    className="calendar-nav"
+                    aria-label="Next month"
+                    onClick={() => setCurrentMonth((m) => addMonths(m, 1))}
+                  >
+                    ›
+                  </button>
+                </div>
+                <div className="calendar-weekdays">
+                  <div>Sun</div>
+                  <div>Mon</div>
+                  <div>Tue</div>
+                  <div>Wed</div>
+                  <div>Thu</div>
+                  <div>Fri</div>
+                  <div>Sat</div>
+                </div>
+                <div className="calendar-grid">
+                  {cells.map((cell) => {
+                    if (cell.type === "blank") {
+                      return <div key={cell.key} className="calendar-blank" />;
+                    }
+                    const isSelected = selectedDates.has(cell.iso);
+                    return (
+                      <button
+                        type="button"
+                        key={cell.key}
+                        className={`calendar-day${isSelected ? " selected" : ""}`}
+                        onClick={() => toggleDate(cell.iso)}
+                        aria-pressed={isSelected}
+                      >
+                        {cell.number}
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            )}
           </div>
 
           {showMaxWarning && (
@@ -271,35 +372,7 @@ const DateTimeLocationPicker = forwardRef((props, ref) => {
             </div>
           )}
 
-          {selectedDates.size > 0 && (
-            <div className="selected-dates-summary" aria-live="polite">
-              {Array.from(selectedDates)
-                .map((iso) => ({ iso, date: new Date(iso) }))
-                .sort((a, b) => a.date - b.date)
-                .map(({ iso, date }) => (
-                  <div key={iso} className="summary-item">
-                    <div className="summary-date">{formatHuman(date)}</div>
-                    <div className="summary-actions">
-                      <button
-                        type="button"
-                        className={`summary-btn favourite${favouriteDates.has(iso) ? " active" : ""}`}
-                        onClick={() => toggleFavourite(iso)}
-                      >
-                        ⭐ Favourite
-                      </button>
-                      <button
-                        type="button"
-                        className="summary-btn remove"
-                        aria-label="Remove date"
-                        onClick={() => toggleDate(iso)}
-                      >
-                        <span aria-hidden>🗑</span>
-                      </button>
-                    </div>
-                  </div>
-                ))}
-            </div>
-          )}
+
         </div>
       </div>
     </div>
