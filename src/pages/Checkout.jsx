@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Breadcrumbs from "../components/Breadcrumbs";
 import Footer from "../components/Footer";
 import { PRODUCT_TITLE } from "../constants";
@@ -12,6 +12,39 @@ export default function Checkout() {
   });
   const [showToast, setShowToast] = useState(false);
   const [errors, setErrors] = useState({});
+  const [currentRequest, setCurrentRequest] = useState(null);
+
+  // Load the most recent availability request from session storage
+  useEffect(() => {
+    const requests = JSON.parse(sessionStorage.getItem('availabilityRequests') || '[]');
+    if (requests.length > 0) {
+      // Get the most recent request (last in array)
+      setCurrentRequest(requests[requests.length - 1]);
+    }
+  }, []);
+
+  // Toggle favorite status for a specific date
+  const toggleFavorite = (dateIso) => {
+    if (!currentRequest) return;
+
+    const updatedRequest = {
+      ...currentRequest,
+      dates: currentRequest.dates.map(date => 
+        date.iso === dateIso 
+          ? { ...date, isFavourite: !date.isFavourite }
+          : date
+      )
+    };
+
+    setCurrentRequest(updatedRequest);
+
+    // Update session storage
+    const requests = JSON.parse(sessionStorage.getItem('availabilityRequests') || '[]');
+    const updatedRequests = requests.map(request => 
+      request.id === currentRequest.id ? updatedRequest : request
+    );
+    sessionStorage.setItem('availabilityRequests', JSON.stringify(updatedRequests));
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -86,6 +119,39 @@ export default function Checkout() {
           Please provide your contact details to send the availability request for {PRODUCT_TITLE}.
         </p>
       </div>
+
+      {currentRequest && (
+        <div className="content">
+          <h2 className="section-title">Summary</h2>
+          
+          <div className="summary-section">
+            <div className="summary-location">
+              <span className="summary-label">📍 Location:</span>
+              <span className="summary-value">{currentRequest.location}</span>
+            </div>
+            
+            <div className="summary-dates">
+              <span className="summary-label">📅 Selected Dates:</span>
+              <div className="dates-summary-list">
+                {currentRequest.dates.map((date) => (
+                  <div key={date.iso} className="date-summary-item">
+                    <span className="date-summary-text">{date.formatted}</span>
+                    <button
+                      type="button"
+                      className={`favorite-btn ${date.isFavourite ? 'active' : ''}`}
+                      onClick={() => toggleFavorite(date.iso)}
+                      aria-label={date.isFavourite ? 'Remove from favorites' : 'Add to favorites'}
+                    >
+                      <span className="star-icon">⭐</span>
+                      <span className="favorite-text">Favourite</span>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="content">
         <form className="checkout-form" onSubmit={(e) => e.preventDefault()}>
