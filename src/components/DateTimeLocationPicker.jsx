@@ -154,7 +154,8 @@ const DateTimeLocationPicker = forwardRef((props, ref) => {
   }, []);
 
   useEffect(() => {
-    if (selectedDates.size <= MAX_SELECTED_DATES) {
+    // Only clear the warning after the user deselects a date (i.e., drops below the max)
+    if (selectedDates.size < MAX_SELECTED_DATES) {
       setShowMaxWarning(false);
     }
   }, [selectedDates]);

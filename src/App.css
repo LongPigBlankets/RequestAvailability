@@ -643,7 +643,7 @@ body {
 /* Desktop layout adjustments for request-to-book controls */
 @media (min-width: 1024px) {
   .location-picker {
-    grid-template-columns: 1fr 1fr; /* left: location, right: calendar */
+    grid-template-columns: 1fr; /* stack location and calendar on desktop */
     gap: 24px;
     align-items: start;
   }
@@ -1010,6 +1010,7 @@ body {
   margin-left: auto;
   margin-right: auto;
 }
+
 
 /* Mobile form adjustments */
 @media (max-width: 767px) {

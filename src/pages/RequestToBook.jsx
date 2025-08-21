@@ -11,6 +11,7 @@ export default function RequestToBook() {
   const datePickerRef = useRef(null);
   const navigate = useNavigate();
 
+
   function handleCheckAvailability() {
     // Get selected dates, favourite information, and location from the DateTimeLocationPicker component
     const selectedDates = datePickerRef.current?.getSelectedDates();
@@ -104,6 +105,11 @@ export default function RequestToBook() {
 
       <div className="ctaBar">
         <div className="ctaInner">
+          <div className="cta-microcopy">
+            This will send a request to check these dates' availability with the experience provider. 
+            Expect an email with the response within 24h of requesting.
+          </div>
+
           <button className="cta-button" type="button" onClick={handleCheckAvailability}>
             Send Request
           </button>
