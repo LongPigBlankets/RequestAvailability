@@ -6,8 +6,8 @@ export default function SupplierPage() {
   const [availabilityRequests, setAvailabilityRequests] = useState([]);
   const [requestStates, setRequestStates] = useState({});
 
-  // Predefined user names for the first 5 users
-  const getUserName = (index) => {
+  // Fallback user names for requests without user info
+  const getFallbackUserName = (index) => {
     const predefinedNames = [
       "John Smith",
       "Jane Doe", 
@@ -23,13 +23,28 @@ export default function SupplierPage() {
     return `User ${index + 1}`;
   };
 
-  // Generate email from name
-  const getUserEmail = (name) => {
-    const parts = name.toLowerCase().split(' ');
-    if (parts.length >= 2) {
-      return `${parts[0]}.${parts[1]}@email.com`;
+  // Get user display info from request or fallback
+  const getUserInfo = (request, index) => {
+    if (request.userInfo) {
+      return {
+        name: `${request.userInfo.firstName} ${request.userInfo.lastName}`,
+        email: request.userInfo.email,
+        phone: request.userInfo.phoneNumber
+      };
     }
-    return `${parts[0]}@email.com`;
+    
+    // Fallback for old requests without user info
+    const fallbackName = getFallbackUserName(index);
+    const parts = fallbackName.toLowerCase().split(' ');
+    const fallbackEmail = parts.length >= 2 
+      ? `${parts[0]}.${parts[1]}@email.com`
+      : `${parts[0]}@email.com`;
+    
+    return {
+      name: fallbackName,
+      email: fallbackEmail,
+      phone: "07123456789"
+    };
   };
 
   // Handle rejecting all dates for a request
@@ -94,7 +109,7 @@ export default function SupplierPage() {
         ) : (
           <div className="requests-list">
             {availabilityRequests.map((request, index) => {
-              const userName = getUserName(index);
+              const userInfo = getUserInfo(request, index);
               const requestState = requestStates[request.id] || {};
               const isRejected = requestState.status === 'rejected';
               const isAccepted = requestState.status === 'accepted';
@@ -103,15 +118,21 @@ export default function SupplierPage() {
               return (
                 <div key={request.id} className="request-item">
                   <div className="user-info">
-                    <h3 className="user-name">{userName}</h3>
+                    <div className="user-header">
+                      <h3 className="user-name">{userInfo.name}</h3>
+                      <div className="voucher-info">
+                        <span className="voucher-label">Voucher number:</span>
+                        <span className="voucher-number">400000000000</span>
+                      </div>
+                    </div>
                     <div className="contact-info">
                       <div className="phone-info">
                         <span className="contact-label">Phone:</span>
-                        <span className="contact-value">07123456789</span>
+                        <span className="contact-value">{userInfo.phone}</span>
                       </div>
                       <div className="email-info">
                         <span className="contact-label">Email:</span>
-                        <span className="contact-value">{getUserEmail(userName)}</span>
+                        <span className="contact-value">{userInfo.email}</span>
                       </div>
                     </div>
                   </div>
@@ -172,7 +193,12 @@ export default function SupplierPage() {
                         <div className="status-message rejected">All dates rejected</div>
                       )}
                       {isAccepted && (
-                        <div className="status-message accepted">Date accepted</div>
+                        <div className="status-message accepted">
+                          <div>Date accepted</div>
+                          <div className="booking-confirmation">
+                            This voucher has been booked and redeemed. It will be paid as part of the regular payment run.
+                          </div>
+                        </div>
                       )}
                     </div>
                   </div>

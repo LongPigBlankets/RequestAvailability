@@ -1152,6 +1152,53 @@ body {
   }
 }
 
+/* Favorites microcopy */
+.favorites-microcopy {
+  font-size: 14px;
+  color: #666;
+  margin: 8px 0 12px 0;
+  font-style: italic;
+}
+
+/* User header with voucher info */
+.user-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.voucher-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 14px;
+}
+
+.voucher-label {
+  color: #666;
+  font-size: 12px;
+  margin-bottom: 2px;
+}
+
+.voucher-number {
+  font-weight: bold;
+  color: #333;
+  font-family: monospace;
+}
+
+/* Booking confirmation message */
+.booking-confirmation {
+  margin-top: 8px;
+  padding: 12px;
+  background-color: #f0f8ff;
+  border-left: 4px solid #007bff;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+  font-style: italic;
+}
+
 /* Desktop summary improvements */
 @media (min-width: 768px) {
   .summary-section {
@@ -1162,5 +1209,19 @@ body {
   
   .dates-summary-list {
     gap: 8px;
+  }
+  
+  .user-header {
+    flex-direction: row;
+  }
+  
+  .voucher-info {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .voucher-label {
+    margin-bottom: 0;
   }
 }

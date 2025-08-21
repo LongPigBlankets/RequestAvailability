@@ -23,17 +23,42 @@ export default function Checkout() {
     }
   }, []);
 
-  // Toggle favorite status for a specific date
+  // Toggle favorite status for a specific date (limit to 1 favorite)
   const toggleFavorite = (dateIso) => {
     if (!currentRequest) return;
 
+    const targetDate = currentRequest.dates.find(date => date.iso === dateIso);
+    const currentFavorites = currentRequest.dates.filter(date => date.isFavourite);
+    
+    // If clicking on a favorited date, unfavorite it
+    if (targetDate.isFavourite) {
+      const updatedRequest = {
+        ...currentRequest,
+        dates: currentRequest.dates.map(date => 
+          date.iso === dateIso 
+            ? { ...date, isFavourite: false }
+            : date
+        )
+      };
+      setCurrentRequest(updatedRequest);
+      
+      // Update session storage
+      const requests = JSON.parse(sessionStorage.getItem('availabilityRequests') || '[]');
+      const updatedRequests = requests.map(request => 
+        request.id === currentRequest.id ? updatedRequest : request
+      );
+      sessionStorage.setItem('availabilityRequests', JSON.stringify(updatedRequests));
+      return;
+    }
+    
+    // If there's already a favorite and we're trying to favorite a different date,
+    // replace the existing favorite
     const updatedRequest = {
       ...currentRequest,
-      dates: currentRequest.dates.map(date => 
-        date.iso === dateIso 
-          ? { ...date, isFavourite: !date.isFavourite }
-          : date
-      )
+      dates: currentRequest.dates.map(date => ({
+        ...date,
+        isFavourite: date.iso === dateIso
+      }))
     };
 
     setCurrentRequest(updatedRequest);
@@ -89,7 +114,16 @@ export default function Checkout() {
 
   const handleSendRequest = () => {
     if (validateForm()) {
-      // Store form data (in a real app, this would be sent to a server)
+      // Store form data and associate it with the current request
+      const requests = JSON.parse(sessionStorage.getItem('availabilityRequests') || '[]');
+      const updatedRequests = requests.map(request => 
+        request.id === currentRequest.id 
+          ? { ...request, userInfo: formData }
+          : request
+      );
+      sessionStorage.setItem('availabilityRequests', JSON.stringify(updatedRequests));
+      
+      // Also store separately for backward compatibility
       sessionStorage.setItem('checkoutData', JSON.stringify(formData));
       setShowToast(true);
     }
@@ -200,21 +234,31 @@ export default function Checkout() {
             
             <div className="summary-dates">
               <span className="summary-label">📅 Selected Dates:</span>
+              <p className="favorites-microcopy">
+                You can favourite one date to let the supplier know which date to prioritise.
+              </p>
               <div className="dates-summary-list">
-                {currentRequest.dates.map((date) => (
-                  <div key={date.iso} className="date-summary-item">
-                    <span className="date-summary-text">{date.formatted}</span>
-                    <button
-                      type="button"
-                      className={`favorite-btn ${date.isFavourite ? 'active' : ''}`}
-                      onClick={() => toggleFavorite(date.iso)}
-                      aria-label={date.isFavourite ? 'Remove from favorites' : 'Add to favorites'}
-                    >
-                      <span className="star-icon">⭐</span>
-                      <span className="favorite-text">Favourite</span>
-                    </button>
-                  </div>
-                ))}
+                {currentRequest.dates.map((date) => {
+                  const hasFavorite = currentRequest.dates.some(d => d.isFavourite);
+                  const showFavoriteBtn = date.isFavourite || !hasFavorite;
+                  
+                  return (
+                    <div key={date.iso} className="date-summary-item">
+                      <span className="date-summary-text">{date.formatted}</span>
+                      {showFavoriteBtn && (
+                        <button
+                          type="button"
+                          className={`favorite-btn ${date.isFavourite ? 'active' : ''}`}
+                          onClick={() => toggleFavorite(date.iso)}
+                          aria-label={date.isFavourite ? 'Remove from favorites' : 'Add to favorites'}
+                        >
+                          <span className="star-icon">⭐</span>
+                          <span className="favorite-text">Favourite</span>
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
