@@ -23,17 +23,21 @@ export default function Checkout() {
     }
   }, []);
 
-  // Toggle favorite status for a specific date
+  // Toggle favorite status for a specific date (limit to 1 favorite)
   const toggleFavorite = (dateIso) => {
     if (!currentRequest) return;
 
     const updatedRequest = {
       ...currentRequest,
-      dates: currentRequest.dates.map(date => 
-        date.iso === dateIso 
-          ? { ...date, isFavourite: !date.isFavourite }
-          : date
-      )
+      dates: currentRequest.dates.map(date => {
+        if (date.iso === dateIso) {
+          // Toggle the clicked date
+          return { ...date, isFavourite: !date.isFavourite };
+        } else {
+          // Remove favorite from all other dates (limit to 1 favorite)
+          return { ...date, isFavourite: false };
+        }
+      })
     };
 
     setCurrentRequest(updatedRequest);
@@ -89,8 +93,24 @@ export default function Checkout() {
 
   const handleSendRequest = () => {
     if (validateForm()) {
-      // Store form data (in a real app, this would be sent to a server)
+      // Store form data
       sessionStorage.setItem('checkoutData', JSON.stringify(formData));
+      
+      // Update the current request with contact information
+      if (currentRequest) {
+        const updatedRequest = {
+          ...currentRequest,
+          contactInfo: formData
+        };
+        
+        // Update session storage with contact info
+        const requests = JSON.parse(sessionStorage.getItem('availabilityRequests') || '[]');
+        const updatedRequests = requests.map(request => 
+          request.id === currentRequest.id ? updatedRequest : request
+        );
+        sessionStorage.setItem('availabilityRequests', JSON.stringify(updatedRequests));
+      }
+      
       setShowToast(true);
     }
   };
@@ -132,21 +152,31 @@ export default function Checkout() {
             
             <div className="summary-dates">
               <span className="summary-label">📅 Selected Dates:</span>
+              <p className="favorite-microcopy">
+                Mark one date as your favourite to let the supplier know which date to prioritise.
+              </p>
               <div className="dates-summary-list">
-                {currentRequest.dates.map((date) => (
-                  <div key={date.iso} className="date-summary-item">
-                    <span className="date-summary-text">{date.formatted}</span>
-                    <button
-                      type="button"
-                      className={`favorite-btn ${date.isFavourite ? 'active' : ''}`}
-                      onClick={() => toggleFavorite(date.iso)}
-                      aria-label={date.isFavourite ? 'Remove from favorites' : 'Add to favorites'}
-                    >
-                      <span className="star-icon">⭐</span>
-                      <span className="favorite-text">Favourite</span>
-                    </button>
-                  </div>
-                ))}
+                {currentRequest.dates.map((date) => {
+                  const hasFavorite = currentRequest.dates.some(d => d.isFavourite);
+                  const showFavoriteBtn = !hasFavorite || date.isFavourite;
+                  
+                  return (
+                    <div key={date.iso} className="date-summary-item">
+                      <span className="date-summary-text">{date.formatted}</span>
+                      {showFavoriteBtn && (
+                        <button
+                          type="button"
+                          className={`favorite-btn ${date.isFavourite ? 'active' : ''}`}
+                          onClick={() => toggleFavorite(date.iso)}
+                          aria-label={date.isFavourite ? 'Remove from favorites' : 'Add to favorites'}
+                        >
+                          <span className="star-icon">⭐</span>
+                          <span className="favorite-text">Favourite</span>
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>

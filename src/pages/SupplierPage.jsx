@@ -6,8 +6,17 @@ export default function SupplierPage() {
   const [availabilityRequests, setAvailabilityRequests] = useState([]);
   const [requestStates, setRequestStates] = useState({});
 
-  // Predefined user names for the first 5 users
-  const getUserName = (index) => {
+  // Get user contact information from request data or fallback to defaults
+  const getUserInfo = (request, index) => {
+    if (request.contactInfo) {
+      return {
+        name: `${request.contactInfo.firstName} ${request.contactInfo.lastName}`,
+        email: request.contactInfo.email,
+        phone: request.contactInfo.phoneNumber
+      };
+    }
+    
+    // Fallback for requests without contact info
     const predefinedNames = [
       "John Smith",
       "Jane Doe", 
@@ -16,20 +25,15 @@ export default function SupplierPage() {
       "Luciano Goncalves"
     ];
     
-    if (index < predefinedNames.length) {
-      return predefinedNames[index];
-    }
-    
-    return `User ${index + 1}`;
-  };
-
-  // Generate email from name
-  const getUserEmail = (name) => {
+    const name = index < predefinedNames.length ? predefinedNames[index] : `User ${index + 1}`;
     const parts = name.toLowerCase().split(' ');
-    if (parts.length >= 2) {
-      return `${parts[0]}.${parts[1]}@email.com`;
-    }
-    return `${parts[0]}@email.com`;
+    const email = parts.length >= 2 ? `${parts[0]}.${parts[1]}@email.com` : `${parts[0]}@email.com`;
+    
+    return {
+      name,
+      email,
+      phone: "07123456789"
+    };
   };
 
   // Handle rejecting all dates for a request
@@ -94,7 +98,7 @@ export default function SupplierPage() {
         ) : (
           <div className="requests-list">
             {availabilityRequests.map((request, index) => {
-              const userName = getUserName(index);
+              const userInfo = getUserInfo(request, index);
               const requestState = requestStates[request.id] || {};
               const isRejected = requestState.status === 'rejected';
               const isAccepted = requestState.status === 'accepted';
@@ -103,15 +107,19 @@ export default function SupplierPage() {
               return (
                 <div key={request.id} className="request-item">
                   <div className="user-info">
-                    <h3 className="user-name">{userName}</h3>
+                    <h3 className="user-name">{userInfo.name}</h3>
+                    <div className="voucher-info">
+                      <span className="contact-label">Voucher number:</span>
+                      <span className="contact-value">400000000000</span>
+                    </div>
                     <div className="contact-info">
                       <div className="phone-info">
                         <span className="contact-label">Phone:</span>
-                        <span className="contact-value">07123456789</span>
+                        <span className="contact-value">{userInfo.phone}</span>
                       </div>
                       <div className="email-info">
                         <span className="contact-label">Email:</span>
-                        <span className="contact-value">{getUserEmail(userName)}</span>
+                        <span className="contact-value">{userInfo.email}</span>
                       </div>
                     </div>
                   </div>
@@ -176,6 +184,12 @@ export default function SupplierPage() {
                       )}
                     </div>
                   </div>
+                  
+                  {isAccepted && (
+                    <div className="booking-message">
+                      This voucher has been booked and redeemed. It will be paid as part of the regular payment run.
+                    </div>
+                  )}
                   
                   <div className="request-timestamp">
                     Requested: {new Date(request.timestamp).toLocaleString()}
