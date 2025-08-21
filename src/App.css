@@ -219,6 +219,19 @@ body {
   margin: 0 auto;
 }
 
+/* Two-CTA layout on home */
+.cta-buttons {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+@media (min-width: 480px) {
+  .cta-buttons {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 .availability-notice {
   text-align: center;
   margin-bottom: 10px;
@@ -244,6 +257,14 @@ body {
   font-weight: 800;
   cursor: pointer;
   box-shadow: 0 6px 14px rgba(14, 165, 164, 0.25);
+}
+
+/* Secondary CTA style: white fill, green text and border */
+.cta-button--secondary {
+  background: #ffffff;
+  color: #0ea5a4;
+  border: 2px solid #0ea5a4;
+  box-shadow: none;
 }
 
 /* Removed fixed small-screen title size in favor of fluid clamp scaling */
