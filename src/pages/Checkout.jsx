@@ -4,6 +4,9 @@ import Footer from "../components/Footer";
 import { PRODUCT_TITLE } from "../constants";
 
 export default function Checkout() {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",

@@ -10,7 +10,7 @@ export default function RequestToBook() {
   const [showToast, setShowToast] = useState(false);
   const datePickerRef = useRef(null);
   const navigate = useNavigate();
-  const [timeOfDay, setTimeOfDay] = useState("");
+
 
   function handleCheckAvailability() {
     // Get selected dates, favourite information, and location from the DateTimeLocationPicker component
@@ -30,7 +30,6 @@ export default function RequestToBook() {
           ...date,
           isFavourite: favouriteDates && favouriteDates.has(date.iso)
         })),
-        timeOfDay,
         timestamp: new Date().toISOString()
       };
       
@@ -106,36 +105,6 @@ export default function RequestToBook() {
 
       <div className="ctaBar">
         <div className="ctaInner">
-          <div className="time-of-day">
-            <div className="time-of-day-title">Time of day</div>
-            <div className="time-of-day-buttons" role="group" aria-label="Preferred time of day">
-              <button
-                type="button"
-                className={`tod-button ${timeOfDay === 'Morning' ? 'active' : ''}`}
-                aria-pressed={timeOfDay === 'Morning'}
-                onClick={() => setTimeOfDay('Morning')}
-              >
-                Morning (before 12pm)
-              </button>
-              <button
-                type="button"
-                className={`tod-button ${timeOfDay === 'Afternoon' ? 'active' : ''}`}
-                aria-pressed={timeOfDay === 'Afternoon'}
-                onClick={() => setTimeOfDay('Afternoon')}
-              >
-                Afternoon (12 noon to 5pm)
-              </button>
-              <button
-                type="button"
-                className={`tod-button ${timeOfDay === 'Evening' ? 'active' : ''}`}
-                aria-pressed={timeOfDay === 'Evening'}
-                onClick={() => setTimeOfDay('Evening')}
-              >
-                Evening (5pm until close)
-              </button>
-            </div>
-          </div>
-
           <div className="cta-microcopy">
             This will send a request to check these dates' availability with the experience provider. 
             Expect an email with the response within 24h of requesting.
