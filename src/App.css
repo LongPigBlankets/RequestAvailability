@@ -643,7 +643,7 @@ body {
 /* Desktop layout adjustments for request-to-book controls */
 @media (min-width: 1024px) {
   .location-picker {
-    grid-template-columns: 1fr 1fr; /* left: location, right: calendar */
+    grid-template-columns: 1fr; /* stack location and calendar on desktop */
     gap: 24px;
     align-items: start;
   }
@@ -1009,6 +1009,47 @@ body {
   max-width: 400px;
   margin-left: auto;
   margin-right: auto;
+}
+
+/* Time of day selector above CTA microcopy */
+.time-of-day {
+  margin-bottom: 12px;
+}
+
+.time-of-day-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.time-of-day-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+}
+
+.tod-button {
+  appearance: none;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #0f172a;
+  padding: 10px 12px;
+  border-radius: 9999px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.tod-button.active {
+  background: #0ea5a4;
+  color: #ffffff;
+  border-color: #0ea5a4;
+}
+
+/* Slightly tighter text on very small screens */
+@media (max-width: 360px) {
+  .tod-button { font-size: 13px; padding: 10px; }
 }
 
 /* Mobile form adjustments */
