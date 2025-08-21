@@ -111,7 +111,7 @@ export default function RequestToBook() {
           </div>
 
           <button className="cta-button" type="button" onClick={handleCheckAvailability}>
-            Send Request
+            Continue to personal details
           </button>
         </div>
       </div>

@@ -83,13 +83,22 @@ export default function Home() {
             <div className="availability-text">Limited Availability!</div>
             <div className="book-text">Book Your Experience Today</div>
           </div>
-          <button
-            className="cta-button"
-            type="button"
-            onClick={() => setIsBookingOpen(true)}
-          >
-            Book Now
-          </button>
+          <div className="cta-buttons">
+            <button
+              className="cta-button"
+              type="button"
+              onClick={() => navigate("/request-to-book")}
+            >
+              Check Availability
+            </button>
+            <button
+              className="cta-button cta-button--secondary"
+              type="button"
+              onClick={() => setIsBookingOpen(true)}
+            >
+              Contact Port Lympne
+            </button>
+          </div>
         </div>
       </div>
 
