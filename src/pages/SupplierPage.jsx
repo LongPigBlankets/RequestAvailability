@@ -94,7 +94,12 @@ export default function SupplierPage() {
         ) : (
           <div className="requests-list">
             {availabilityRequests.map((request, index) => {
-              const userName = getUserName(index);
+              const contact = request.contact || null;
+              const userName = contact && (contact.firstName || contact.lastName)
+                ? `${contact.firstName || ''} ${contact.lastName || ''}`.trim()
+                : getUserName(index);
+              const phoneValue = contact?.phoneNumber || "07123456789";
+              const emailValue = contact?.email || getUserEmail(userName);
               const requestState = requestStates[request.id] || {};
               const isRejected = requestState.status === 'rejected';
               const isAccepted = requestState.status === 'accepted';
@@ -107,11 +112,15 @@ export default function SupplierPage() {
                     <div className="contact-info">
                       <div className="phone-info">
                         <span className="contact-label">Phone:</span>
-                        <span className="contact-value">07123456789</span>
+                        <span className="contact-value">{phoneValue}</span>
                       </div>
                       <div className="email-info">
                         <span className="contact-label">Email:</span>
-                        <span className="contact-value">{getUserEmail(userName)}</span>
+                        <span className="contact-value">{emailValue}</span>
+                      </div>
+                      <div className="voucher-info">
+                        <span className="contact-label">Voucher:</span>
+                        <span className="contact-value">400000000000</span>
                       </div>
                     </div>
                   </div>
@@ -172,7 +181,12 @@ export default function SupplierPage() {
                         <div className="status-message rejected">All dates rejected</div>
                       )}
                       {isAccepted && (
-                        <div className="status-message accepted">Date accepted</div>
+                        <>
+                          <div className="status-message accepted">Date accepted</div>
+                          <div className="redemption-message">
+                            This voucher has been booked and redeemed. It will be paid as part of the regular payment run.
+                          </div>
+                        </>
                       )}
                     </div>
                   </div>

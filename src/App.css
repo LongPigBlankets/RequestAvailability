@@ -755,7 +755,8 @@ body {
 }
 
 .phone-info,
-.email-info {
+.email-info,
+.voucher-info {
   display: flex;
   gap: 8px;
   font-size: 14px;
