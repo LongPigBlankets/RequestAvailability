@@ -255,13 +255,16 @@ const DateTimeLocationPicker = forwardRef((props, ref) => {
                         return <div key={cell.key} className="calendar-blank" />;
                       }
                       const isSelected = selectedDates.has(cell.iso);
+                      const isSaturday = cell.date.getDay() === 6;
                       return (
                         <button
                           type="button"
                           key={cell.key}
-                          className={`calendar-day${isSelected ? " selected" : ""}`}
-                          onClick={() => toggleDate(cell.iso)}
+                          className={`calendar-day${isSelected ? " selected" : ""}${isSaturday ? " disabled" : ""}`}
+                          onClick={() => !isSaturday && toggleDate(cell.iso)}
                           aria-pressed={isSelected}
+                          aria-disabled={isSaturday}
+                          disabled={isSaturday}
                         >
                           {cell.number}
                         </button>
@@ -301,13 +304,16 @@ const DateTimeLocationPicker = forwardRef((props, ref) => {
                         return <div key={cell.key} className="calendar-blank" />;
                       }
                       const isSelected = selectedDates.has(cell.iso);
+                      const isSaturday = cell.date.getDay() === 6;
                       return (
                         <button
                           type="button"
                           key={cell.key}
-                          className={`calendar-day${isSelected ? " selected" : ""}`}
-                          onClick={() => toggleDate(cell.iso)}
+                          className={`calendar-day${isSelected ? " selected" : ""}${isSaturday ? " disabled" : ""}`}
+                          onClick={() => !isSaturday && toggleDate(cell.iso)}
                           aria-pressed={isSelected}
+                          aria-disabled={isSaturday}
+                          disabled={isSaturday}
                         >
                           {cell.number}
                         </button>
@@ -353,13 +359,16 @@ const DateTimeLocationPicker = forwardRef((props, ref) => {
                       return <div key={cell.key} className="calendar-blank" />;
                     }
                     const isSelected = selectedDates.has(cell.iso);
+                    const isSaturday = cell.date.getDay() === 6;
                     return (
                       <button
                         type="button"
                         key={cell.key}
-                        className={`calendar-day${isSelected ? " selected" : ""}`}
-                        onClick={() => toggleDate(cell.iso)}
+                        className={`calendar-day${isSelected ? " selected" : ""}${isSaturday ? " disabled" : ""}`}
+                        onClick={() => !isSaturday && toggleDate(cell.iso)}
                         aria-pressed={isSelected}
+                        aria-disabled={isSaturday}
+                        disabled={isSaturday}
                       >
                         {cell.number}
                       </button>
@@ -368,6 +377,10 @@ const DateTimeLocationPicker = forwardRef((props, ref) => {
                 </div>
               </>
             )}
+          </div>
+
+          <div className="calendar-microcopy">
+            Note: This voucher cannot be booked on Saturdays
           </div>
 
           {showMaxWarning && (

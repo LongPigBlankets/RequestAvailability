@@ -575,12 +575,26 @@ body {
   box-shadow: 0 4px 10px rgba(14, 165, 164, 0.2);
 }
 
+/* Disabled/unavailable day (e.g., Saturdays) */
+.calendar-day.disabled {
+  background: #f1f5f9;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
 /* Selected dates summary */
 .selected-dates-summary {
   margin-top: 12px;
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+/* Calendar microcopy note */
+.calendar-microcopy {
+  font-size: 13px;
+  color: #64748b;
+  margin-top: 8px;
 }
 
 .summary-item {
@@ -997,6 +1011,18 @@ body {
   line-height: 1.5;
   background: #ffffff;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Placeholder-like behavior styling when we seed textarea with initial hint text */
+.form-input.placeholder-active {
+  color: #9ca3af;
+}
+
+/* Textarea sizing */
+textarea.form-input,
+.form-textarea {
+  min-height: 100px;
+  resize: vertical;
 }
 
 .form-input:focus {
