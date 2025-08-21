@@ -120,39 +120,6 @@ export default function Checkout() {
         </p>
       </div>
 
-      {currentRequest && (
-        <div className="content">
-          <h2 className="section-title">Summary</h2>
-          
-          <div className="summary-section">
-            <div className="summary-location">
-              <span className="summary-label">📍 Location:</span>
-              <span className="summary-value">{currentRequest.location}</span>
-            </div>
-            
-            <div className="summary-dates">
-              <span className="summary-label">📅 Selected Dates:</span>
-              <div className="dates-summary-list">
-                {currentRequest.dates.map((date) => (
-                  <div key={date.iso} className="date-summary-item">
-                    <span className="date-summary-text">{date.formatted}</span>
-                    <button
-                      type="button"
-                      className={`favorite-btn ${date.isFavourite ? 'active' : ''}`}
-                      onClick={() => toggleFavorite(date.iso)}
-                      aria-label={date.isFavourite ? 'Remove from favorites' : 'Add to favorites'}
-                    >
-                      <span className="star-icon">⭐</span>
-                      <span className="favorite-text">Favourite</span>
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
       <div className="content">
         <form className="checkout-form" onSubmit={(e) => e.preventDefault()}>
           <div className="form-group">
@@ -220,6 +187,39 @@ export default function Checkout() {
           </div>
         </form>
       </div>
+
+      {currentRequest && (
+        <div className="content">
+          <h2 className="section-title">Summary</h2>
+          
+          <div className="summary-section">
+            <div className="summary-location">
+              <span className="summary-label">📍 Location:</span>
+              <span className="summary-value">{currentRequest.location}</span>
+            </div>
+            
+            <div className="summary-dates">
+              <span className="summary-label">📅 Selected Dates:</span>
+              <div className="dates-summary-list">
+                {currentRequest.dates.map((date) => (
+                  <div key={date.iso} className="date-summary-item">
+                    <span className="date-summary-text">{date.formatted}</span>
+                    <button
+                      type="button"
+                      className={`favorite-btn ${date.isFavourite ? 'active' : ''}`}
+                      onClick={() => toggleFavorite(date.iso)}
+                      aria-label={date.isFavourite ? 'Remove from favorites' : 'Add to favorites'}
+                    >
+                      <span className="star-icon">⭐</span>
+                      <span className="favorite-text">Favourite</span>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="ctaBar">
         <div className="ctaInner">
