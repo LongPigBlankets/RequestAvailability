@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import elephant from "../assets/elephant.jpg";
 import Breadcrumbs from "../components/Breadcrumbs";
 import { PRODUCT_TITLE } from "../constants";
@@ -8,6 +9,7 @@ import Footer from "../components/Footer";
 export default function RequestToBook() {
   const [showToast, setShowToast] = useState(false);
   const datePickerRef = useRef(null);
+  const navigate = useNavigate();
 
   function handleCheckAvailability() {
     // Get selected dates and favourite information from the DateTimeLocationPicker component
@@ -33,9 +35,13 @@ export default function RequestToBook() {
       
       // Store back in session storage
       sessionStorage.setItem('availabilityRequests', JSON.stringify(updatedRequests));
+      
+      // Navigate to checkout page
+      navigate('/checkout');
+    } else {
+      // Show toast if no dates selected
+      setShowToast(true);
     }
-    
-    setShowToast(true);
   }
 
   return (
@@ -103,9 +109,9 @@ export default function RequestToBook() {
       </div>
 
       {showToast && (
-        <div className="toast toast-success" role="status" aria-live="polite">
+        <div className="toast toast-warning" role="status" aria-live="polite">
           <div className="toast-content">
-            Your request has been sent to Port Lympne. Please allow up to 24 hours for them to review. We will email back with their response.
+            Please select at least one date before sending your request.
           </div>
           <button className="toast-close" aria-label="Close notification" onClick={() => setShowToast(false)}>×</button>
         </div>
