@@ -11,6 +11,10 @@ export default function RequestToBook() {
   const datePickerRef = useRef(null);
   const navigate = useNavigate();
 
+  const SPECIAL_NOTES_PLACEHOLDER = 'add your dietary requirements/accessibility needs here';
+  const [specialNotes, setSpecialNotes] = useState(SPECIAL_NOTES_PLACEHOLDER);
+  const [isNotesPlaceholderActive, setIsNotesPlaceholderActive] = useState(true);
+
 
   function handleCheckAvailability() {
     // Get selected dates, favourite information, and location from the DateTimeLocationPicker component
@@ -101,6 +105,32 @@ export default function RequestToBook() {
       {/* Booking controls area (desktop: below description, above CTA) */}
       <div className="content">
         <DateTimeLocationPicker ref={datePickerRef} />
+      </div>
+
+      {/* Special Notes field (above CTA) */}
+      <div className="content">
+        <div className="form-group">
+          <label htmlFor="special-notes" className="form-label">Special Notes</label>
+          <textarea
+            id="special-notes"
+            className={`form-input form-textarea${isNotesPlaceholderActive ? ' placeholder-active' : ''}`}
+            value={specialNotes}
+            onFocus={() => {
+              if (isNotesPlaceholderActive) {
+                setSpecialNotes('');
+                setIsNotesPlaceholderActive(false);
+              }
+            }}
+            onChange={(e) => setSpecialNotes(e.target.value)}
+            onBlur={() => {
+              if (specialNotes.trim() === '') {
+                setSpecialNotes(SPECIAL_NOTES_PLACEHOLDER);
+                setIsNotesPlaceholderActive(true);
+              }
+            }}
+            aria-label="Special Notes"
+          />
+        </div>
       </div>
 
       <div className="ctaBar">
