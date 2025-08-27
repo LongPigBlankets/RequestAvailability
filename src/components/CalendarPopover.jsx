@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function CalendarPopover({ anchorRef, onClose }) {
+export default function CalendarPopover({ anchorRef, onClose, selectedLocation }) {
   const popoverRef = useRef(null);
   const [isDesktop, setIsDesktop] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0, width: 0, maxHeight: 0 });
@@ -50,6 +50,20 @@ export default function CalendarPopover({ anchorRef, onClose }) {
       }
     }
     return cells;
+  }
+
+  function formatHuman(date) {
+    const day = date.getDate();
+    const month = date.toLocaleString(undefined, { month: "long" });
+    const j = day % 10, k = day % 100;
+    const suffix = (j === 1 && k !== 11)
+      ? "st"
+      : (j === 2 && k !== 12)
+        ? "nd"
+        : (j === 3 && k !== 13)
+          ? "rd"
+          : "th";
+    return `${day}${suffix} of ${month}`;
   }
 
   const monthLabel = useMemo(() => currentMonth.toLocaleString(undefined, {
@@ -140,6 +154,27 @@ export default function CalendarPopover({ anchorRef, onClose }) {
   }, [anchorRef, onClose]);
 
   const isMobile = !isDesktop;
+
+  function handleCheckAvailability() {
+    const chosenIsos = Array.from(selectedDates);
+    if (chosenIsos.length > 0) {
+      const existingRequests = JSON.parse(sessionStorage.getItem('availabilityRequests') || '[]');
+      const newRequest = {
+        id: Date.now(),
+        location: selectedLocation,
+        dates: chosenIsos.map(iso => ({
+          iso,
+          formatted: formatHuman(new Date(iso)),
+          isFavourite: false
+        })),
+        timestamp: new Date().toISOString()
+      };
+      const updatedRequests = [...existingRequests, newRequest];
+      sessionStorage.setItem('availabilityRequests', JSON.stringify(updatedRequests));
+    }
+    onClose?.();
+    navigate('/checkout');
+  }
 
   return (
     <>
@@ -251,7 +286,7 @@ export default function CalendarPopover({ anchorRef, onClose }) {
               <button
                 type="button"
                 className="cta-button cta-button--pill"
-                onClick={() => { onClose?.(); navigate('/checkout'); }}
+                onClick={handleCheckAvailability}
               >
                 Check availability
               </button>
@@ -326,7 +361,7 @@ export default function CalendarPopover({ anchorRef, onClose }) {
                   <button
                     type="button"
                     className="cta-button"
-                    onClick={() => { onClose?.(); navigate('/checkout'); }}
+                    onClick={handleCheckAvailability}
                   >
                     Check availability
                   </button>
