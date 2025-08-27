@@ -267,6 +267,63 @@ body {
   box-shadow: none;
 }
 
+/* Desktop product header + CTA container layout */
+.product-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: start;
+  gap: 16px;
+}
+
+.product-main { min-width: 0; }
+
+.cta-card { display: none; }
+
+@media (min-width: 1024px) {
+  .product-layout {
+    grid-template-columns: 1fr min(380px, 32vw);
+    gap: 24px;
+  }
+
+  /* Hide sticky mobile CTA bar on desktop */
+  .ctaBar { display: none; }
+
+  .cta-card {
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+    padding: 18px;
+    position: sticky;
+    top: 24px;
+  }
+
+  .cta-card-header {
+    text-align: center;
+    padding: 6px 6px 12px 6px;
+  }
+
+  .cta-card-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.2;
+  }
+
+  .cta-card-subtitle {
+    color: #475569;
+  }
+
+  .cta-card-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 8px;
+  }
+}
+
 /* Removed fixed small-screen title size in favor of fluid clamp scaling */
 
 /* Booking Overlay / Modal */
