@@ -72,7 +72,7 @@ export default function FutureVersion() {
               🔁 <span className="flexible-text">Fully Flexible</span>
             </div>
 
-            {/* Mobile inline controls with divider above and below */}
+            {/* Mobile inline controls with divider above and below; hidden on desktop via CSS */}
             <div className="divider"></div>
             <div className="future-inline-controls" aria-label="Choose options">
               <button

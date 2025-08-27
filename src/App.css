@@ -1339,8 +1339,8 @@ textarea.form-input,
   border: 1px solid #e5e7eb;
   border-radius: 16px; /* more rounded corners */
   box-shadow: 0 12px 28px rgba(0,0,0,0.12);
-  overflow: hidden;
-  padding: 12px;
+  overflow: auto; /* allow scroll when constrained by viewport */
+  padding: 16px 16px 20px 16px; /* extra padding for CTA space */
 }
 
 /* Ensure calendar fully expands inside action sheets */
