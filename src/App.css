@@ -327,7 +327,7 @@ body {
 /* Future version layout */
 .chip-button {
   width: 100%;
-  background: #ffffff;
+  background: #f1f5f9; /* grey */
   color: #0f172a;
   border: 1px solid #e5e7eb;
   padding: 14px 16px;
@@ -337,10 +337,9 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
 }
 
-.chip-icon { opacity: 0.9; }
+.chip-icon { display: none; }
 
 /* Desktop card fields arranged as three rows/areas */
 .future-cta-card { gap: 10px; }

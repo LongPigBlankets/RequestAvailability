@@ -56,12 +56,7 @@ export default function FutureVersion() {
             <div className="divider"></div>
             <div className="future-inline-controls" aria-label="Choose options">
               <button type="button" className="chip-button" aria-disabled="true" tabIndex={-1}>
-                <span className="chip-icon" aria-hidden="true">📅</span>
-                <span>Add dates</span>
-              </button>
-              <button type="button" className="chip-button" aria-disabled="true" tabIndex={-1}>
-                <span className="chip-icon" aria-hidden="true">📍</span>
-                <span>Choose location</span>
+                <span>Add location</span>
               </button>
             </div>
             <div className="divider"></div>
@@ -82,8 +77,7 @@ export default function FutureVersion() {
             </div>
             <div className="future-card-fields">
               <button type="button" className="chip-button" aria-disabled="true" tabIndex={-1}>
-                <span className="chip-icon" aria-hidden="true">📍</span>
-                <span>Choose location</span>
+                <span>Add location</span>
               </button>
             </div>
             <div className="future-card-cta">
