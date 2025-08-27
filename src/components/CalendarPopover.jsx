@@ -1,9 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function CalendarPopover({ anchorRef, onClose }) {
   const popoverRef = useRef(null);
   const [isDesktop, setIsDesktop] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
+  const navigate = useNavigate();
 
   const [currentMonth, setCurrentMonth] = useState(() => {
     const now = new Date();
@@ -99,8 +101,8 @@ export default function CalendarPopover({ anchorRef, onClose }) {
       const rect = anchorRef.current.getBoundingClientRect();
       const desiredTop = rect.bottom + 8; // 8px offset
       const availableRight = window.innerWidth - rect.left;
-      const maxWidth = Math.min(420, availableRight - 16); // keep within viewport
-      setPosition({ top: desiredTop, left: rect.left, width: Math.max(300, maxWidth) });
+      const maxWidth = Math.min(720, availableRight - 16); // wider on desktop
+      setPosition({ top: desiredTop, left: rect.left, width: Math.max(560, maxWidth) });
     }
 
     updatePosition();
@@ -241,6 +243,15 @@ export default function CalendarPopover({ anchorRef, onClose }) {
                 Please select a maximum of 5 dates
               </div>
             )}
+            <div className="booking-cta">
+              <button
+                type="button"
+                className="cta-button cta-button--pill"
+                onClick={() => { onClose?.(); navigate('/checkout'); }}
+              >
+                Check availability
+              </button>
+            </div>
           </div>
         </div>
       ) : (
@@ -307,6 +318,15 @@ export default function CalendarPopover({ anchorRef, onClose }) {
                     Please select a maximum of 5 dates
                   </div>
                 )}
+                <div className="booking-cta">
+                  <button
+                    type="button"
+                    className="cta-button"
+                    onClick={() => { onClose?.(); navigate('/checkout'); }}
+                  >
+                    Check availability
+                  </button>
+                </div>
               </div>
             </div>
           </div>
