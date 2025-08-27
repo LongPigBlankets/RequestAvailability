@@ -28,7 +28,7 @@ export default function FutureVersion() {
   }, []);
 
   return (
-    <div className="app">
+    <div className="app has-footer">
       <div className="header" role="banner">
         <button className="nav-button" aria-label="Go back">
           <span className="arrow-left">←</span>
@@ -72,7 +72,7 @@ export default function FutureVersion() {
               🔁 <span className="flexible-text">Fully Flexible</span>
             </div>
 
-            {/* Mobile inline controls with divider above and below */}
+            {/* Mobile inline controls with divider above and below; hidden on desktop via CSS */}
             <div className="divider"></div>
             <div className="future-inline-controls" aria-label="Choose options">
               <button
@@ -94,6 +94,8 @@ export default function FutureVersion() {
               then unwind with a relaxing afternoon tea. Meet incredible animals up close and enjoy 
               a memorable day out in nature.
             </p>
+            {/* Page footer under description */}
+            <div className="footer" aria-hidden="true"></div>
           </div>
 
           {/* Desktop: remade container with Date, Location and Check availability */}

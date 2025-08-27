@@ -299,6 +299,7 @@ body {
     position: sticky;
     top: 24px;
   }
+  .future-inline-controls { display: none; }
 
   .cta-card-header {
     text-align: center;
@@ -354,7 +355,7 @@ body {
 /* Mobile inline controls between title/location and description */
 .future-inline-controls {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr; /* full-width on mobile */
   gap: 10px;
 }
 
@@ -646,6 +647,7 @@ body {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 6px;
+  padding: 0 2px; /* align with weekday headers */
 }
 
 .calendar-blank {
@@ -733,6 +735,14 @@ body {
 .footer {
   height: 32px;
   background: #9ca3af; /* medium grey */
+  width: 100vw;
+  margin-left: 50%;
+  transform: translateX(-50%);
+  margin-top: 32px;
+}
+
+@media (max-width: 1023px) {
+  .has-footer .ctaBar { bottom: 0; }
 }
 
 /* Toast */
@@ -1327,10 +1337,10 @@ textarea.form-input,
   z-index: 60;
   background: #ffffff;
   border: 1px solid #e5e7eb;
-  border-radius: 12px;
+  border-radius: 16px; /* more rounded corners */
   box-shadow: 0 12px 28px rgba(0,0,0,0.12);
-  overflow: hidden;
-  padding: 12px;
+  overflow: auto; /* allow scroll when constrained by viewport */
+  padding: 16px 16px 20px 16px; /* extra padding for CTA space */
 }
 
 /* Ensure calendar fully expands inside action sheets */
