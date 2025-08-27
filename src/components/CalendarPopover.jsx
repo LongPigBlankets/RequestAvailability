@@ -145,7 +145,7 @@ export default function CalendarPopover({ anchorRef, onClose }) {
           role="dialog"
           aria-modal="false"
         >
-          <div className="calendar">
+          <div className="calendar open">
             <div className="calendar-caption">Select up to 5 dates</div>
             <div className="calendar-desktop-container">
               <div className="calendar-month">
@@ -252,7 +252,7 @@ export default function CalendarPopover({ anchorRef, onClose }) {
               <button className="booking-close" aria-label="Close" onClick={onClose}>×</button>
             </div>
             <div className="booking-body">
-              <div className="calendar">
+              <div className="calendar open">
                 <div className="calendar-header">
                   <button
                     type="button"

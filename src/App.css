@@ -1332,3 +1332,9 @@ textarea.form-input,
   overflow: hidden;
   padding: 12px;
 }
+
+/* Ensure calendar fully expands inside action sheets */
+.booking-panel .calendar {
+  max-height: none;
+  overflow: visible;
+}

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import elephant from "../assets/elephant.jpg";
 import Breadcrumbs from "../components/Breadcrumbs";
@@ -13,9 +13,19 @@ export default function FutureVersion() {
   const [isLocationOpen, setIsLocationOpen] = useState(false);
 
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  const ctaRef = useRef(null);
+  const [isDesktop, setIsDesktop] = useState(false);
+  const ctaDesktopRef = useRef(null);
+  const ctaMobileRef = useRef(null);
   const locationChipInlineRef = useRef(null);
   const locationChipCardRef = useRef(null);
+
+  useEffect(() => {
+    const mql = window.matchMedia('(min-width: 1024px)');
+    const sync = () => setIsDesktop(mql.matches);
+    sync();
+    mql.addEventListener('change', sync);
+    return () => mql.removeEventListener('change', sync);
+  }, []);
 
   return (
     <div className="app">
@@ -106,7 +116,7 @@ export default function FutureVersion() {
             </div>
             <div className="future-card-cta">
               <button
-                ref={ctaRef}
+                ref={ctaDesktopRef}
                 className="cta-button cta-button--pill"
                 type="button"
                 onClick={() => setIsCalendarOpen(true)}
@@ -129,7 +139,7 @@ export default function FutureVersion() {
             onClick={() => setIsCalendarOpen(true)}
             aria-haspopup="dialog"
             aria-expanded={isCalendarOpen}
-            ref={ctaRef}
+            ref={ctaMobileRef}
           >
             Check availability
           </button>
@@ -138,7 +148,7 @@ export default function FutureVersion() {
 
       {/* Overlays/Popovers */}
       <LocationActionSheet
-        anchorRef={locationChipCardRef || locationChipInlineRef}
+        anchorRef={isDesktop ? locationChipCardRef : locationChipInlineRef}
         isOpen={isLocationOpen}
         onClose={() => setIsLocationOpen(false)}
         onSelect={(loc) => setSelectedLocation(loc)}
@@ -146,7 +156,7 @@ export default function FutureVersion() {
       />
 
       {isCalendarOpen && (
-        <CalendarPopover anchorRef={ctaRef} onClose={() => setIsCalendarOpen(false)} />
+        <CalendarPopover anchorRef={isDesktop ? ctaDesktopRef : ctaMobileRef} onClose={() => setIsCalendarOpen(false)} />
       )}
     </div>
   );
