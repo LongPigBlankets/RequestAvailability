@@ -299,6 +299,7 @@ body {
     position: sticky;
     top: 24px;
   }
+  .future-inline-controls { display: none; }
 
   .cta-card-header {
     text-align: center;
@@ -734,6 +735,14 @@ body {
 .footer {
   height: 32px;
   background: #9ca3af; /* medium grey */
+  width: 100vw;
+  margin-left: 50%;
+  transform: translateX(-50%);
+  margin-top: 32px;
+}
+
+@media (max-width: 1023px) {
+  .has-footer .ctaBar { bottom: 0; }
 }
 
 /* Toast */
