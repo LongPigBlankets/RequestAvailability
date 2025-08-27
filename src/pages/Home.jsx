@@ -56,18 +56,46 @@ export default function Home() {
       </div>
 
       <div className="content">
-        <div className="product-id">118107722</div>
-        <h1 className="title">{PRODUCT_TITLE}</h1>
-        <div className="location">
-          📍 The Aspinall Foundation, Nr Ashford Kent, Lympne Hythe, CT21 4PD
+        <div className="product-layout">
+          <div className="product-main">
+            <div className="product-id">118107722</div>
+            <h1 className="title">{PRODUCT_TITLE}</h1>
+            <div className="location">
+              📍 The Aspinall Foundation, Nr Ashford Kent, Lympne Hythe, CT21 4PD
+            </div>
+            <div className="validity">
+              <span className="use-by">Use by 19th Aug 2026</span>
+              <span className="extend" role="button" tabIndex={0}>Extend</span>
+            </div>
+            <div className="flexibility">
+              🔁 <span className="flexible-text">Fully Flexible</span>
+            </div>
+          </div>
+
+          <aside className="cta-card" aria-label="Availability actions">
+            <div className="cta-card-header">
+              <div className="cta-card-title">Limited Availability.</div>
+              <div className="cta-card-subtitle">Select your dates to check</div>
+            </div>
+            <div className="cta-card-actions">
+              <button
+                className="cta-button"
+                type="button"
+                onClick={() => navigate("/request-to-book")}
+              >
+                Check Availability
+              </button>
+              <button
+                className="cta-button cta-button--secondary"
+                type="button"
+                onClick={() => setIsBookingOpen(true)}
+              >
+                Contact Port Lympne
+              </button>
+            </div>
+          </aside>
         </div>
-        <div className="validity">
-          <span className="use-by">Use by 19th Aug 2026</span>
-          <span className="extend" role="button" tabIndex={0}>Extend</span>
-        </div>
-        <div className="flexibility">
-          🔁 <span className="flexible-text">Fully Flexible</span>
-        </div>
+
         <div className="divider"></div>
         <h2 className="section-title">About the experience</h2>
         <p className="description">
