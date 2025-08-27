@@ -103,6 +103,27 @@ export default function Home() {
           then unwind with a relaxing afternoon tea. Meet incredible animals up close and enjoy 
           a memorable day out in nature.
         </p>
+        <div className="divider"></div>
+        <h2 className="section-title">What's included?</h2>
+        <div className="description">
+          <ul>
+            <li>Unforgettable 45-minute Truck Safari covering 600 acres of ancient parkland</li>
+            <li>The unique chance to admire over 900 animal residents across 75 species right here in the UK</li>
+            <li>Afternoon tea inside the Grade II listed Port Lympne Mansion</li>
+          </ul>
+        </div>
+
+        <div className="divider"></div>
+        <h2 className="section-title">What do I need to know?</h2>
+        <div className="description">
+          <ul>
+            <li>This experience should last around 60 minutes</li>
+            <li>Open from 9:30 am to 5 pm; last entry at 3:30 pm</li>
+            <li>Available week-round, year-round</li>
+            <li>All dates are subject to availability</li>
+            <li>Accessibility; The entrance to the park is via a ramped footbridge with designated disabled parking available at the base of the footbridge on hard-standing. The park has an on-call minibus that can transport you to any area required. (Please notify any member of staff if you require assistance and this will be arranged). Wheelchairs are also available for hire at the Gatehouse!</li>
+          </ul>
+        </div>
       </div>
 
       <div className="ctaBar">
