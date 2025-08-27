@@ -324,6 +324,46 @@ body {
   }
 }
 
+/* Future version layout */
+.chip-button {
+  width: 100%;
+  background: #f1f5f9; /* grey */
+  color: #0f172a;
+  border: 1px solid #e5e7eb;
+  padding: 14px 16px;
+  border-radius: 9999px;
+  font-size: 16px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chip-icon { display: none; }
+
+/* Desktop card fields arranged as three rows/areas */
+.future-cta-card { gap: 10px; }
+.future-card-fields { display: grid; grid-template-columns: 1fr; gap: 10px; }
+.future-card-cta { margin-top: 6px; }
+
+/* Pill variant for primary CTA to match rounded style */
+.cta-button--pill {
+  border-radius: 9999px;
+}
+
+/* Mobile inline controls between title/location and description */
+.future-inline-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+@media (min-width: 1024px) {
+  .future-card-fields {
+    grid-template-columns: 1fr; /* two inputs stacked, CTA below */
+  }
+}
+
 /* Removed fixed small-screen title size in favor of fluid clamp scaling */
 
 /* Booking Overlay / Modal */
