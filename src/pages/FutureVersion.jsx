@@ -72,21 +72,23 @@ export default function FutureVersion() {
               🔁 <span className="flexible-text">Fully Flexible</span>
             </div>
 
-            {/* Mobile inline controls with divider above and below; hidden on desktop via CSS */}
-            <div className="divider"></div>
-            <div className="future-inline-controls" aria-label="Choose options">
-              <button
-                type="button"
-                className="chip-button"
-                ref={locationChipInlineRef}
-                onClick={() => setIsLocationOpen(true)}
-                aria-haspopup="dialog listbox"
-                aria-expanded={isLocationOpen}
-              >
-                <span>{selectedLocation ? selectedLocation : "Add location"}</span>
-              </button>
+            {/* Mobile inline controls with divider above and below; hide entire section on desktop */}
+            <div className="future-inline-section">
+              <div className="divider"></div>
+              <div className="future-inline-controls" aria-label="Choose options">
+                <button
+                  type="button"
+                  className="chip-button"
+                  ref={locationChipInlineRef}
+                  onClick={() => setIsLocationOpen(true)}
+                  aria-haspopup="dialog listbox"
+                  aria-expanded={isLocationOpen}
+                >
+                  <span>{selectedLocation ? selectedLocation : "Add location"}</span>
+                </button>
+              </div>
+              <div className="divider"></div>
             </div>
-            <div className="divider"></div>
 
             <h2 className="section-title">About the experience</h2>
             <p className="description">

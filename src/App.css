@@ -332,6 +332,7 @@ body {
     top: 24px;
   }
   .future-inline-controls { display: none; }
+  .future-inline-section { display: none; }
 
   .cta-card-header {
     text-align: center;
