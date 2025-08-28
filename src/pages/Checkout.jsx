@@ -16,13 +16,21 @@ export default function Checkout() {
   const [showToast, setShowToast] = useState(false);
   const [errors, setErrors] = useState({});
   const [currentRequest, setCurrentRequest] = useState(null);
+  const [isDraft, setIsDraft] = useState(false);
 
-  // Load the most recent availability request from session storage
+  // Load availability draft (from Future Version flow) or fallback to most recent availability request
   useEffect(() => {
+    const draft = JSON.parse(sessionStorage.getItem('availabilityDraft') || 'null');
+    if (draft && Array.isArray(draft.dates) && draft.dates.length > 0) {
+      setCurrentRequest({ ...draft, id: 'draft' });
+      setIsDraft(true);
+      return;
+    }
+
     const requests = JSON.parse(sessionStorage.getItem('availabilityRequests') || '[]');
     if (requests.length > 0) {
-      // Get the most recent request (last in array)
       setCurrentRequest(requests[requests.length - 1]);
+      setIsDraft(false);
     }
   }, []);
 
@@ -45,12 +53,17 @@ export default function Checkout() {
 
     setCurrentRequest(updatedRequest);
 
-    // Update session storage
-    const requests = JSON.parse(sessionStorage.getItem('availabilityRequests') || '[]');
-    const updatedRequests = requests.map(request => 
-      request.id === currentRequest.id ? updatedRequest : request
-    );
-    sessionStorage.setItem('availabilityRequests', JSON.stringify(updatedRequests));
+    // Update session storage for draft or existing request
+    if (isDraft) {
+      const { id, ...draftWithoutId } = updatedRequest;
+      sessionStorage.setItem('availabilityDraft', JSON.stringify(draftWithoutId));
+    } else {
+      const requests = JSON.parse(sessionStorage.getItem('availabilityRequests') || '[]');
+      const updatedRequests = requests.map(request => 
+        request.id === currentRequest.id ? updatedRequest : request
+      );
+      sessionStorage.setItem('availabilityRequests', JSON.stringify(updatedRequests));
+    }
   };
 
   const handleInputChange = (e) => {
@@ -98,13 +111,31 @@ export default function Checkout() {
     if (validateForm()) {
       // Store form data (in a real app, this would be sent to a server)
       sessionStorage.setItem('checkoutData', JSON.stringify(formData));
-      // Attach contact details to the corresponding availability request
-      const requests = JSON.parse(sessionStorage.getItem('availabilityRequests') || '[]');
-      if (currentRequest) {
-        const updatedRequests = requests.map(request => 
-          request.id === currentRequest.id ? { ...request, contact: { ...formData } } : request
-        );
+
+      if (isDraft && currentRequest) {
+        // Convert draft into a real availability request and append
+        const newRequest = {
+          id: Date.now(),
+          location: currentRequest.location,
+          dates: currentRequest.dates,
+          timestamp: new Date().toISOString(),
+          contact: { ...formData },
+        };
+        const requests = JSON.parse(sessionStorage.getItem('availabilityRequests') || '[]');
+        const updatedRequests = [...requests, newRequest];
         sessionStorage.setItem('availabilityRequests', JSON.stringify(updatedRequests));
+        sessionStorage.removeItem('availabilityDraft');
+        setCurrentRequest(newRequest);
+        setIsDraft(false);
+      } else {
+        // Attach contact details to the corresponding availability request
+        const requests = JSON.parse(sessionStorage.getItem('availabilityRequests') || '[]');
+        if (currentRequest) {
+          const updatedRequests = requests.map(request => 
+            request.id === currentRequest.id ? { ...request, contact: { ...formData } } : request
+          );
+          sessionStorage.setItem('availabilityRequests', JSON.stringify(updatedRequests));
+        }
       }
       setShowToast(true);
     }

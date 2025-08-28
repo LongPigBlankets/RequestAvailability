@@ -192,7 +192,11 @@ export default function FutureVersion() {
       />
 
       {isCalendarOpen && (
-        <CalendarPopover anchorRef={isDesktop ? ctaDesktopRef : ctaMobileRef} onClose={() => setIsCalendarOpen(false)} />
+        <CalendarPopover 
+          anchorRef={isDesktop ? ctaDesktopRef : ctaMobileRef} 
+          onClose={() => setIsCalendarOpen(false)} 
+          selectedLocation={selectedLocation}
+        />
       )}
     </div>
   );
