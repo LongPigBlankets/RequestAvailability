@@ -240,6 +240,7 @@ body {
     bottom: 0;
     z-index: 30;
     padding: 14px 16px calc(18px + env(safe-area-inset-bottom)) 16px;
+    background: #ffffff; /* remove gradient on future-version */
   }
 
   /* Add bottom space so content isn't obscured by fixed CTA */
