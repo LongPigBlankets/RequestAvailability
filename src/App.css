@@ -282,6 +282,13 @@ body {
   box-shadow: 0 6px 14px rgba(14, 165, 164, 0.25);
 }
 
+.cta-button[disabled],
+.cta-button[aria-disabled="true"] {
+  background: #94a3b8;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
 /* Secondary CTA style: white fill, green text and border */
 .cta-button--secondary {
   background: #ffffff;
@@ -310,6 +317,8 @@ body {
 
   /* Hide sticky mobile CTA bar on desktop */
   .ctaBar { display: none; }
+  /* Show CTA on checkout page even on desktop */
+  .checkout-page .ctaBar { display: block; }
 
   .cta-card {
     display: flex;

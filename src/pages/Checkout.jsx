@@ -67,6 +67,8 @@ export default function Checkout() {
     }
   };
 
+  const hasSelectedDates = Array.isArray(currentRequest?.dates) && currentRequest.dates.length > 0;
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -143,7 +145,7 @@ export default function Checkout() {
   };
 
   return (
-    <div className="app has-footer">
+    <div className="app has-footer checkout-page">
       <div className="header" role="banner">
         <button className="nav-button" aria-label="Go back">
           <span className="arrow-left">←</span>
@@ -283,6 +285,8 @@ export default function Checkout() {
             className="cta-button" 
             type="button" 
             onClick={handleSendRequest}
+            disabled={!hasSelectedDates}
+            aria-disabled={!hasSelectedDates}
           >
             Send Request
           </button>
