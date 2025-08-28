@@ -28,7 +28,7 @@ export default function FutureVersion() {
   }, []);
 
   return (
-    <div className="app has-footer">
+    <div className="app has-footer future-version">
       <div className="header" role="banner">
         <button className="nav-button" aria-label="Go back">
           <span className="arrow-left">←</span>
@@ -162,7 +162,7 @@ export default function FutureVersion() {
           </div>
           <div className="cta-buttons future-cta-buttons">
             <button
-              className="cta-button"
+              className="cta-button cta-button--pill"
               type="button"
               onClick={() => setIsCalendarOpen(true)}
               aria-haspopup="dialog"
@@ -172,7 +172,7 @@ export default function FutureVersion() {
               Check availability
             </button>
             <button
-              className="cta-button cta-button--secondary"
+              className="cta-button cta-button--secondary cta-button--pill"
               type="button"
               onClick={() => navigate("/request-to-book")}
             >
