@@ -226,6 +226,29 @@ body {
   gap: 10px;
 }
 
+/* Force two side-by-side buttons on FutureVersion mobile CTA */
+.future-cta-buttons {
+  grid-template-columns: 1fr 1fr;
+}
+
+/* Fixed, bottom-anchored CTA for Future Version on mobile */
+@media (max-width: 1023px) {
+  .future-version .ctaBar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 30;
+    padding: 14px 16px calc(18px + env(safe-area-inset-bottom)) 16px;
+    background: #ffffff; /* remove gradient on future-version */
+  }
+
+  /* Add bottom space so content isn't obscured by fixed CTA */
+  .future-version {
+    padding-bottom: calc(120px + env(safe-area-inset-bottom));
+  }
+}
+
 @media (min-width: 480px) {
   .cta-buttons {
     grid-template-columns: 1fr 1fr;

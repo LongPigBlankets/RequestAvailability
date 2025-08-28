@@ -28,7 +28,7 @@ export default function FutureVersion() {
   }, []);
 
   return (
-    <div className="app has-footer">
+    <div className="app has-footer future-version">
       <div className="header" role="banner">
         <button className="nav-button" aria-label="Go back">
           <span className="arrow-left">←</span>
@@ -156,16 +156,29 @@ export default function FutureVersion() {
       {/* Mobile sticky CTA */}
       <div className="ctaBar">
         <div className="ctaInner">
-          <button
-            className="cta-button"
-            type="button"
-            onClick={() => setIsCalendarOpen(true)}
-            aria-haspopup="dialog"
-            aria-expanded={isCalendarOpen}
-            ref={ctaMobileRef}
-          >
-            Check availability
-          </button>
+          <div className="availability-notice">
+            <div className="availability-text">Limited Availability!</div>
+            <div className="book-text">Book Your Experience Today</div>
+          </div>
+          <div className="cta-buttons future-cta-buttons">
+            <button
+              className="cta-button cta-button--pill"
+              type="button"
+              onClick={() => setIsCalendarOpen(true)}
+              aria-haspopup="dialog"
+              aria-expanded={isCalendarOpen}
+              ref={ctaMobileRef}
+            >
+              Check availability
+            </button>
+            <button
+              className="cta-button cta-button--secondary cta-button--pill"
+              type="button"
+              onClick={() => navigate("/request-to-book")}
+            >
+              Contact Port Lympne
+            </button>
+          </div>
         </div>
       </div>
 
