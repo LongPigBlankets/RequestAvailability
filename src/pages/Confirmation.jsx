@@ -61,7 +61,7 @@ export default function Confirmation() {
                       <div key={date.iso} className="date-summary-item">
                         <span className="date-summary-text">{date.formatted || date.iso}</span>
                         {date.isFavourite && (
-                          <span className="favorite-text" aria-label="Favourite date">⭐ Favourite</span>
+                          <span className="favorite-text" aria-label="Top preference date">⭐ Top preference</span>
                         )}
                       </div>
                     ))

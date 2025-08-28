@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from "react";
 
 const DateTimeLocationPicker = forwardRef((props, ref) => {
-  const [selectedLocation, setSelectedLocation] = useState("Port Lympne Kent");
+  const [selectedLocation, setSelectedLocation] = useState("");
   const [isLocationMenuOpen, setIsLocationMenuOpen] = useState(false);
   const locationWrapperRef = useRef(null);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -174,7 +174,7 @@ const DateTimeLocationPicker = forwardRef((props, ref) => {
             aria-expanded={isLocationMenuOpen}
             onClick={() => setIsLocationMenuOpen((o) => !o)}
           >
-            {selectedLocation}
+            {selectedLocation ? selectedLocation : "Choose location"}
             <span className="chevron" aria-hidden>{isLocationMenuOpen ? "▲" : "▼"}</span>
           </button>
           {isLocationMenuOpen && (

@@ -137,7 +137,7 @@ export default function SupplierPage() {
                           <li key={dateIndex} className={`date-item-wrapper ${isDisabled ? 'disabled' : ''} ${isThisAccepted ? 'accepted' : ''}`}>
                             <div className="favourited-label-space">
                               {dateInfo.isFavourite && (
-                                <div className="favourited-label">favourited</div>
+                                <div className="favourited-label">top preference</div>
                               )}
                             </div>
                             <div className="date-selection">
