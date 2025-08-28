@@ -250,7 +250,7 @@ export default function Checkout() {
             <div className="summary-dates">
               <span className="summary-label">📅 Selected Dates:</span>
               <p className="description" style={{ marginTop: 8 }}>
-                Mark one Favourite so the supplier knows which date to prioritise.
+                Mark one Top Preference so the supplier knows which date to prioritise.
               </p>
               <div className="dates-summary-list">
                 {currentRequest.dates.map((date) => (
@@ -264,7 +264,7 @@ export default function Checkout() {
                         aria-label={date.isFavourite ? 'Remove from favorites' : 'Add to favorites'}
                       >
                         <span className="star-icon">⭐</span>
-                        <span className="favorite-text">Favourite</span>
+                        <span className="favorite-text">Top Preference</span>
                       </button>
                     )}
                   </div>

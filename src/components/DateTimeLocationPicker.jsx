@@ -223,7 +223,7 @@ const DateTimeLocationPicker = forwardRef((props, ref) => {
           </button>
 
           <div className={`calendar ${isCalendarOpen ? "open" : ""}`}>
-            <div className="calendar-caption">Select up to 5 dates</div>
+            <div className="calendar-caption">Select dates (you can choose up to 5)</div>
             {isDesktop ? (
               <div className="calendar-desktop-container">
                 {/* First Month */}

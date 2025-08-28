@@ -112,7 +112,7 @@ export default function FutureVersion() {
               <ul>
                 <li>This experience should last around 60 minutes</li>
                 <li>Open from 9:30 am to 5 pm; last entry at 3:30 pm</li>
-                <li>Available week-round, year-round</li>
+                <li>Available Sunday-Friday, year-round</li>
                 <li>All dates are subject to availability</li>
                 <li>Accessibility; The entrance to the park is via a ramped footbridge with designated disabled parking available at the base of the footbridge on hard-standing. The park has an on-call minibus that can transport you to any area required. (Please notify any member of staff if you require assistance and this will be arranged). Wheelchairs are also available for hire at the Gatehouse!</li>
               </ul>

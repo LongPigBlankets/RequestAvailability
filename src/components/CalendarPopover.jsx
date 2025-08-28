@@ -186,7 +186,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation }
           aria-modal="false"
         >
           <div className="calendar open">
-            <div className="calendar-caption">Select up to 5 dates</div>
+            <div className="calendar-caption">Select dates (you can choose up to 5)</div>
             <div className="calendar-desktop-container">
               <div className="calendar-month">
                 <div className="calendar-header">
