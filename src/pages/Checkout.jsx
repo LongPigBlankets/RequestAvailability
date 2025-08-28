@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../components/Breadcrumbs";
 import Footer from "../components/Footer";
 import { PRODUCT_TITLE } from "../constants";
@@ -7,13 +8,13 @@ export default function Checkout() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     phoneNumber: ""
   });
-  const [showToast, setShowToast] = useState(false);
   const [errors, setErrors] = useState({});
   const [currentRequest, setCurrentRequest] = useState(null);
   const [isDraft, setIsDraft] = useState(false);
@@ -65,6 +66,8 @@ export default function Checkout() {
       sessionStorage.setItem('availabilityRequests', JSON.stringify(updatedRequests));
     }
   };
+
+  const hasSelectedDates = Array.isArray(currentRequest?.dates) && currentRequest.dates.length > 0;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -137,12 +140,12 @@ export default function Checkout() {
           sessionStorage.setItem('availabilityRequests', JSON.stringify(updatedRequests));
         }
       }
-      setShowToast(true);
+      navigate('/confirmation');
     }
   };
 
   return (
-    <div className="app has-footer">
+    <div className="app has-footer checkout-page">
       <div className="header" role="banner">
         <button className="nav-button" aria-label="Go back">
           <span className="arrow-left">←</span>
@@ -282,20 +285,15 @@ export default function Checkout() {
             className="cta-button" 
             type="button" 
             onClick={handleSendRequest}
+            disabled={!hasSelectedDates}
+            aria-disabled={!hasSelectedDates}
           >
             Send Request
           </button>
         </div>
       </div>
 
-      {showToast && (
-        <div className="toast toast-success" role="status" aria-live="polite">
-          <div className="toast-content">
-            Your request has been sent successfully! We will email you with the availability response within 24 hours.
-          </div>
-          <button className="toast-close" aria-label="Close notification" onClick={() => setShowToast(false)}>×</button>
-        </div>
-      )}
+      {false}
 
       <Footer />
     </div>
