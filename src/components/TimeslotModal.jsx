@@ -214,7 +214,7 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
       <div className="booking-cta">
         <button
           type="button"
-          className={`cta-button${isDesktop ? ' cta-button--pill' : ''}`}
+          className={`cta-button cta-button--pill`}
           onClick={persistTimesAndGoToCheckout}
         >
           Continue to checkout

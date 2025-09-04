@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function CalendarPopover({ anchorRef, onClose, selectedLocation }) {
+export default function CalendarPopover({ anchorRef, onClose, selectedLocation, onProceed }) {
   const popoverRef = useRef(null);
   const [isDesktop, setIsDesktop] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0, width: 0, maxHeight: 0 });
@@ -175,6 +175,36 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation }
     navigate('/checkout');
   }
 
+  function persistDraftWithoutNavigation() {
+    try {
+      const dates = Array.from(selectedDates).map(iso => ({
+        iso,
+        formatted: formatHuman(new Date(iso)),
+        isFavourite: false,
+      }));
+      const draft = {
+        location: selectedLocation || "Port Lympne Kent",
+        dates,
+        timestamp: new Date().toISOString(),
+      };
+      sessionStorage.setItem('availabilityDraft', JSON.stringify(draft));
+    } catch (e) {
+      // no-op
+    }
+  }
+
+  function handleProceedClick() {
+    if (typeof onProceed === 'function') {
+      // Persist draft for timeslot modal to consume, close calendar, then delegate
+      persistDraftWithoutNavigation();
+      onClose?.();
+      onProceed();
+      return;
+    }
+    // Default behaviour: go to checkout
+    persistDraftAndGoToCheckout();
+  }
+
   return (
     <>
       {isDesktop ? (
@@ -285,7 +315,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation }
               <button
                 type="button"
                 className="cta-button cta-button--pill"
-                onClick={persistDraftAndGoToCheckout}
+                onClick={handleProceedClick}
               >
                 Check availability
               </button>
@@ -359,8 +389,8 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation }
                 <div className="booking-cta">
                   <button
                     type="button"
-                    className="cta-button"
-                    onClick={persistDraftAndGoToCheckout}
+                    className="cta-button cta-button--pill"
+                    onClick={handleProceedClick}
                   >
                     Check availability
                   </button>
