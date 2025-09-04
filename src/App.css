@@ -378,7 +378,7 @@ body {
 /* Desktop card fields arranged as three rows/areas */
 .future-cta-card { gap: 10px; }
 .future-card-fields { display: grid; grid-template-columns: 1fr; gap: 10px; }
-.future-card-cta { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px; }
+.future-card-cta { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 0; }
 
 /* Pill variant for primary CTA to match rounded style */
 .cta-button--pill {
@@ -395,6 +395,11 @@ body {
 @media (min-width: 1024px) {
   .future-card-fields {
     grid-template-columns: 1fr; /* two inputs stacked, CTA below */
+  }
+
+  /* Make chip padding match CTA padding for consistent pill sizing on desktop */
+  .future-cta-card .chip-button {
+    padding: 16px 20px;
   }
 }
 
