@@ -536,6 +536,36 @@ body {
 }
 
 
+/* Timeslot Modal sections */
+.timeslot-sections { display: flex; flex-direction: column; gap: 12px; }
+.timeslot-section { padding: 8px 0; }
+.timeslot-date { font-weight: 700; margin-bottom: 8px; }
+.timeslot-carousel {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px; /* breathing room under chips */
+}
+.timeslot-carousel::-webkit-scrollbar { height: 8px; }
+.timeslot-carousel::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 9999px; }
+.timeslot-pill {
+  padding: 8px 12px;
+  border-radius: 9999px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.timeslot-pill.selected {
+  background: #0ea5a4;
+  color: #ffffff;
+  border-color: #0ea5a4;
+  box-shadow: 0 4px 10px rgba(14, 165, 164, 0.2);
+}
+
 /* Location picker */
 .location-picker {
   display: grid;

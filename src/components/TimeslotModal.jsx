@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
   const navigate = useNavigate();
-  const [datesSummary, setDatesSummary] = useState([]);
+  const [dates, setDates] = useState([]); // [{ iso, formatted }]
+  const [selectedTimesByIso, setSelectedTimesByIso] = useState({}); // { [iso]: 'HH:MM' }
   const popoverRef = useRef(null);
   const [isDesktop, setIsDesktop] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0, width: 0, maxHeight: 0 });
@@ -22,36 +23,60 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
     return `${day}${suffix} of ${month}`;
   }
 
+  function generateTimeOptions(startHour = 9, startMinute = 30, endHour = 17, endMinute = 0, stepMinutes = 30) {
+    const options = [];
+    const startTotal = startHour * 60 + startMinute;
+    const endTotal = endHour * 60 + endMinute;
+    for (let t = startTotal; t <= endTotal; t += stepMinutes) {
+      const h = Math.floor(t / 60);
+      const m = t % 60;
+      options.push(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`);
+    }
+    return options;
+  }
+
+  const timeOptions = useMemo(() => generateTimeOptions(9, 30, 17, 0, 30), []);
+
   useEffect(() => {
     if (!isOpen) return;
     try {
-      let dates = [];
+      let dateObjs = [];
       const draft = JSON.parse(sessionStorage.getItem('availabilityDraft') || 'null');
       if (draft && Array.isArray(draft.dates) && draft.dates.length > 0) {
-        dates = draft.dates;
+        dateObjs = draft.dates;
       } else {
         const requests = JSON.parse(sessionStorage.getItem('availabilityRequests') || '[]');
         if (Array.isArray(requests) && requests.length > 0) {
           const last = requests[requests.length - 1];
           if (last && Array.isArray(last.dates)) {
-            dates = last.dates;
+            dateObjs = last.dates;
           }
         }
       }
-      const formatted = dates.map(d => {
-        if (d && typeof d === 'object') {
-          if (d.formatted) return d.formatted;
-          if (d.iso) {
-            const dt = new Date(d.iso);
-            if (!isNaN(dt.getTime())) return formatHuman(dt);
-            return d.iso;
-          }
+      const normalized = (Array.isArray(dateObjs) ? dateObjs : []).map(d => {
+        if (d && typeof d === 'object' && d.iso) {
+          const dt = new Date(d.iso);
+          return {
+            iso: d.iso,
+            formatted: d.formatted || (!isNaN(dt.getTime()) ? formatHuman(dt) : String(d.iso)),
+            time: d.time || null,
+          };
         }
-        return String(d);
+        const asDate = new Date(d);
+        const iso = !isNaN(asDate.getTime()) ? asDate.toISOString().slice(0, 10) : String(d);
+        return { iso, formatted: !isNaN(asDate.getTime()) ? formatHuman(asDate) : String(d), time: null };
       });
-      setDatesSummary(formatted);
+      setDates(normalized);
+
+      // initialize selected times from stored values or default to first option
+      const initial = {};
+      normalized.forEach(item => {
+        initial[item.iso] = item.time || timeOptions[0];
+      });
+      setSelectedTimesByIso(initial);
     } catch (e) {
-      setDatesSummary([]);
+      setDates([]);
+      setSelectedTimesByIso({});
     }
   }, [isOpen]);
 
@@ -113,19 +138,84 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
 
   if (!isOpen) return null;
 
+  function persistTimesAndGoToCheckout() {
+    try {
+      // update draft if present; otherwise update the latest availability request
+      const draft = JSON.parse(sessionStorage.getItem('availabilityDraft') || 'null');
+      if (draft && Array.isArray(draft.dates)) {
+        const updatedDraft = {
+          ...draft,
+          dates: draft.dates.map(d => ({
+            ...d,
+            time: selectedTimesByIso[d.iso] || d.time || timeOptions[0],
+          }))
+        };
+        sessionStorage.setItem('availabilityDraft', JSON.stringify(updatedDraft));
+      } else {
+        const requests = JSON.parse(sessionStorage.getItem('availabilityRequests') || '[]');
+        if (Array.isArray(requests) && requests.length > 0) {
+          const lastIndex = requests.length - 1;
+          const last = requests[lastIndex];
+          if (last && Array.isArray(last.dates)) {
+            const updatedLast = {
+              ...last,
+              dates: last.dates.map(d => ({
+                ...d,
+                time: selectedTimesByIso[d.iso] || d.time || timeOptions[0],
+              }))
+            };
+            const next = [...requests];
+            next[lastIndex] = updatedLast;
+            sessionStorage.setItem('availabilityRequests', JSON.stringify(next));
+            // Also set a draft so checkout reads it first
+            sessionStorage.setItem('availabilityDraft', JSON.stringify({ ...updatedLast, id: 'draft' }));
+          }
+        }
+      }
+    } catch (e) {
+      // no-op
+    }
+    onClose?.();
+    navigate('/checkout');
+  }
+
   const content = (
     <>
-      <div className="booking-details-heading">Dates selected</div>
-      {datesSummary.length > 0 ? (
-        <p className="booking-description">{datesSummary.join(', ')}</p>
-      ) : (
+      <div className="booking-details-heading">Select timeslots</div>
+      {dates.length === 0 ? (
         <p className="booking-description">No dates selected yet.</p>
+      ) : (
+        <div className="timeslot-sections">
+          {dates.map((d, idx) => (
+            <div key={d.iso} className="timeslot-section">
+              <div className="timeslot-date">{d.formatted}</div>
+              <div className="timeslot-carousel" role="radiogroup" aria-label={`Select time for ${d.formatted}`}>
+                {timeOptions.map((t) => {
+                  const isSelected = selectedTimesByIso[d.iso] === t;
+                  return (
+                    <button
+                      key={t}
+                      type="button"
+                      role="radio"
+                      aria-checked={isSelected}
+                      className={`timeslot-pill${isSelected ? ' selected' : ''}`}
+                      onClick={() => setSelectedTimesByIso(prev => ({ ...prev, [d.iso]: t }))}
+                    >
+                      {t}
+                    </button>
+                  );
+                })}
+              </div>
+              {idx < dates.length - 1 && <div className="divider"></div>}
+            </div>
+          ))}
+        </div>
       )}
       <div className="booking-cta">
         <button
           type="button"
           className={`cta-button${isDesktop ? ' cta-button--pill' : ''}`}
-          onClick={() => { onClose?.(); navigate('/checkout'); }}
+          onClick={persistTimesAndGoToCheckout}
         >
           Continue to checkout
         </button>
