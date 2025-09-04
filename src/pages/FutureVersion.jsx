@@ -22,6 +22,7 @@ export default function FutureVersion() {
   const timeslotMobileRef = useRef(null);
   const locationChipInlineRef = useRef(null);
   const locationChipCardRef = useRef(null);
+  const dateChipDesktopRef = useRef(null);
   const { search } = useLocation();
   const hasTimeslotParam = new URLSearchParams(search).has('timeslot');
 
@@ -150,7 +151,7 @@ export default function FutureVersion() {
             <div className="footer" aria-hidden="true"></div>
           </div>
 
-          {/* Desktop: remade container with Date, Location and Check availability */}
+          {/* Desktop: remade container with Location, Date and Time pills + CTA */}
           <aside className="cta-card future-cta-card" aria-label="Availability actions">
             <div className="cta-card-header">
               <div className="cta-card-title">Limited Availability.</div>
@@ -159,7 +160,7 @@ export default function FutureVersion() {
             <div className="future-card-fields">
               <button
                 type="button"
-                className="chip-button"
+                className="chip-button chip-button--full"
                 ref={locationChipCardRef}
                 onClick={() => setIsLocationOpen(true)}
                 aria-haspopup="dialog listbox"
@@ -167,6 +168,30 @@ export default function FutureVersion() {
               >
                 <span>{selectedLocation ? selectedLocation : "Add location"}</span>
               </button>
+
+              {/* Dates pill */}
+              <button
+                type="button"
+                className="chip-button"
+                ref={dateChipDesktopRef}
+                onClick={() => setIsCalendarOpen(true)}
+                aria-haspopup="dialog"
+                aria-expanded={isCalendarOpen}
+              >
+                <span>Select dates</span>
+              </button>
+
+              {/* Times pill (optional via ?timeslot query) */}
+              {hasTimeslotParam && (
+                <button
+                  type="button"
+                  className="chip-button"
+                  onClick={() => setIsTimeslotOpen(true)}
+                  ref={timeslotDesktopRef}
+                >
+                  <span>Select times</span>
+                </button>
+              )}
             </div>
             <div className="future-card-cta">
               <button
@@ -177,18 +202,8 @@ export default function FutureVersion() {
                 aria-haspopup="dialog"
                 aria-expanded={isCalendarOpen}
               >
-                Check Availability
+                Reserve
               </button>
-              {hasTimeslotParam && (
-                <button
-                  className="cta-button cta-button--secondary cta-button--pill"
-                  type="button"
-                  onClick={() => setIsTimeslotOpen(true)}
-                  ref={timeslotDesktopRef}
-                >
-                  Select timeslots
-                </button>
-              )}
             </div>
           </aside>
         </div>
@@ -207,7 +222,7 @@ export default function FutureVersion() {
 
       {isCalendarOpen && (
         <CalendarPopover 
-          anchorRef={isDesktop ? ctaDesktopRef : ctaMobileRef} 
+          anchorRef={isDesktop ? dateChipDesktopRef : ctaMobileRef} 
           onClose={() => setIsCalendarOpen(false)} 
           selectedLocation={selectedLocation}
           onProceed={hasTimeslotParam ? () => setIsTimeslotOpen(true) : undefined}
