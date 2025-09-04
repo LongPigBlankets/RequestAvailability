@@ -18,6 +18,8 @@ export default function FutureVersion() {
   const [isDesktop, setIsDesktop] = useState(false);
   const ctaDesktopRef = useRef(null);
   const ctaMobileRef = useRef(null);
+  const timeslotDesktopRef = useRef(null);
+  const timeslotMobileRef = useRef(null);
   const locationChipInlineRef = useRef(null);
   const locationChipCardRef = useRef(null);
   const { search } = useLocation();
@@ -159,6 +161,7 @@ export default function FutureVersion() {
                   className="cta-button cta-button--secondary cta-button--pill"
                   type="button"
                   onClick={() => setIsTimeslotOpen(true)}
+                  ref={timeslotDesktopRef}
                 >
                   Select timeslots
                 </button>
@@ -198,6 +201,7 @@ export default function FutureVersion() {
                 className="cta-button cta-button--secondary cta-button--pill"
                 type="button"
                 onClick={() => setIsTimeslotOpen(true)}
+                ref={timeslotMobileRef}
               >
                 Select timeslots
               </button>
@@ -222,7 +226,11 @@ export default function FutureVersion() {
           selectedLocation={selectedLocation}
         />
       )}
-      <TimeslotModal isOpen={isTimeslotOpen} onClose={() => setIsTimeslotOpen(false)} />
+      <TimeslotModal 
+        isOpen={isTimeslotOpen} 
+        onClose={() => setIsTimeslotOpen(false)} 
+        anchorRef={isDesktop ? timeslotDesktopRef : timeslotMobileRef}
+      />
     </div>
   );
 }

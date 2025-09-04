@@ -378,7 +378,7 @@ body {
 /* Desktop card fields arranged as three rows/areas */
 .future-cta-card { gap: 10px; }
 .future-card-fields { display: grid; grid-template-columns: 1fr; gap: 10px; }
-.future-card-cta { margin-top: 6px; }
+.future-card-cta { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px; }
 
 /* Pill variant for primary CTA to match rounded style */
 .cta-button--pill {
