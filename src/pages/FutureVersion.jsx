@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import elephant from "../assets/elephant.jpg";
 import Breadcrumbs from "../components/Breadcrumbs";
 import { PRODUCT_TITLE } from "../constants";
 import LocationActionSheet from "../components/LocationActionSheet";
 import CalendarPopover from "../components/CalendarPopover";
+import TimeslotModal from "../components/TimeslotModal";
 
 export default function FutureVersion() {
   const navigate = useNavigate();
@@ -13,11 +14,16 @@ export default function FutureVersion() {
   const [isLocationOpen, setIsLocationOpen] = useState(false);
 
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [isTimeslotOpen, setIsTimeslotOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const ctaDesktopRef = useRef(null);
   const ctaMobileRef = useRef(null);
+  const timeslotDesktopRef = useRef(null);
+  const timeslotMobileRef = useRef(null);
   const locationChipInlineRef = useRef(null);
   const locationChipCardRef = useRef(null);
+  const { search } = useLocation();
+  const hasTimeslotParam = new URLSearchParams(search).has('timeslot');
 
   useEffect(() => {
     const mql = window.matchMedia('(min-width: 1024px)');
@@ -150,6 +156,16 @@ export default function FutureVersion() {
               >
                 Check Availability
               </button>
+              {hasTimeslotParam && (
+                <button
+                  className="cta-button cta-button--secondary cta-button--pill"
+                  type="button"
+                  onClick={() => setIsTimeslotOpen(true)}
+                  ref={timeslotDesktopRef}
+                >
+                  Select timeslots
+                </button>
+              )}
             </div>
           </aside>
         </div>
@@ -180,6 +196,16 @@ export default function FutureVersion() {
             >
               Contact Port Lympne
             </button>
+            {hasTimeslotParam && (
+              <button
+                className="cta-button cta-button--secondary cta-button--pill"
+                type="button"
+                onClick={() => setIsTimeslotOpen(true)}
+                ref={timeslotMobileRef}
+              >
+                Select timeslots
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -200,6 +226,11 @@ export default function FutureVersion() {
           selectedLocation={selectedLocation}
         />
       )}
+      <TimeslotModal 
+        isOpen={isTimeslotOpen} 
+        onClose={() => setIsTimeslotOpen(false)} 
+        anchorRef={isDesktop ? timeslotDesktopRef : timeslotMobileRef}
+      />
     </div>
   );
 }
