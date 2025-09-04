@@ -210,6 +210,7 @@ export default function FutureVersion() {
           anchorRef={isDesktop ? ctaDesktopRef : ctaMobileRef} 
           onClose={() => setIsCalendarOpen(false)} 
           selectedLocation={selectedLocation}
+          onProceed={hasTimeslotParam ? () => setIsTimeslotOpen(true) : undefined}
         />
       )}
       <TimeslotModal 
