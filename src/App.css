@@ -385,7 +385,7 @@ body {
 
 @media (min-width: 1024px) {
   .future-card-fields {
-    grid-template-columns: 1fr; /* two inputs stacked, CTA below */
+    grid-template-columns: 1fr 1fr; /* location spans both using chip-button--full */
   }
 
   /* Make chip padding match CTA padding for consistent pill sizing on desktop */
