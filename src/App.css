@@ -231,22 +231,10 @@ body {
   grid-template-columns: 1fr 1fr;
 }
 
-/* Fixed, bottom-anchored CTA for Future Version on mobile */
+/* Fixed CTA removed on Future Version for mobile; hide bar and remove extra padding */
 @media (max-width: 1023px) {
-  .future-version .ctaBar {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 30;
-    padding: 14px 16px calc(18px + env(safe-area-inset-bottom)) 16px;
-    background: #ffffff; /* remove gradient on future-version */
-  }
-
-  /* Add bottom space so content isn't obscured by fixed CTA */
-  .future-version {
-    padding-bottom: calc(120px + env(safe-area-inset-bottom));
-  }
+  .future-version .ctaBar { display: none; }
+  .future-version { padding-bottom: 0; }
 }
 
 @media (min-width: 480px) {
@@ -388,9 +376,12 @@ body {
 /* Mobile inline controls between title/location and description */
 .future-inline-controls {
   display: grid;
-  grid-template-columns: 1fr; /* full-width on mobile */
+  grid-template-columns: 1fr 1fr; /* date and time side by side */
   gap: 10px;
 }
+
+/* Make first pill (location) span full width */
+.chip-button--full { grid-column: 1 / -1; }
 
 @media (min-width: 1024px) {
   .future-card-fields {

@@ -82,15 +82,38 @@ export default function FutureVersion() {
             <div className="future-inline-section">
               <div className="divider"></div>
               <div className="future-inline-controls" aria-label="Choose options">
+                {/* Location pill (full width) */}
                 <button
                   type="button"
-                  className="chip-button"
+                  className="chip-button chip-button--full"
                   ref={locationChipInlineRef}
                   onClick={() => setIsLocationOpen(true)}
                   aria-haspopup="dialog listbox"
                   aria-expanded={isLocationOpen}
                 >
-                  <span>{selectedLocation ? selectedLocation : "Add location"}</span>
+                  <span>{selectedLocation ? selectedLocation : "Select location"}</span>
+                </button>
+
+                {/* Dates pill */}
+                <button
+                  type="button"
+                  className="chip-button"
+                  ref={ctaMobileRef}
+                  onClick={() => setIsCalendarOpen(true)}
+                  aria-haspopup="dialog"
+                  aria-expanded={isCalendarOpen}
+                >
+                  <span>Select dates</span>
+                </button>
+
+                {/* Times pill */}
+                <button
+                  type="button"
+                  className="chip-button"
+                  ref={timeslotMobileRef}
+                  onClick={() => setIsTimeslotOpen(true)}
+                >
+                  <span>Select times</span>
                 </button>
               </div>
               <div className="divider"></div>
@@ -171,44 +194,7 @@ export default function FutureVersion() {
         </div>
       </div>
 
-      {/* Mobile sticky CTA */}
-      <div className="ctaBar">
-        <div className="ctaInner">
-          <div className="availability-notice">
-            <div className="availability-text">Limited Availability!</div>
-            <div className="book-text">Book Your Experience Today</div>
-          </div>
-          <div className="cta-buttons future-cta-buttons">
-            <button
-              className="cta-button cta-button--pill"
-              type="button"
-              onClick={() => setIsCalendarOpen(true)}
-              aria-haspopup="dialog"
-              aria-expanded={isCalendarOpen}
-              ref={ctaMobileRef}
-            >
-              Check availability
-            </button>
-            <button
-              className="cta-button cta-button--secondary cta-button--pill"
-              type="button"
-              onClick={() => navigate("/request-to-book")}
-            >
-              Contact Port Lympne
-            </button>
-            {hasTimeslotParam && (
-              <button
-                className="cta-button cta-button--secondary cta-button--pill"
-                type="button"
-                onClick={() => setIsTimeslotOpen(true)}
-                ref={timeslotMobileRef}
-              >
-                Select timeslots
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
+      {/* Mobile sticky CTA removed in favor of inline pills */}
 
       {/* Overlays/Popovers */}
       <LocationActionSheet
