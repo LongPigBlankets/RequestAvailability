@@ -1069,6 +1069,12 @@ body {
   border: 1px solid #bbf7d0;
 }
 
+.status-message.cancelled {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
 @media (min-width: 768px) {
   .requests-list {
     gap: 32px;
