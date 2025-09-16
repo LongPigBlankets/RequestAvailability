@@ -10,12 +10,13 @@ import TimeslotModal from "../components/TimeslotModal";
 export default function FutureVersion() {
   const navigate = useNavigate();
 
-  const [selectedLocation, setSelectedLocation] = useState("Port Lympne Kent");
+  const [selectedLocation, setSelectedLocation] = useState("");
   const [isLocationOpen, setIsLocationOpen] = useState(false);
 
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isTimeslotOpen, setIsTimeslotOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
+  const [selectedDatesCount, setSelectedDatesCount] = useState(0);
   const ctaDesktopRef = useRef(null);
   const ctaMobileRef = useRef(null);
   const timeslotDesktopRef = useRef(null);
@@ -91,7 +92,7 @@ export default function FutureVersion() {
                   aria-haspopup="dialog listbox"
                   aria-expanded={isLocationOpen}
                 >
-                  <span>{selectedLocation ? selectedLocation : "Select location"}</span>
+                  <span>{selectedLocation ? selectedLocation : "Choose location"}</span>
                 </button>
 
                 {/* Dates pill */}
@@ -165,7 +166,7 @@ export default function FutureVersion() {
                 aria-haspopup="dialog listbox"
                 aria-expanded={isLocationOpen}
               >
-                <span>{selectedLocation ? selectedLocation : "Add location"}</span>
+                <span>{selectedLocation ? selectedLocation : "Choose location"}</span>
               </button>
             </div>
             <div className="future-card-cta">
@@ -177,7 +178,11 @@ export default function FutureVersion() {
                 aria-haspopup="dialog"
                 aria-expanded={isCalendarOpen}
               >
-                Check Availability
+                {selectedDatesCount === 0
+                  ? "Choose date"
+                  : selectedDatesCount === 1
+                    ? "1 date selected"
+                    : `${selectedDatesCount} dates selected`}
               </button>
               {hasTimeslotParam && (
                 <button
@@ -210,6 +215,7 @@ export default function FutureVersion() {
           anchorRef={isDesktop ? ctaDesktopRef : ctaMobileRef} 
           onClose={() => setIsCalendarOpen(false)} 
           selectedLocation={selectedLocation}
+          onSelectedCountChange={(n) => setSelectedDatesCount(n)}
           onProceed={hasTimeslotParam ? () => setIsTimeslotOpen(true) : undefined}
         />
       )}

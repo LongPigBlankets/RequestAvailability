@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function CalendarPopover({ anchorRef, onClose, selectedLocation, onProceed }) {
+export default function CalendarPopover({ anchorRef, onClose, selectedLocation, onProceed, onSelectedCountChange }) {
   const popoverRef = useRef(null);
   const [isDesktop, setIsDesktop] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0, width: 0, maxHeight: 0 });
@@ -96,6 +96,13 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
       setShowMaxWarning(false);
     }
   }, [selectedDates]);
+
+  // Notify parent about selected dates count changes
+  useEffect(() => {
+    if (typeof onSelectedCountChange === 'function') {
+      onSelectedCountChange(selectedDates.size);
+    }
+  }, [selectedDates, onSelectedCountChange]);
 
   // Track viewport type and open behavior
   useEffect(() => {
