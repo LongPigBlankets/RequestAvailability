@@ -373,6 +373,23 @@ body {
   border-radius: 9999px;
 }
 
+/* Make desktop FutureVersion CTAs (date/time) match mobile chip styling */
+@media (min-width: 1024px) {
+  .future-cta-card .cta-button {
+    background: #f1f5f9;
+    color: #0f172a;
+    border: 1px solid #e5e7eb;
+    box-shadow: none;
+  }
+
+  .future-cta-card .cta-button.cta-button--secondary {
+    background: #f1f5f9;
+    color: #0f172a;
+    border: 1px solid #e5e7eb;
+    box-shadow: none;
+  }
+}
+
 /* Mobile inline controls between title/location and description */
 .future-inline-controls {
   display: grid;
@@ -1392,6 +1409,12 @@ textarea.form-input,
   font-weight: 500;
   color: #1e293b;
   font-size: 15px;
+}
+
+.date-summary-time {
+  color: #64748b;
+  font-size: 14px;
+  margin-top: 4px;
 }
 
 .favorite-btn {
