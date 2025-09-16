@@ -255,7 +255,12 @@ export default function Checkout() {
               <div className="dates-summary-list">
                 {currentRequest.dates.map((date) => (
                   <div key={date.iso} className="date-summary-item">
-                    <span className="date-summary-text">{date.formatted}</span>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <span className="date-summary-text">{date.formatted}</span>
+                      {date.time && (
+                        <div className="date-summary-time">Selected time: {date.time}</div>
+                      )}
+                    </div>
                     {(!anyFavourited || date.isFavourite) && (
                       <button
                         type="button"
