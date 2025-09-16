@@ -11,8 +11,9 @@ import Confirmation from "./pages/Confirmation";
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<FutureVersion />} />
       <Route path="/future-version" element={<FutureVersion />} />
+      <Route path="/legacy" element={<Home />} />
       <Route path="/request-to-book" element={<RequestToBook />} />
       <Route path="/supplier-page" element={<SupplierPage />} />
       <Route path="/checkout" element={<Checkout />} />
