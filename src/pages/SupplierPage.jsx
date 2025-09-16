@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 export default function SupplierPage() {
   const [availabilityRequests, setAvailabilityRequests] = useState([]);
   const [requestStates, setRequestStates] = useState({});
+  const [cancelModalRequestId, setCancelModalRequestId] = useState(null);
 
   // Predefined user names for the first 5 users
   const getUserName = (index) => {
@@ -61,6 +62,68 @@ export default function SupplierPage() {
     }));
   };
 
+  // Hardcoded older booking requests that should always appear at the top
+  const hardcodedRequests = [
+    {
+      id: -3001,
+      contact: { firstName: 'John', lastName: 'Smith', phoneNumber: '0712345678', email: 'email@email.com' },
+      dates: [
+        { iso: '2025-12-01', formatted: '1 Dec', isFavourite: false },
+        { iso: '2025-12-02', formatted: '2 Dec', isFavourite: false },
+        { iso: '2025-12-03', formatted: '3 Dec', isFavourite: false },
+        { iso: '2025-12-04', formatted: '4 Dec', isFavourite: false },
+        { iso: '2025-12-10', formatted: '10 Dec', isFavourite: true }
+      ],
+      timestamp: new Date('2025-09-15T15:03:00').toISOString(),
+      bookedAtDisplay: 'Booked at 15:03:00 on 15th of September'
+    },
+    {
+      id: -3002,
+      contact: { firstName: 'Janet', lastName: 'Jackson', phoneNumber: '0712345678', email: 'email@email.com' },
+      dates: [
+        { iso: '2026-01-05', formatted: '5 Jan', isFavourite: false },
+        { iso: '2026-01-10', formatted: '10 Jan', isFavourite: false },
+        { iso: '2026-01-11', formatted: '11 Jan', isFavourite: false },
+        { iso: '2026-01-12', formatted: '12 Jan', isFavourite: true },
+        { iso: '2026-01-13', formatted: '13 Jan', isFavourite: false }
+      ],
+      timestamp: new Date('2025-09-16T14:51:09').toISOString(),
+      bookedAtDisplay: 'Booked at 14:51:09 on 16th of September'
+    },
+    {
+      id: -3003,
+      contact: { firstName: 'Edward', lastName: 'Andrews', phoneNumber: '0712345678', email: 'email@email.com' },
+      dates: [
+        { iso: '2026-01-05', formatted: '5 Jan', isFavourite: false },
+        { iso: '2026-01-10', formatted: '10 Jan', isFavourite: false },
+        { iso: '2026-01-11', formatted: '11 Jan', isFavourite: false },
+        { iso: '2026-01-12', formatted: '12 Jan', isFavourite: true },
+        { iso: '2026-01-13', formatted: '13 Jan', isFavourite: false }
+      ],
+      timestamp: new Date('2025-09-16T14:51:09').toISOString(),
+      bookedAtDisplay: 'Booked at 14:51:09 on 16th of September'
+    }
+  ];
+
+  // Cancel booking flow
+  const handleOpenCancelModal = (requestId) => {
+    setCancelModalRequestId(requestId);
+  };
+
+  const handleCloseCancelModal = () => {
+    setCancelModalRequestId(null);
+  };
+
+  const handleConfirmCancel = () => {
+    if (cancelModalRequestId === null) return;
+    const requestId = cancelModalRequestId;
+    setRequestStates(prev => ({
+      ...prev,
+      [requestId]: { status: 'cancelled', selectedDateIndex: null }
+    }));
+    setCancelModalRequestId(null);
+  };
+
   useEffect(() => {
     // Load availability requests from session storage
     const requests = JSON.parse(sessionStorage.getItem('availabilityRequests') || '[]');
@@ -89,11 +152,11 @@ export default function SupplierPage() {
         <h1 className="title">Supplier Dashboard</h1>
         <h2 className="section-title">Availability Requests</h2>
         
-        {availabilityRequests.length === 0 ? (
+        {([...hardcodedRequests, ...availabilityRequests]).length === 0 ? (
           <p className="description">No availability requests yet.</p>
         ) : (
           <div className="requests-list">
-            {availabilityRequests.map((request, index) => {
+            {[...hardcodedRequests, ...availabilityRequests].map((request, index) => {
               const contact = request.contact || null;
               const userName = contact && (contact.firstName || contact.lastName)
                 ? `${contact.firstName || ''} ${contact.lastName || ''}`.trim()
@@ -103,6 +166,7 @@ export default function SupplierPage() {
               const requestState = requestStates[request.id] || {};
               const isRejected = requestState.status === 'rejected';
               const isAccepted = requestState.status === 'accepted';
+              const isCancelled = requestState.status === 'cancelled';
               const selectedDateIndex = requestState.selectedDateIndex;
               
               return (
@@ -131,7 +195,7 @@ export default function SupplierPage() {
                       {request.dates.map((dateInfo, dateIndex) => {
                         const isSelected = selectedDateIndex === dateIndex;
                         const isThisAccepted = isAccepted && isSelected;
-                        const isDisabled = isRejected || (isAccepted && !isSelected);
+                        const isDisabled = isRejected || isCancelled || (isAccepted && !isSelected);
                         
                         return (
                           <li key={dateIndex} className={`date-item-wrapper ${isDisabled ? 'disabled' : ''} ${isThisAccepted ? 'accepted' : ''}`}>
@@ -159,7 +223,7 @@ export default function SupplierPage() {
                     </ul>
                     
                     <div className="date-actions">
-                      {!isRejected && !isAccepted && (
+                      {!isRejected && !isAccepted && !isCancelled && (
                         <>
                           <button 
                             className="reject-all-btn"
@@ -186,13 +250,28 @@ export default function SupplierPage() {
                           <div className="redemption-message">
                             This voucher has been booked and redeemed. It will be paid as part of the regular payment run.
                           </div>
+                          <button 
+                            className="reject-all-btn"
+                            onClick={() => handleOpenCancelModal(request.id)}
+                          >
+                            Cancel
+                          </button>
                         </>
+                      )}
+                      {isCancelled && (
+                        <div className="status-message cancelled">Cancelled</div>
                       )}
                     </div>
                   </div>
                   
                   <div className="request-timestamp">
-                    Requested: {new Date(request.timestamp).toLocaleString()}
+                    {request.bookedAtDisplay ? (
+                      <>
+                        {request.bookedAtDisplay}
+                      </>
+                    ) : (
+                      <>Requested: {new Date(request.timestamp).toLocaleString()}</>
+                    )}
                   </div>
                 </div>
               );
@@ -200,6 +279,26 @@ export default function SupplierPage() {
           </div>
         )}
       </div>
+
+      {/* Cancel confirmation modal */}
+      {cancelModalRequestId !== null && (
+        <div className="booking-overlay" role="dialog" aria-modal="true">
+          <div className="booking-backdrop" onClick={handleCloseCancelModal}></div>
+          <div className="booking-panel">
+            <div className="booking-header">
+              <div className="booking-title">Cancel booking</div>
+              <button className="booking-close" aria-label="Close" onClick={handleCloseCancelModal}>×</button>
+            </div>
+            <div className="booking-body">
+              <div className="booking-description">Are you sure you want to cancel and unredeem this voucher?</div>
+              <div className="booking-cta" style={{ display: 'flex', gap: '12px' }}>
+                <button className="reject-all-btn" onClick={handleConfirmCancel}>Yes, cancel booking</button>
+                <button className="accept-selected-btn" onClick={handleCloseCancelModal}>No, keep booking</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>
