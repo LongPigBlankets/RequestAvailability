@@ -169,7 +169,7 @@ body {
 
 .extend {
   font-size: 15px;
-  color: #0ea5a4;
+  color: #0f766e;
   text-decoration: underline;
   cursor: pointer;
 }
@@ -259,7 +259,7 @@ body {
 
 .cta-button {
   width: 100%;
-  background: #0ea5a4;
+  background: #0f766e;
   color: #ffffff;
   border: none;
   padding: 16px 20px;
@@ -267,7 +267,7 @@ body {
   font-size: 16px;
   font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 6px 14px rgba(14, 165, 164, 0.25);
+  box-shadow: 0 6px 14px rgba(15, 118, 110, 0.25);
 }
 
 .cta-button[disabled],
@@ -280,8 +280,8 @@ body {
 /* Secondary CTA style: white fill, green text and border */
 .cta-button--secondary {
   background: #ffffff;
-  color: #0ea5a4;
-  border: 2px solid #0ea5a4;
+  color: #0f766e;
+  border: 2px solid #0f766e;
   box-shadow: none;
 }
 
@@ -349,9 +349,9 @@ body {
 /* Future version layout */
 .chip-button {
   width: 100%;
-  background: #f1f5f9; /* grey */
+  background: #eceae6; /* warm light grey to match mock */
   color: #0f172a;
-  border: 1px solid #e5e7eb;
+  border: none;
   padding: 14px 16px;
   border-radius: 9999px;
   font-size: 16px;
@@ -361,7 +361,7 @@ body {
   justify-content: center;
 }
 
-.chip-icon { display: none; }
+.chip-icon { display: inline-flex; margin-right: 10px; }
 
 /* Desktop card fields arranged as three rows/areas */
 .future-cta-card { gap: 10px; }
@@ -376,16 +376,16 @@ body {
 /* Make desktop FutureVersion CTAs (date/time) match mobile chip styling */
 @media (min-width: 1024px) {
   .future-cta-card .cta-button {
-    background: #f1f5f9;
+    background: #eceae6;
     color: #0f172a;
-    border: 1px solid #e5e7eb;
+    border: none;
     box-shadow: none;
   }
 
   .future-cta-card .cta-button.cta-button--secondary {
-    background: #f1f5f9;
+    background: #eceae6;
     color: #0f172a;
-    border: 1px solid #e5e7eb;
+    border: none;
     box-shadow: none;
   }
 }
@@ -568,10 +568,10 @@ body {
   white-space: nowrap;
 }
 .timeslot-pill.selected {
-  background: #0ea5a4;
+  background: #0f766e;
   color: #ffffff;
-  border-color: #0ea5a4;
-  box-shadow: 0 4px 10px rgba(14, 165, 164, 0.2);
+  border-color: #0f766e;
+  box-shadow: 0 4px 10px rgba(15, 118, 110, 0.2);
 }
 
 /* Location picker */
@@ -599,17 +599,34 @@ body {
 }
 
 .location-select {
+  position: relative;
   width: 100%;
-  padding: 12px;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
+  padding: 14px 44px 14px 44px;
+  border-radius: 9999px;
+  border: none;
   font-size: 16px;
-  background: #ffffff;
+  background: #eceae6;
+  color: #334155;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   cursor: pointer;
 }
+.location-select::before {
+  content: "📍";
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.location-select::after {
+  content: "🔍";
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.location-select .chevron { display: none; }
 
 .location-dropdown {
   position: absolute;
@@ -644,16 +661,24 @@ body {
 }
 
 .date-toggle {
+  position: relative;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
-  background: #ffffff;
+  padding: 14px 18px 14px 44px;
+  border-radius: 9999px;
+  border: none;
+  background: #eceae6;
   font-size: 16px;
   cursor: pointer;
+}
+.date-toggle::before {
+  content: "📅";
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .date-toggle .chevron {
@@ -745,9 +770,9 @@ body {
 }
 
 .calendar-day.selected {
-  background: #0ea5a4; /* CTA color */
+  background: #0f766e; /* CTA color */
   color: #ffffff;
-  box-shadow: 0 4px 10px rgba(14, 165, 164, 0.2);
+  box-shadow: 0 4px 10px rgba(15, 118, 110, 0.2);
 }
 
 /* Disabled/unavailable day (e.g., Saturdays) */
@@ -1216,8 +1241,8 @@ textarea.form-input,
 
 .form-input:focus {
   outline: none;
-  border-color: #0ea5a4;
-  box-shadow: 0 0 0 3px rgba(14, 165, 164, 0.1);
+  border-color: #0f766e;
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
 }
 
 .form-input.error {

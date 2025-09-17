@@ -174,8 +174,7 @@ const DateTimeLocationPicker = forwardRef((props, ref) => {
             aria-expanded={isLocationMenuOpen}
             onClick={() => setIsLocationMenuOpen((o) => !o)}
           >
-            {selectedLocation ? selectedLocation : "Choose location"}
-            <span className="chevron" aria-hidden>{isLocationMenuOpen ? "▲" : "▼"}</span>
+            {selectedLocation ? selectedLocation : "Search location"}
           </button>
           {isLocationMenuOpen && (
             <div className="location-dropdown" role="listbox" aria-label="Choose location">
@@ -208,7 +207,7 @@ const DateTimeLocationPicker = forwardRef((props, ref) => {
           <div className="location-title"><span aria-hidden>📅</span> Choose Dates</div>
         </div>
         <div className="date-picker">
-          <label className="location-label" htmlFor="date-toggle">Dates</label>
+          <label className="location-label" htmlFor="date-toggle">Select date</label>
           <button
             id="date-toggle"
             type="button"
@@ -217,9 +216,6 @@ const DateTimeLocationPicker = forwardRef((props, ref) => {
             onClick={() => setIsCalendarOpen((o) => !o)}
           >
             <span>{selectedSummary}</span>
-            <span className="chevron" aria-hidden>
-              {isCalendarOpen ? "▲" : "▼"}
-            </span>
           </button>
 
           <div className={`calendar ${isCalendarOpen ? "open" : ""}`}>
