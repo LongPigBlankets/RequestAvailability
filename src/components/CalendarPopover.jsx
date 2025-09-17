@@ -120,14 +120,40 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
     function updatePosition() {
       if (!anchorRef.current) return;
       const rect = anchorRef.current.getBoundingClientRect();
-      const desiredTop = rect.bottom + 8; // 8px offset
-      const RIGHT_MARGIN = 48; // keep space from the right edge
-      const BOTTOM_MARGIN = 128; // leave space for CTA inside popover
-      const availableRight = window.innerWidth - rect.left;
-      const maxWidth = Math.min(640, availableRight - RIGHT_MARGIN);
-      const width = Math.max(520, maxWidth);
-      const maxHeight = Math.max(340, window.innerHeight - desiredTop - BOTTOM_MARGIN);
-      setPosition({ top: desiredTop, left: rect.left, width, maxHeight });
+
+      // Viewport guards and preferred sizing
+      const LEFT_MARGIN = 24;
+      const RIGHT_MARGIN = 24;
+      const TOP_MARGIN = 16;
+      const BOTTOM_MARGIN = 24;
+
+      // Prefer a wide calendar that can show two months comfortably
+      const IDEAL_WIDTH = 720; // px
+      const MIN_WIDTH = 560; // px, still two months but tighter
+      const SAFE_MIN_WIDTH = 360; // last-resort clamp
+
+      // Align the popover's right edge to the CTA's right edge, but clamp inside viewport
+      const alignRight = Math.min(rect.right, window.innerWidth - RIGHT_MARGIN);
+      const maxWidthFromViewport = alignRight - LEFT_MARGIN;
+      const width = Math.max(
+        SAFE_MIN_WIDTH,
+        Math.min(IDEAL_WIDTH, Math.max(MIN_WIDTH, maxWidthFromViewport))
+      );
+      const left = Math.max(LEFT_MARGIN, alignRight - width);
+
+      // Flip above if there isn't enough space below
+      const spaceBelow = window.innerHeight - rect.bottom - BOTTOM_MARGIN;
+      const spaceAbove = rect.top - TOP_MARGIN;
+      const preferBelow = spaceBelow >= spaceAbove;
+      const OFFSET = 8;
+      const desiredTop = preferBelow ? rect.bottom + OFFSET : Math.max(TOP_MARGIN, rect.top - OFFSET);
+      const maxHeight = preferBelow
+        ? Math.max(340, spaceBelow)
+        : Math.max(340, spaceAbove);
+
+      const top = preferBelow ? desiredTop : Math.max(TOP_MARGIN, rect.top - maxHeight - OFFSET);
+
+      setPosition({ top, left, width, maxHeight });
     }
 
     updatePosition();

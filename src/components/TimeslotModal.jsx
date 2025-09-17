@@ -96,14 +96,37 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
     function updatePosition() {
       if (!anchorRef.current) return;
       const rect = anchorRef.current.getBoundingClientRect();
-      const desiredTop = rect.bottom + 8; // small offset
-      const RIGHT_MARGIN = 48;
-      const BOTTOM_MARGIN = 128; // leave space for CTA area
-      const availableRight = window.innerWidth - rect.left;
-      const maxWidth = Math.min(520, availableRight - RIGHT_MARGIN);
-      const width = Math.max(380, maxWidth);
-      const maxHeight = Math.max(240, window.innerHeight - desiredTop - BOTTOM_MARGIN);
-      setPosition({ top: desiredTop, left: rect.left, width, maxHeight });
+
+      const LEFT_MARGIN = 24;
+      const RIGHT_MARGIN = 24;
+      const TOP_MARGIN = 16;
+      const BOTTOM_MARGIN = 24;
+
+      // Timeslot popover should be slightly narrower and shorter than calendar
+      const IDEAL_WIDTH = 560;
+      const MIN_WIDTH = 420;
+      const SAFE_MIN_WIDTH = 360;
+
+      const alignRight = Math.min(rect.right, window.innerWidth - RIGHT_MARGIN);
+      const maxWidthFromViewport = alignRight - LEFT_MARGIN;
+      const width = Math.max(
+        SAFE_MIN_WIDTH,
+        Math.min(IDEAL_WIDTH, Math.max(MIN_WIDTH, maxWidthFromViewport))
+      );
+      const left = Math.max(LEFT_MARGIN, alignRight - width);
+
+      // Flip above if needed and anchor the popover to the top of the CTA if near the top edge
+      const spaceBelow = window.innerHeight - rect.bottom - BOTTOM_MARGIN;
+      const spaceAbove = rect.top - TOP_MARGIN;
+      const preferBelow = spaceBelow >= spaceAbove;
+      const OFFSET = 8;
+      const desiredTop = preferBelow ? rect.bottom + OFFSET : Math.max(TOP_MARGIN, rect.top - OFFSET);
+      const maxHeight = preferBelow
+        ? Math.max(220, spaceBelow)
+        : Math.max(220, spaceAbove);
+      const top = preferBelow ? desiredTop : Math.max(TOP_MARGIN, rect.top - maxHeight - OFFSET);
+
+      setPosition({ top, left, width, maxHeight });
     }
 
     updatePosition();

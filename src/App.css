@@ -11,6 +11,15 @@ body {
   line-height: 1.5;
 }
 
+/* Theme variables */
+:root {
+  --primary: #0f8b7c; /* new green */
+  --primary-contrast: #ffffff;
+  --primary-shadow-10: rgba(15, 139, 124, 0.10);
+  --primary-shadow-20: rgba(15, 139, 124, 0.20);
+  --primary-shadow-25: rgba(15, 139, 124, 0.25);
+}
+
 .app {
   max-width: 100%;
   width: 100%;
@@ -169,7 +178,7 @@ body {
 
 .extend {
   font-size: 15px;
-  color: #0ea5a4;
+  color: var(--primary);
   text-decoration: underline;
   cursor: pointer;
 }
@@ -259,15 +268,15 @@ body {
 
 .cta-button {
   width: 100%;
-  background: #0ea5a4;
-  color: #ffffff;
+  background: var(--primary);
+  color: var(--primary-contrast);
   border: none;
   padding: 16px 20px;
   border-radius: 12px;
   font-size: 16px;
   font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 6px 14px rgba(14, 165, 164, 0.25);
+  box-shadow: 0 6px 14px var(--primary-shadow-25);
 }
 
 .cta-button[disabled],
@@ -280,8 +289,8 @@ body {
 /* Secondary CTA style: white fill, green text and border */
 .cta-button--secondary {
   background: #ffffff;
-  color: #0ea5a4;
-  border: 2px solid #0ea5a4;
+  color: var(--primary);
+  border: 2px solid var(--primary);
   box-shadow: none;
 }
 
@@ -568,10 +577,10 @@ body {
   white-space: nowrap;
 }
 .timeslot-pill.selected {
-  background: #0ea5a4;
+  background: var(--primary);
   color: #ffffff;
-  border-color: #0ea5a4;
-  box-shadow: 0 4px 10px rgba(14, 165, 164, 0.2);
+  border-color: var(--primary);
+  box-shadow: 0 4px 10px var(--primary-shadow-20);
 }
 
 /* Location picker */
@@ -745,9 +754,9 @@ body {
 }
 
 .calendar-day.selected {
-  background: #0ea5a4; /* CTA color */
+  background: var(--primary); /* CTA color */
   color: #ffffff;
-  box-shadow: 0 4px 10px rgba(14, 165, 164, 0.2);
+  box-shadow: 0 4px 10px var(--primary-shadow-20);
 }
 
 /* Disabled/unavailable day (e.g., Saturdays) */
@@ -1216,8 +1225,8 @@ textarea.form-input,
 
 .form-input:focus {
   outline: none;
-  border-color: #0ea5a4;
-  box-shadow: 0 0 0 3px rgba(14, 165, 164, 0.1);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-shadow-10);
 }
 
 .form-input.error {
