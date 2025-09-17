@@ -98,12 +98,17 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
       const rect = anchorRef.current.getBoundingClientRect();
       const desiredTop = rect.bottom + 8; // small offset
       const RIGHT_MARGIN = 48;
+      const LEFT_MARGIN = 24;
       const BOTTOM_MARGIN = 128; // leave space for CTA area
-      const availableRight = window.innerWidth - rect.left;
-      const maxWidth = Math.min(520, availableRight - RIGHT_MARGIN);
-      const width = Math.max(380, maxWidth);
+      const availableRight = window.innerWidth - rect.left - RIGHT_MARGIN;
+      const availableLeft = rect.right - LEFT_MARGIN;
+      const MAX_WIDTH = 700;
+      const MIN_WIDTH = 420;
+      const candidate = Math.max(availableLeft, availableRight);
+      const width = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, candidate));
+      const left = Math.max(LEFT_MARGIN, rect.right - width);
       const maxHeight = Math.max(240, window.innerHeight - desiredTop - BOTTOM_MARGIN);
-      setPosition({ top: desiredTop, left: rect.left, width, maxHeight });
+      setPosition({ top: desiredTop, left, width, maxHeight });
     }
 
     updatePosition();

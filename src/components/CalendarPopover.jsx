@@ -122,12 +122,21 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
       const rect = anchorRef.current.getBoundingClientRect();
       const desiredTop = rect.bottom + 8; // 8px offset
       const RIGHT_MARGIN = 48; // keep space from the right edge
+      const LEFT_MARGIN = 24; // small inset from the left edge
       const BOTTOM_MARGIN = 128; // leave space for CTA inside popover
-      const availableRight = window.innerWidth - rect.left;
-      const maxWidth = Math.min(640, availableRight - RIGHT_MARGIN);
-      const width = Math.max(520, maxWidth);
+      // Space available to the right of the anchor's left edge
+      const availableRight = window.innerWidth - rect.left - RIGHT_MARGIN;
+      // Space available to the left of the anchor's right edge (so we can expand leftwards)
+      const availableLeft = rect.right - LEFT_MARGIN;
+      // Prefer the larger of left/right availability and allow a wider max width on desktop
+      const MAX_WIDTH = 860;
+      const MIN_WIDTH = 520;
+      const candidate = Math.max(availableLeft, availableRight);
+      const width = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, candidate));
+      // Position so that the popover can expand to the left when needed
+      const left = Math.max(LEFT_MARGIN, rect.right - width);
       const maxHeight = Math.max(340, window.innerHeight - desiredTop - BOTTOM_MARGIN);
-      setPosition({ top: desiredTop, left: rect.left, width, maxHeight });
+      setPosition({ top: desiredTop, left, width, maxHeight });
     }
 
     updatePosition();
