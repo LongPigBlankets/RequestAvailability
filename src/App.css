@@ -194,15 +194,8 @@ body {
   text-decoration: underline;
 }
 
-/* Arrows icon mask for Fully Flexible */
-.icon-arrows {
-  width: 18px;
-  height: 18px;
-  background-color: #0f172a;
-  display: inline-block;
-  -webkit-mask: url('./assets/arrows.svg') no-repeat center / contain;
-  mask: url('./assets/arrows.svg') no-repeat center / contain;
-}
+/* Image-based Fully Flexible icon */
+.flex-icon-img { width: 18px; height: 18px; display: inline-block; }
 
 .divider {
   height: 1px;

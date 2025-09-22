@@ -91,7 +91,7 @@ export default function RequestToBook() {
           <span className="extend" role="button" tabIndex={0}>Extend</span>
         </div>
         <div className="flexibility">
-          <span className="icon-arrows" aria-hidden="true"></span>
+          <img src="/assets/fully-flexible-arrows.png" alt="" aria-hidden="true" className="flex-icon-img" />
           <span className="flexible-text">Fully Flexible</span>
         </div>
         <div className="divider"></div>

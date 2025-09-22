@@ -147,9 +147,6 @@ export default function Checkout() {
   return (
     <div className="app has-footer checkout-page">
       <div className="header" role="banner">
-        <button className="nav-button" aria-label="Go back">
-          <span className="arrow-left">←</span>
-        </button>
         <div className="right-actions">
           <button className="nav-button" aria-label="Share">
             <span className="share-icon">↗</span>
