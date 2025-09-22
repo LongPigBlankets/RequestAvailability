@@ -959,6 +959,20 @@ body {
 
 
 /* Supplier Page Styles */
+.requests-tabs { display: flex; gap: 8px; margin: 12px 0 16px; flex-wrap: wrap; }
+.requests-tab {
+  padding: 8px 12px;
+  border-radius: 9999px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 14px;
+}
+.requests-tab.active {
+  background: #0f766e;
+  color: #ffffff;
+  border-color: #0f766e;
+}
 .requests-list {
   display: flex;
   flex-direction: column;
@@ -1010,6 +1024,8 @@ body {
   height: 20px;
   display: flex;
   align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 
 .favourited-label {
@@ -1032,6 +1048,7 @@ body {
   overflow: hidden;
   min-width: 120px;
 }
+.date-column { display: flex; flex-direction: column; align-items: center; }
 .date-item-top,
 .date-item-bottom {
   display: flex;
@@ -1064,17 +1081,18 @@ body {
   margin-bottom: 16px;
 }
 
-.contact-info {
+.supplier-page .contact-info {
   margin-top: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 16px;
 }
 
 .phone-info,
 .email-info,
 .voucher-info,
-.product-info {
+.product-info,
+.guests-info {
   display: flex;
   gap: 8px;
   font-size: 14px;
@@ -1183,6 +1201,11 @@ body {
   background: #fef2f2;
   color: #dc2626;
   border: 1px solid #fecaca;
+}
+.status-message.expired {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
 }
 
 @media (min-width: 768px) {
