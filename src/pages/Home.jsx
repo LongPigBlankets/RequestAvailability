@@ -67,9 +67,10 @@ export default function Home() {
               <span className="use-by">Use by 19th Aug 2026</span>
               <span className="extend" role="button" tabIndex={0}>Extend</span>
             </div>
-            <div className="flexibility">
-              🔁 <span className="flexible-text">Fully Flexible</span>
-            </div>
+        <div className="flexibility">
+          <span className="icon-arrows" aria-hidden="true"></span>
+          <span className="flexible-text">Fully Flexible</span>
+        </div>
           </div>
 
           <aside className="cta-card" aria-label="Availability actions">

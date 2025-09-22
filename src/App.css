@@ -116,6 +116,14 @@ body {
   text-overflow: ellipsis;
 }
 
+/* Brand logo display (replaces breadcrumbs on certain pages) */
+.brand-logo {
+  height: 40px;
+  width: auto;
+  display: block;
+  margin: 8px 0 4px 0;
+}
+
 .breadcrumbs .crumb a {
   color: inherit;
   text-decoration: none;
@@ -184,6 +192,16 @@ body {
 .flexible-text {
   font-size: 15px;
   text-decoration: underline;
+}
+
+/* Arrows icon mask for Fully Flexible */
+.icon-arrows {
+  width: 18px;
+  height: 18px;
+  background-color: #0f172a;
+  display: inline-block;
+  -webkit-mask: url('./assets/arrows.svg') no-repeat center / contain;
+  mask: url('./assets/arrows.svg') no-repeat center / contain;
 }
 
 .divider {

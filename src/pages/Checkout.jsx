@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Breadcrumbs from "../components/Breadcrumbs";
+import BrandLogo from "../components/BrandLogo";
 import Footer from "../components/Footer";
 import { PRODUCT_TITLE } from "../constants";
 
@@ -159,7 +159,7 @@ export default function Checkout() {
       </div>
 
       <div className="content">
-        <Breadcrumbs />
+        <BrandLogo />
       </div>
 
       <div className="content">

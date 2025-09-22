@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import Breadcrumbs from "../components/Breadcrumbs";
+import BrandLogo from "../components/BrandLogo";
 import Footer from "../components/Footer";
 
 export default function Confirmation() {
@@ -31,7 +31,7 @@ export default function Confirmation() {
       </div>
 
       <div className="content">
-        <Breadcrumbs />
+        <BrandLogo />
       </div>
 
       <div className="content">
