@@ -92,7 +92,7 @@ export default function FutureVersion() {
                   aria-haspopup="dialog listbox"
                   aria-expanded={isLocationOpen}
                 >
-                  <span className="chip-icon" aria-hidden>📍</span>
+                  <span className="chip-icon chip-icon--pin" aria-hidden="true"></span>
                   <span>{selectedLocation ? selectedLocation : "Choose location"}</span>
                 </button>
 
@@ -105,7 +105,7 @@ export default function FutureVersion() {
                   aria-haspopup="dialog"
                   aria-expanded={isCalendarOpen}
                 >
-                  <span className="chip-icon" aria-hidden>📅</span>
+                  <span className="chip-icon chip-icon--calendar" aria-hidden="true"></span>
                   <span>Select date</span>
                 </button>
 
@@ -116,7 +116,7 @@ export default function FutureVersion() {
                   ref={timeslotMobileRef}
                   onClick={() => setIsTimeslotOpen(true)}
                 >
-                  <span className="chip-icon" aria-hidden>⏱</span>
+                  <span className="chip-icon chip-icon--clock" aria-hidden="true"></span>
                   <span>Select time</span>
                 </button>
               </div>
@@ -169,19 +169,20 @@ export default function FutureVersion() {
                 aria-haspopup="dialog listbox"
                 aria-expanded={isLocationOpen}
               >
-                <span className="chip-icon" aria-hidden>📍</span>
+                <span className="chip-icon chip-icon--pin" aria-hidden="true"></span>
                 <span>{selectedLocation ? selectedLocation : "Choose location"}</span>
               </button>
             </div>
             <div className="future-card-cta">
               <button
                 ref={ctaDesktopRef}
-                className="cta-button cta-button--pill"
+                className="cta-button cta-button--pill cta-button--date"
                 type="button"
                 onClick={() => setIsCalendarOpen(true)}
                 aria-haspopup="dialog"
                 aria-expanded={isCalendarOpen}
               >
+                <span className="chip-icon" aria-hidden="true"></span>
                 {selectedDatesCount === 0
                   ? "Choose date"
                   : selectedDatesCount === 1
@@ -190,11 +191,12 @@ export default function FutureVersion() {
               </button>
               {hasTimeslotParam && (
                 <button
-                  className="cta-button cta-button--secondary cta-button--pill"
+                  className="cta-button cta-button--secondary cta-button--pill cta-button--timeslot"
                   type="button"
                   onClick={() => setIsTimeslotOpen(true)}
                   ref={timeslotDesktopRef}
                 >
+                  <span className="chip-icon" aria-hidden="true"></span>
                   Select timeslots
                 </button>
               )}
