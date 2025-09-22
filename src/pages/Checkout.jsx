@@ -243,12 +243,12 @@ export default function Checkout() {
           
           <div className="summary-section">
             <div className="summary-location">
-              <span className="summary-label">📍 Location:</span>
+              <span className="summary-label"><span className="chip-icon chip-icon--pin" aria-hidden="true"></span> Location:</span>
               <span className="summary-value">{currentRequest.location}</span>
             </div>
             
             <div className="summary-dates">
-              <span className="summary-label">📅 Selected Dates:</span>
+              <span className="summary-label"><span className="chip-icon chip-icon--calendar" aria-hidden="true"></span> Selected Dates:</span>
               <p className="description" style={{ marginTop: 8 }}>
                 Mark one Top Preference so the supplier knows which date to prioritise.
               </p>

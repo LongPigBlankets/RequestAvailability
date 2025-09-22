@@ -227,7 +227,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
         <div
           ref={popoverRef}
           className="cta-popover"
-          style={{ top: `${position.top}px`, left: `${position.left}px`, width: `${position.width}px`, maxHeight: `${position.maxHeight}px` }}
+          style={{ top: `${position.top}px`, left: `${position.left}px`, width: `${position.width}px` }}
           role="dialog"
           aria-modal="false"
         >
