@@ -92,7 +92,7 @@ export default function FutureVersion() {
                   aria-haspopup="dialog listbox"
                   aria-expanded={isLocationOpen}
                 >
-                  <span className="chip-icon" aria-hidden>📍</span>
+                  <span className="chip-icon chip-icon--pin" aria-hidden="true"></span>
                   <span>{selectedLocation ? selectedLocation : "Choose location"}</span>
                 </button>
 
@@ -105,7 +105,7 @@ export default function FutureVersion() {
                   aria-haspopup="dialog"
                   aria-expanded={isCalendarOpen}
                 >
-                  <span className="chip-icon" aria-hidden>📅</span>
+                  <span className="chip-icon chip-icon--calendar" aria-hidden="true"></span>
                   <span>Select date</span>
                 </button>
 
@@ -116,7 +116,7 @@ export default function FutureVersion() {
                   ref={timeslotMobileRef}
                   onClick={() => setIsTimeslotOpen(true)}
                 >
-                  <span className="chip-icon" aria-hidden>⏱</span>
+                  <span className="chip-icon chip-icon--clock" aria-hidden="true"></span>
                   <span>Select time</span>
                 </button>
               </div>
@@ -169,7 +169,7 @@ export default function FutureVersion() {
                 aria-haspopup="dialog listbox"
                 aria-expanded={isLocationOpen}
               >
-                <span className="chip-icon" aria-hidden>📍</span>
+                <span className="chip-icon chip-icon--pin" aria-hidden="true"></span>
                 <span>{selectedLocation ? selectedLocation : "Choose location"}</span>
               </button>
             </div>

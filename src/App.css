@@ -349,19 +349,22 @@ body {
 /* Future version layout */
 .chip-button {
   width: 100%;
-  background: #eceae6; /* warm light grey to match mock */
+  background: #f1efeb; /* lighter warm grey */
   color: #0f172a;
   border: none;
   padding: 14px 16px;
   border-radius: 9999px;
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 500; /* thinner typeface */
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
-.chip-icon { display: inline-flex; margin-right: 10px; }
+.chip-icon { display: inline-block; margin-right: 10px; width: 18px; height: 18px; background-color: #0f172a; }
+.chip-icon--pin { -webkit-mask: url('./assets/pin.svg') no-repeat center / contain; mask: url('./assets/pin.svg') no-repeat center / contain; }
+.chip-icon--calendar { -webkit-mask: url('./assets/calendar.svg') no-repeat center / contain; mask: url('./assets/calendar.svg') no-repeat center / contain; }
+.chip-icon--clock { -webkit-mask: url('./assets/clock.svg') no-repeat center / contain; mask: url('./assets/clock.svg') no-repeat center / contain; }
 
 /* Desktop card fields arranged as three rows/areas */
 .future-cta-card { gap: 10px; }
@@ -376,14 +379,14 @@ body {
 /* Make desktop FutureVersion CTAs (date/time) match mobile chip styling */
 @media (min-width: 1024px) {
   .future-cta-card .cta-button {
-    background: #eceae6;
+    background: #f1efeb;
     color: #0f172a;
     border: none;
     box-shadow: none;
   }
 
   .future-cta-card .cta-button.cta-button--secondary {
-    background: #eceae6;
+    background: #f1efeb;
     color: #0f172a;
     border: none;
     box-shadow: none;
@@ -605,7 +608,8 @@ body {
   border-radius: 9999px;
   border: none;
   font-size: 16px;
-  background: #eceae6;
+  font-weight: 500; /* thinner typeface */
+  background: #f1efeb; /* lighter warm grey */
   color: #334155;
   display: flex;
   align-items: center;
@@ -613,11 +617,16 @@ body {
   cursor: pointer;
 }
 .location-select::before {
-  content: "📍";
+  content: "";
   position: absolute;
   left: 16px;
   top: 50%;
   transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  -webkit-mask: url('./assets/pin.svg') no-repeat center / contain;
+  mask: url('./assets/pin.svg') no-repeat center / contain;
+  background-color: #0f172a;
 }
 .location-select::after {
   content: "🔍";
@@ -650,6 +659,7 @@ body {
   border-bottom: 1px solid #f1f5f9;
   cursor: pointer;
   font-size: 16px;
+  font-weight: 500; /* thinner typeface */
 }
 
 .location-option:last-child { border-bottom: none; }
@@ -669,16 +679,22 @@ body {
   padding: 14px 18px 14px 44px;
   border-radius: 9999px;
   border: none;
-  background: #eceae6;
+  background: #f1efeb; /* lighter warm grey */
   font-size: 16px;
+  font-weight: 500; /* thinner typeface */
   cursor: pointer;
 }
 .date-toggle::before {
-  content: "📅";
+  content: "";
   position: absolute;
   left: 16px;
   top: 50%;
   transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  -webkit-mask: url('./assets/calendar.svg') no-repeat center / contain;
+  mask: url('./assets/calendar.svg') no-repeat center / contain;
+  background-color: #0f172a;
 }
 
 .date-toggle .chevron {
