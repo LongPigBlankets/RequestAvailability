@@ -182,6 +182,7 @@ export default function FutureVersion() {
                 aria-haspopup="dialog"
                 aria-expanded={isCalendarOpen}
               >
+                <span className="chip-icon" aria-hidden="true"></span>
                 {selectedDatesCount === 0
                   ? "Choose date"
                   : selectedDatesCount === 1
@@ -195,6 +196,7 @@ export default function FutureVersion() {
                   onClick={() => setIsTimeslotOpen(true)}
                   ref={timeslotDesktopRef}
                 >
+                  <span className="chip-icon" aria-hidden="true"></span>
                   Select timeslots
                 </button>
               )}
