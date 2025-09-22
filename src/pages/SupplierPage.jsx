@@ -133,6 +133,7 @@ export default function SupplierPage() {
   return (
     <div className="app has-footer">
       <div className="header" role="banner">
+        <BrandLogo />
         <div className="right-actions">
           <button className="nav-button" aria-label="Share">
             <span className="share-icon">↗</span>
@@ -141,9 +142,6 @@ export default function SupplierPage() {
         </div>
       </div>
 
-      <div className="content">
-        <BrandLogo />
-      </div>
 
       <div className="content">
         <h1 className="title">Supplier Dashboard</h1>

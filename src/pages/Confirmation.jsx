@@ -19,6 +19,7 @@ export default function Confirmation() {
   return (
     <div className="app has-footer">
       <div className="header" role="banner">
+        <BrandLogo />
         <div className="right-actions">
           <button className="nav-button" aria-label="Share">
             <span className="share-icon">↗</span>
@@ -27,9 +28,6 @@ export default function Confirmation() {
         </div>
       </div>
 
-      <div className="content">
-        <BrandLogo />
-      </div>
 
       <div className="content">
         <div className="confirmation-hero" role="status" aria-live="polite">
