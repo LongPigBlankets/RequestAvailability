@@ -76,7 +76,8 @@ export default function FutureVersion() {
               <span className="extend" role="button" tabIndex={0}>Extend</span>
             </div>
             <div className="flexibility">
-              🔁 <span className="flexible-text">Fully Flexible</span>
+              <img src="/assets/fully-flexible-arrows.png" alt="" aria-hidden="true" className="flex-icon-img" />
+              <span className="flexible-text">Fully Flexible</span>
             </div>
 
             {/* Mobile inline controls with divider above and below; hide entire section on desktop */}

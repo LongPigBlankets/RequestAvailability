@@ -116,6 +116,14 @@ body {
   text-overflow: ellipsis;
 }
 
+/* Brand logo display (replaces breadcrumbs on certain pages) */
+.brand-logo {
+  height: 40px;
+  width: auto;
+  display: block;
+  margin: 8px 0 4px 0;
+}
+
 .breadcrumbs .crumb a {
   color: inherit;
   text-decoration: none;
@@ -185,6 +193,9 @@ body {
   font-size: 15px;
   text-decoration: underline;
 }
+
+/* Image-based Fully Flexible icon */
+.flex-icon-img { width: 18px; height: 18px; display: inline-block; }
 
 .divider {
   height: 1px;

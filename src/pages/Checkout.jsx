@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Breadcrumbs from "../components/Breadcrumbs";
+import BrandLogo from "../components/BrandLogo";
 import Footer from "../components/Footer";
 import { PRODUCT_TITLE } from "../constants";
 
@@ -147,9 +147,6 @@ export default function Checkout() {
   return (
     <div className="app has-footer checkout-page">
       <div className="header" role="banner">
-        <button className="nav-button" aria-label="Go back">
-          <span className="arrow-left">←</span>
-        </button>
         <div className="right-actions">
           <button className="nav-button" aria-label="Share">
             <span className="share-icon">↗</span>
@@ -159,7 +156,7 @@ export default function Checkout() {
       </div>
 
       <div className="content">
-        <Breadcrumbs />
+        <BrandLogo />
       </div>
 
       <div className="content">

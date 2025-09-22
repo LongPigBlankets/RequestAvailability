@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Breadcrumbs from "../components/Breadcrumbs";
+import BrandLogo from "../components/BrandLogo";
 import Footer from "../components/Footer";
 
 export default function SupplierPage() {
@@ -133,9 +133,6 @@ export default function SupplierPage() {
   return (
     <div className="app has-footer">
       <div className="header" role="banner">
-        <button className="nav-button" aria-label="Go back">
-          <span className="arrow-left">←</span>
-        </button>
         <div className="right-actions">
           <button className="nav-button" aria-label="Share">
             <span className="share-icon">↗</span>
@@ -145,7 +142,7 @@ export default function SupplierPage() {
       </div>
 
       <div className="content">
-        <Breadcrumbs />
+        <BrandLogo />
       </div>
 
       <div className="content">
@@ -193,6 +190,22 @@ export default function SupplierPage() {
                     <strong>Requested dates:</strong>
                     <ul className="dates-list">
                       {request.dates.map((dateInfo, dateIndex) => {
+                        const formattedForPill = (() => {
+                          const iso = dateInfo.iso;
+                          if (iso) {
+                            const d = new Date(iso + 'T00:00:00');
+                            if (!isNaN(d)) {
+                              const day = d.getDate();
+                              const month = d.toLocaleString(undefined, { month: 'long' });
+                              const ordinal = (n) => {
+                                const s = ["th","st","nd","rd"]; const v = n % 100; return n + (s[(v-20)%10] || s[v] || s[0]);
+                              };
+                              return `${ordinal(day)} of ${month}`;
+                            }
+                          }
+                          // Fallback to existing formatted
+                          return dateInfo.formatted;
+                        })();
                         const isSelected = selectedDateIndex === dateIndex;
                         const isThisAccepted = isAccepted && isSelected;
                         const isDisabled = isRejected || isCancelled || (isAccepted && !isSelected);
@@ -214,7 +227,7 @@ export default function SupplierPage() {
                                 className="date-radio"
                               />
                               <div className={`date-item ${isThisAccepted ? 'accepted' : ''} ${isDisabled ? 'disabled' : ''}`}>
-                                {dateInfo.formatted}
+                                {formattedForPill}
                               </div>
                             </div>
                           </li>

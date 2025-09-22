@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import Breadcrumbs from "../components/Breadcrumbs";
+import BrandLogo from "../components/BrandLogo";
 import Footer from "../components/Footer";
 
 export default function Confirmation() {
@@ -19,9 +19,6 @@ export default function Confirmation() {
   return (
     <div className="app has-footer">
       <div className="header" role="banner">
-        <button className="nav-button" aria-label="Go back">
-          <span className="arrow-left">←</span>
-        </button>
         <div className="right-actions">
           <button className="nav-button" aria-label="Share">
             <span className="share-icon">↗</span>
@@ -31,7 +28,7 @@ export default function Confirmation() {
       </div>
 
       <div className="content">
-        <Breadcrumbs />
+        <BrandLogo />
       </div>
 
       <div className="content">
