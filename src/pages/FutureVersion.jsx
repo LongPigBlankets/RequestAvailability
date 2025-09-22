@@ -176,7 +176,7 @@ export default function FutureVersion() {
             <div className="future-card-cta">
               <button
                 ref={ctaDesktopRef}
-                className="cta-button cta-button--pill"
+                className="cta-button cta-button--pill cta-button--date"
                 type="button"
                 onClick={() => setIsCalendarOpen(true)}
                 aria-haspopup="dialog"
@@ -190,7 +190,7 @@ export default function FutureVersion() {
               </button>
               {hasTimeslotParam && (
                 <button
-                  className="cta-button cta-button--secondary cta-button--pill"
+                  className="cta-button cta-button--secondary cta-button--pill cta-button--timeslot"
                   type="button"
                   onClick={() => setIsTimeslotOpen(true)}
                   ref={timeslotDesktopRef}
