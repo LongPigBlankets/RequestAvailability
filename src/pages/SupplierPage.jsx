@@ -6,6 +6,7 @@ export default function SupplierPage() {
   const [availabilityRequests, setAvailabilityRequests] = useState([]);
   const [requestStates, setRequestStates] = useState({});
   const [cancelModalRequestId, setCancelModalRequestId] = useState(null);
+  const [activeTab, setActiveTab] = useState('Pending Requests');
 
   // Predefined user names for the first 5 users
   const getUserName = (index) => {
@@ -105,6 +106,44 @@ export default function SupplierPage() {
     }
   ];
 
+  // Completed and Expired placeholders
+  const completedPlaceholders = [
+    {
+      id: -9001,
+      contact: { firstName: 'Ryan', lastName: 'Reynolds', phoneNumber: '0712345678', email: 'ryan.reynolds@email.com' },
+      productName: 'Placeholder Product Name',
+      guests: 2,
+      dates: [
+        { iso: '2025-07-01', isFavourite: false, time: '14:30' },
+        { iso: '2025-07-02', isFavourite: false, time: '14:30' },
+        { iso: '2025-07-03', isFavourite: true, time: '14:30' },
+        { iso: '2025-07-04', isFavourite: false, time: '14:30' },
+        { iso: '2025-07-05', isFavourite: false, time: '14:30' }
+      ],
+      acceptedIndex: 2,
+      isCompleted: true,
+      timestamp: new Date('2025-07-05T18:00:00').toISOString(),
+    }
+  ];
+
+  const expiredPlaceholders = [
+    {
+      id: -9002,
+      contact: { firstName: 'John', lastName: 'Wayne', phoneNumber: '0712345678', email: 'john.wayne@email.com' },
+      productName: 'Placeholder Product Name',
+      guests: 2,
+      dates: [
+        { iso: '2025-08-21', isFavourite: false, time: '10:30' },
+        { iso: '2025-08-22', isFavourite: false, time: '10:30' },
+        { iso: '2025-08-23', isFavourite: false, time: '10:30' },
+        { iso: '2025-08-24', isFavourite: false, time: '10:30' },
+        { iso: '2025-08-25', isFavourite: true, time: '10:30' }
+      ],
+      isExpired: true,
+      timestamp: new Date('2025-08-26T12:00:00').toISOString(),
+    }
+  ];
+
   // Cancel booking flow
   const handleOpenCancelModal = (requestId) => {
     setCancelModalRequestId(requestId);
@@ -130,8 +169,21 @@ export default function SupplierPage() {
     setAvailabilityRequests(requests);
   }, []);
 
+  // Derived lists for tabs
+  const allPendingBase = [...hardcodedRequests, ...availabilityRequests];
+  const cancelledList = allPendingBase.filter(r => requestStates[r.id]?.status === 'cancelled');
+  const pendingList = allPendingBase.filter(r => requestStates[r.id]?.status !== 'cancelled');
+
+  const getTabData = () => {
+    if (activeTab === 'Completed Bookings') return completedPlaceholders;
+    if (activeTab === 'Expired') return expiredPlaceholders;
+    if (activeTab === 'Cancelled') return cancelledList;
+    return pendingList; // Pending Requests
+  };
+  const listToRender = getTabData();
+
   return (
-    <div className="app has-footer">
+    <div className="app has-footer supplier-page">
       <div className="header" role="banner">
         <BrandLogo />
         <div className="right-actions">
@@ -146,12 +198,26 @@ export default function SupplierPage() {
       <div className="content">
         <h1 className="title">Supplier Dashboard</h1>
         <h2 className="section-title">Availability Requests</h2>
+        <div className="requests-tabs" role="tablist" aria-label="Filter requests">
+          {['Completed Bookings', 'Pending Requests', 'Cancelled', 'Expired'].map(tab => (
+            <button
+              key={tab}
+              type="button"
+              role="tab"
+              aria-selected={activeTab === tab}
+              className={`requests-tab ${activeTab === tab ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
         
-        {([...hardcodedRequests, ...availabilityRequests]).length === 0 ? (
+        {(listToRender.length === 0) ? (
           <p className="description">No availability requests yet.</p>
         ) : (
           <div className="requests-list">
-            {[...hardcodedRequests, ...availabilityRequests].map((request, index) => {
+            {listToRender.map((request, index) => {
               const contact = request.contact || null;
               const userName = contact && (contact.firstName || contact.lastName)
                 ? `${contact.firstName || ''} ${contact.lastName || ''}`.trim()
@@ -159,10 +225,14 @@ export default function SupplierPage() {
               const phoneValue = contact?.phoneNumber || "07123456789";
               const emailValue = contact?.email || getUserEmail(userName);
               const requestState = requestStates[request.id] || {};
+              const isCompleted = request.isCompleted === true;
+              const isExpired = request.isExpired === true;
               const isRejected = requestState.status === 'rejected';
-              const isAccepted = requestState.status === 'accepted';
+              const isAccepted = isCompleted ? true : (requestState.status === 'accepted');
               const isCancelled = requestState.status === 'cancelled';
-              const selectedDateIndex = requestState.selectedDateIndex;
+              const selectedDateIndex = isCompleted
+                ? (typeof request.acceptedIndex === 'number' ? request.acceptedIndex : requestState.selectedDateIndex)
+                : requestState.selectedDateIndex;
               
               return (
                 <div key={request.id} className="request-item">
@@ -170,7 +240,7 @@ export default function SupplierPage() {
                     <h3 className="user-name">{userName}</h3>
                     <div className="product-info">
                       <span className="contact-label">Product (Product Code):</span>
-                      <span className="contact-value">An Unforgettable Experience for Two with Afternoon Tea (101234567)</span>
+                      <span className="contact-value">{request.productName || 'An Unforgettable Experience for Two with Afternoon Tea'} (101234567)</span>
                     </div>
                     <div className="contact-info">
                       <div className="phone-info">
@@ -184,6 +254,10 @@ export default function SupplierPage() {
                       <div className="voucher-info">
                         <span className="contact-label">Voucher:</span>
                         <span className="contact-value">400000000000</span>
+                      </div>
+                      <div className="guests-info">
+                        <span className="contact-label">Guests:</span>
+                        <span className="contact-value">{request.guests || 2}</span>
                       </div>
                     </div>
                   </div>
@@ -210,15 +284,10 @@ export default function SupplierPage() {
                         })();
                         const isSelected = selectedDateIndex === dateIndex;
                         const isThisAccepted = isAccepted && isSelected;
-                        const isDisabled = isRejected || isCancelled || (isAccepted && !isSelected);
+                        const isDisabled = isExpired || isRejected || isCancelled || (isAccepted && !isSelected);
                         
                         return (
                           <li key={dateIndex} className={`date-item-wrapper ${isDisabled ? 'disabled' : ''} ${isThisAccepted ? 'accepted' : ''}`}>
-                            <div className="favourited-label-space">
-                              {dateInfo.isFavourite && (
-                                <div className="favourited-label">top preference</div>
-                              )}
-                            </div>
                             <div className="date-selection">
                               <input
                                 type="radio"
@@ -228,9 +297,16 @@ export default function SupplierPage() {
                                 disabled={isDisabled}
                                 className="date-radio"
                               />
-                              <div className={`date-item ${isThisAccepted ? 'accepted' : ''} ${isDisabled ? 'disabled' : ''}`}>
-                                <div className="date-item-top">{formattedForPill}</div>
-                                <div className="date-item-bottom">{dateInfo.time ? dateInfo.time : '—'}</div>
+                              <div className="date-column">
+                                <div className="favourited-label-space">
+                                  {dateInfo.isFavourite && (
+                                    <div className="favourited-label">top preference</div>
+                                  )}
+                                </div>
+                                <div className={`date-item ${isThisAccepted ? 'accepted' : ''} ${isDisabled ? 'disabled' : ''}`}>
+                                  <div className="date-item-top">{formattedForPill}</div>
+                                  <div className="date-item-bottom">{dateInfo.time ? dateInfo.time : '—'}</div>
+                                </div>
                               </div>
                             </div>
                           </li>
@@ -239,7 +315,7 @@ export default function SupplierPage() {
                     </ul>
                     
                     <div className="date-actions">
-                      {!isRejected && !isAccepted && !isCancelled && (
+                      {!isRejected && !isAccepted && !isCancelled && !isExpired && (
                         <>
                           <button 
                             className="reject-all-btn"
@@ -260,7 +336,7 @@ export default function SupplierPage() {
                       {isRejected && (
                         <div className="status-message rejected">All dates rejected</div>
                       )}
-                      {isAccepted && (
+                      {isAccepted && !isCompleted && (
                         <>
                           <div className="status-message accepted">Date accepted</div>
                           <div className="redemption-message">
@@ -273,6 +349,17 @@ export default function SupplierPage() {
                             Cancel
                           </button>
                         </>
+                      )}
+                      {isAccepted && isCompleted && (
+                        <>
+                          <div className="status-message accepted">Date accepted</div>
+                          <div className="redemption-message">
+                            This booking has completed. The voucher is redeemed and cannot be cancelled.
+                          </div>
+                        </>
+                      )}
+                      {isExpired && (
+                        <div className="status-message expired">This request timed out after 24h, so the request cannot be accepted or rejected anymore.</div>
                       )}
                       {isCancelled && (
                         <div className="status-message cancelled">Cancelled</div>
