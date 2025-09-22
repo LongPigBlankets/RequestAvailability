@@ -61,7 +61,7 @@ export default function Home() {
             <div className="product-id">118107722</div>
             <h1 className="title">{PRODUCT_TITLE}</h1>
             <div className="location">
-              📍 The Aspinall Foundation, Nr Ashford Kent, Lympne Hythe, CT21 4PD
+              <span className="chip-icon chip-icon--pin" aria-hidden="true"></span> The Aspinall Foundation, Nr Ashford Kent, Lympne Hythe, CT21 4PD
             </div>
             <div className="validity">
               <span className="use-by">Use by 19th Aug 2026</span>
@@ -182,7 +182,7 @@ export default function Home() {
 
               <div className="booking-info">
                 <div className="booking-info-row">
-                  <span className="booking-info-icon" aria-hidden="true">📍</span>
+                  <span className="booking-info-icon" aria-hidden="true"><span className="chip-icon chip-icon--pin" aria-hidden="true"></span></span>
                   <span>Port Lympne, Kent, England</span>
                 </div>
                 <div className="booking-info-row">

@@ -50,11 +50,11 @@ export default function Confirmation() {
           <div className="confirmation-left">
             <div className="summary-section">
               <div className="summary-location">
-                <span className="summary-label">📍 Location:</span>
+                <span className="summary-label"><span className="chip-icon chip-icon--pin" aria-hidden="true"></span> Location:</span>
                 <span className="summary-value">{location}</span>
               </div>
               <div className="summary-dates">
-                <span className="summary-label">📅 Requested dates:</span>
+                <span className="summary-label"><span className="chip-icon chip-icon--calendar" aria-hidden="true"></span> Requested dates:</span>
                 <div className="dates-summary-list">
                   {requestedDates.length > 0 ? (
                     requestedDates.map(date => (

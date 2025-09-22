@@ -163,7 +163,7 @@ const DateTimeLocationPicker = forwardRef((props, ref) => {
   return (
     <div className="location-picker">
       <div className="location-panel">
-        <div className="location-title"><span aria-hidden>📍</span> Choose Location</div>
+        <div className="location-title"><span className="chip-icon chip-icon--pin" aria-hidden="true"></span> Choose Location</div>
         <label htmlFor="location-button" className="location-label">Location</label>
         <div className="location-select-wrapper" ref={locationWrapperRef}>
           <button
@@ -204,7 +204,7 @@ const DateTimeLocationPicker = forwardRef((props, ref) => {
 
       <div className="calendar-panel">
         <div className="calendar-title-section">
-          <div className="location-title"><span aria-hidden>📅</span> Choose Dates</div>
+          <div className="location-title"><span className="chip-icon chip-icon--calendar" aria-hidden="true"></span> Choose Dates</div>
         </div>
         <div className="date-picker">
           <label className="location-label" htmlFor="date-toggle">Select date</label>
