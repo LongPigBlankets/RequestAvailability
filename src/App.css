@@ -1026,12 +1026,31 @@ body {
 }
 
 .date-item {
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  overflow: hidden;
+  min-width: 120px;
+}
+.date-item-top,
+.date-item-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+.date-item-top {
   background: #3b82f6;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 20px;
+  color: #ffffff;
+  padding: 8px 12px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
+}
+.date-item-bottom {
+  background: #1d4ed8; /* darker blue */
+  color: #ffffff;
+  padding: 8px 12px;
+  font-size: 13px;
 }
 
 .request-timestamp {
@@ -1054,7 +1073,8 @@ body {
 
 .phone-info,
 .email-info,
-.voucher-info {
+.voucher-info,
+.product-info {
   display: flex;
   gap: 8px;
   font-size: 14px;
@@ -1088,25 +1108,18 @@ body {
 }
 
 /* Date item states */
-.date-item.accepted {
-  background: #22c55e !important;
-  color: white;
-}
-
-.date-item.disabled {
-  background: #94a3b8 !important;
-  color: #64748b !important;
-  cursor: not-allowed;
-}
+.date-item.accepted .date-item-top { background: #22c55e !important; color: #ffffff; }
+.date-item.accepted .date-item-bottom { background: #16a34a !important; color: #ffffff; }
+.date-item.disabled .date-item-top,
+.date-item.disabled .date-item-bottom { background: #94a3b8 !important; color: #e2e8f0 !important; }
+.date-item.disabled { cursor: not-allowed; }
 
 .date-item-wrapper.disabled {
   opacity: 0.6;
 }
 
-.date-item-wrapper.accepted .date-item {
-  background: #22c55e !important;
-  color: white;
-}
+.date-item-wrapper.accepted .date-item .date-item-top { background: #22c55e !important; color: #ffffff; }
+.date-item-wrapper.accepted .date-item .date-item-bottom { background: #16a34a !important; color: #ffffff; }
 
 /* Action buttons */
 .date-actions {

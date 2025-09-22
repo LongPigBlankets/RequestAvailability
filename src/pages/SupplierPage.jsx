@@ -168,6 +168,10 @@ export default function SupplierPage() {
                 <div key={request.id} className="request-item">
                   <div className="user-info">
                     <h3 className="user-name">{userName}</h3>
+                    <div className="product-info">
+                      <span className="contact-label">Product (Product Code):</span>
+                      <span className="contact-value">An Unforgettable Experience for Two with Afternoon Tea (101234567)</span>
+                    </div>
                     <div className="contact-info">
                       <div className="phone-info">
                         <span className="contact-label">Phone:</span>
@@ -225,7 +229,8 @@ export default function SupplierPage() {
                                 className="date-radio"
                               />
                               <div className={`date-item ${isThisAccepted ? 'accepted' : ''} ${isDisabled ? 'disabled' : ''}`}>
-                                {formattedForPill}
+                                <div className="date-item-top">{formattedForPill}</div>
+                                <div className="date-item-bottom">{dateInfo.time ? dateInfo.time : '—'}</div>
                               </div>
                             </div>
                           </li>

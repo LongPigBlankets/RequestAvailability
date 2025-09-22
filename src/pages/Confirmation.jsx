@@ -54,7 +54,12 @@ export default function Confirmation() {
                   {requestedDates.length > 0 ? (
                     requestedDates.map(date => (
                       <div key={date.iso} className="date-summary-item">
-                        <span className="date-summary-text">{date.formatted || date.iso}</span>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                          <span className="date-summary-text">{date.formatted || date.iso}</span>
+                          {date.time && (
+                            <div className="date-summary-time">Selected time: {date.time}</div>
+                          )}
+                        </div>
                         {date.isFavourite && (
                           <span className="favorite-text" aria-label="Top preference date">⭐ Top preference</span>
                         )}
