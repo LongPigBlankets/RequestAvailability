@@ -114,6 +114,26 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
     }
   }, [selectedDates, onSelectedCountChange]);
 
+  // Auto-persist draft on selection change for autoaccept (no internal CTA on desktop)
+  useEffect(() => {
+    if (!isAutoAccept) return;
+    try {
+      const dates = Array.from(selectedDates).map(iso => ({
+        iso,
+        formatted: formatHuman(new Date(iso)),
+        isFavourite: false,
+      }));
+      const draft = {
+        location: selectedLocation || "Port Lympne Kent",
+        dates,
+        timestamp: new Date().toISOString(),
+      };
+      sessionStorage.setItem('availabilityDraft', JSON.stringify(draft));
+    } catch (e) {
+      // no-op
+    }
+  }, [selectedDates, selectedLocation, isAutoAccept]);
+
   // Track viewport type and open behavior
   useEffect(() => {
     const mql = window.matchMedia('(min-width: 1024px)');
@@ -339,15 +359,17 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
                 Please select a maximum of 5 dates
               </div>
             )}
-            <div className="booking-cta">
-              <button
-                type="button"
-                className="cta-button cta-button--pill"
-                onClick={handleProceedClick}
-              >
-                {ctaLabel}
-              </button>
-            </div>
+            {!isAutoAccept && (
+              <div className="booking-cta">
+                <button
+                  type="button"
+                  className="cta-button cta-button--pill"
+                  onClick={handleProceedClick}
+                >
+                  {ctaLabel}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       ) : (
@@ -414,15 +436,17 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
                     Please select a maximum of 5 dates
                   </div>
                 )}
-                <div className="booking-cta">
-                  <button
-                    type="button"
-                    className="cta-button cta-button--pill"
-                    onClick={handleProceedClick}
-                  >
-                    {ctaLabel}
-                  </button>
-                </div>
+                {!isAutoAccept && (
+                  <div className="booking-cta">
+                    <button
+                      type="button"
+                      className="cta-button cta-button--pill"
+                      onClick={handleProceedClick}
+                    >
+                      {ctaLabel}
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

@@ -13,6 +13,18 @@ export default function Confirmation() {
     return requests[requests.length - 1];
   }, []);
 
+  // Determine if user came via autoaccept: presence of availabilityDraft without id OR a flag
+  const isAutoAcceptFlow = useMemo(() => {
+    try {
+      const draft = JSON.parse(sessionStorage.getItem('availabilityDraft') || 'null');
+      // If a draft exists and is not the synthetic 'draft' created by the timeslot modal, treat as autoaccept
+      if (draft && draft.id !== 'draft') return true;
+    } catch (e) {}
+    // Fallback: check an explicit flag that can be set when navigating from autoaccept
+    const flag = sessionStorage.getItem('cameFromAutoAccept') === 'true';
+    return flag;
+  }, []);
+
   const requestedDates = lastRequest?.dates ?? [];
   const location = lastRequest?.location || 'Port Lympne, Kent';
 
@@ -32,10 +44,21 @@ export default function Confirmation() {
       <div className="content">
         <div className="confirmation-hero" role="status" aria-live="polite">
           <div className="confetti-icon" aria-hidden>🎉</div>
-          <h1 className="title">Request sent</h1>
-          <p className="confirmation-message">
-            Your booking request has been sent to Port Lympne. Expect a response confirming or rejecting the dates in the next 24 hours.
-          </p>
+          {isAutoAcceptFlow ? (
+            <>
+              <h1 className="title">Booking successful</h1>
+              <p className="confirmation-message">
+                Your booking with the experience provider is confirmed. Please enjoy your experience.
+              </p>
+            </>
+          ) : (
+            <>
+              <h1 className="title">Request sent</h1>
+              <p className="confirmation-message">
+                Your booking request has been sent to Port Lympne. Expect a response confirming or rejecting the dates in the next 24 hours.
+              </p>
+            </>
+          )}
           <div className="request-id">Request ID: 1234567890</div>
         </div>
       </div>

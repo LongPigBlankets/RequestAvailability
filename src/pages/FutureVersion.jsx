@@ -17,6 +17,7 @@ export default function FutureVersion() {
   const [isTimeslotOpen, setIsTimeslotOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const [selectedDatesCount, setSelectedDatesCount] = useState(0);
+  const [hasAllTimesSelected, setHasAllTimesSelected] = useState(false);
   const ctaDesktopRef = useRef(null);
   const ctaMobileRef = useRef(null);
   const timeslotDesktopRef = useRef(null);
@@ -201,6 +202,19 @@ export default function FutureVersion() {
                   Select timeslots
                 </button>
               )}
+              {/* Desktop-only Continue CTA; disabled until required selections are made */}
+              <button
+                type="button"
+                className="cta-button cta-button--pill"
+                onClick={() => {
+                  sessionStorage.setItem('cameFromAutoAccept', 'true');
+                  navigate('/checkout');
+                }}
+                disabled={!(selectedLocation && selectedDatesCount > 0 && (!hasTimeslotParam || hasAllTimesSelected))}
+                aria-disabled={!(selectedLocation && selectedDatesCount > 0 && (!hasTimeslotParam || hasAllTimesSelected))}
+              >
+                Continue to checkout
+              </button>
             </div>
           </aside>
         </div>
@@ -230,6 +244,7 @@ export default function FutureVersion() {
         isOpen={isTimeslotOpen} 
         onClose={() => setIsTimeslotOpen(false)} 
         anchorRef={isDesktop ? timeslotDesktopRef : timeslotMobileRef}
+        onTimesUpdated={(ok) => setHasAllTimesSelected(!!ok)}
       />
     </div>
   );

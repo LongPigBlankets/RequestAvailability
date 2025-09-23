@@ -1,8 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
-export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
+export default function TimeslotModal({ isOpen, onClose, anchorRef, onTimesUpdated }) {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const isAutoAccept = pathname === '/autoaccept';
   const [dates, setDates] = useState([]); // [{ iso, formatted }]
   const [selectedTimesByIso, setSelectedTimesByIso] = useState({}); // { [iso]: 'HH:MM' }
   const popoverRef = useRef(null);
@@ -79,6 +81,32 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
       setSelectedTimesByIso({});
     }
   }, [isOpen]);
+
+  // Persist times to draft and notify parent on every change in autoaccept
+  useEffect(() => {
+    if (!isAutoAccept) return;
+    if (!dates || dates.length === 0) {
+      onTimesUpdated?.(false);
+      return;
+    }
+    const hasAllTimes = dates.every(d => !!selectedTimesByIso[d.iso]);
+    try {
+      const draft = JSON.parse(sessionStorage.getItem('availabilityDraft') || 'null');
+      if (draft && Array.isArray(draft.dates)) {
+        const updatedDraft = {
+          ...draft,
+          dates: draft.dates.map(d => ({
+            ...d,
+            time: selectedTimesByIso[d.iso] || d.time || null,
+          }))
+        };
+        sessionStorage.setItem('availabilityDraft', JSON.stringify(updatedDraft));
+      }
+    } catch (e) {
+      // no-op
+    }
+    onTimesUpdated?.(hasAllTimes);
+  }, [isAutoAccept, dates, selectedTimesByIso]);
 
   // Track viewport type similar to calendar popover
   useEffect(() => {
@@ -216,15 +244,17 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
           ))}
         </div>
       )}
-      <div className="booking-cta">
-        <button
-          type="button"
-          className={`cta-button cta-button--pill`}
-          onClick={persistTimesAndGoToCheckout}
-        >
-          Continue to checkout
-        </button>
-      </div>
+      {!isAutoAccept && (
+        <div className="booking-cta">
+          <button
+            type="button"
+            className={`cta-button cta-button--pill`}
+            onClick={persistTimesAndGoToCheckout}
+          >
+            Continue to checkout
+          </button>
+        </div>
+      )}
     </>
   );
 
