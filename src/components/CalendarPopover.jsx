@@ -1,11 +1,14 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function CalendarPopover({ anchorRef, onClose, selectedLocation, onProceed, onSelectedCountChange }) {
   const popoverRef = useRef(null);
   const [isDesktop, setIsDesktop] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0, width: 0, maxHeight: 0 });
   const navigate = useNavigate();
+  const { pathname, search } = useLocation();
+  const isAutoAccept = pathname === '/autoaccept';
+  const hasTimeslotParam = new URLSearchParams(search).has('timeslot');
 
   const [currentMonth, setCurrentMonth] = useState(() => {
     const now = new Date();
@@ -77,6 +80,13 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
   function toggleDate(iso, isDisabled) {
     if (isDisabled) return;
     setSelectedDates((prev) => {
+      if (isAutoAccept) {
+        const next = new Set();
+        if (!prev.has(iso)) {
+          next.add(iso);
+        }
+        return next;
+      }
       const next = new Set(prev);
       if (next.has(iso)) {
         next.delete(iso);
@@ -92,10 +102,10 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
   }
 
   useEffect(() => {
-    if (selectedDates.size < MAX_SELECTED_DATES) {
+    if (!isAutoAccept && selectedDates.size < MAX_SELECTED_DATES) {
       setShowMaxWarning(false);
     }
-  }, [selectedDates]);
+  }, [selectedDates, isAutoAccept]);
 
   // Notify parent about selected dates count changes
   useEffect(() => {
@@ -221,6 +231,8 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
     persistDraftAndGoToCheckout();
   }
 
+  const ctaLabel = isAutoAccept ? (hasTimeslotParam ? 'Select times' : 'Book now') : 'Check availability';
+
   return (
     <>
       {isDesktop ? (
@@ -232,7 +244,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
           aria-modal="false"
         >
           <div className="calendar open">
-            <div className="calendar-caption">Select dates (you can choose up to 5)</div>
+            <div className="calendar-caption">{isAutoAccept ? 'Select a date' : 'Select dates (you can choose up to 5)'}</div>
             <div className="calendar-desktop-container">
               <div className="calendar-month">
                 <div className="calendar-header">
@@ -322,7 +334,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
               </div>
             </div>
             <div className="calendar-microcopy">Note: This voucher cannot be booked on Saturdays</div>
-            {showMaxWarning && (
+            {(!isAutoAccept && showMaxWarning) && (
               <div className="calendar-warning" role="alert" aria-live="assertive">
                 Please select a maximum of 5 dates
               </div>
@@ -333,7 +345,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
                 className="cta-button cta-button--pill"
                 onClick={handleProceedClick}
               >
-                Check availability
+                {ctaLabel}
               </button>
             </div>
           </div>
@@ -408,7 +420,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
                     className="cta-button cta-button--pill"
                     onClick={handleProceedClick}
                   >
-                    Check availability
+                    {ctaLabel}
                   </button>
                 </div>
               </div>
