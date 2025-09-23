@@ -17,6 +17,7 @@ export default function FutureVersion() {
   const [isTimeslotOpen, setIsTimeslotOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const [selectedDatesCount, setSelectedDatesCount] = useState(0);
+  const [hasAllTimesSelected, setHasAllTimesSelected] = useState(false);
   const ctaDesktopRef = useRef(null);
   const ctaMobileRef = useRef(null);
   const timeslotDesktopRef = useRef(null);
@@ -33,6 +34,40 @@ export default function FutureVersion() {
     mql.addEventListener('change', sync);
     return () => mql.removeEventListener('change', sync);
   }, []);
+
+  // Keep draft's location in sync so checkout summary is accurate
+  useEffect(() => {
+    try {
+      const draft = JSON.parse(sessionStorage.getItem('availabilityDraft') || 'null');
+      if (draft) {
+        const next = { ...draft, location: selectedLocation || draft.location };
+        sessionStorage.setItem('availabilityDraft', JSON.stringify(next));
+        window.dispatchEvent(new Event('draftUpdated'));
+      }
+    } catch (e) {
+      // no-op
+    }
+  }, [selectedLocation]);
+
+  // Listen for draft updates to compute whether all times are selected
+  useEffect(() => {
+    function recompute() {
+      try {
+        const draft = JSON.parse(sessionStorage.getItem('availabilityDraft') || 'null');
+        const dates = Array.isArray(draft?.dates) ? draft.dates : [];
+        if (dates.length === 0) { setHasAllTimesSelected(false); return; }
+        const allHaveTimes = dates.every(d => !!d.time);
+        setHasAllTimesSelected(allHaveTimes);
+      } catch (e) {
+        setHasAllTimesSelected(false);
+      }
+    }
+    recompute();
+    window.addEventListener('draftUpdated', recompute);
+    return () => window.removeEventListener('draftUpdated', recompute);
+  }, []);
+
+  const isDesktopContinueEnabled = Boolean(selectedLocation) && selectedDatesCount > 0 && (!hasTimeslotParam || hasAllTimesSelected);
 
   return (
     <div className="app has-footer future-version">
@@ -201,12 +236,34 @@ export default function FutureVersion() {
                   Select timeslots
                 </button>
               )}
+              {/* Desktop proceed CTA for both flows; gating applied for autoaccept rules */}
+              <button
+                className="cta-button cta-button--pill"
+                type="button"
+                onClick={() => navigate('/checkout')}
+                disabled={!isDesktopContinueEnabled}
+                aria-disabled={!isDesktopContinueEnabled}
+                style={{ marginTop: '8px' }}
+              >
+                Continue to checkout
+              </button>
             </div>
           </aside>
         </div>
       </div>
 
-      {/* Mobile sticky CTA removed in favor of inline pills */}
+      {/* Mobile sticky CTA - always enabled for both flows */}
+      <div className="ctaBar">
+        <div className="ctaInner">
+          <button
+            className="cta-button"
+            type="button"
+            onClick={() => navigate('/checkout')}
+          >
+            Continue to Checkout
+          </button>
+        </div>
+      </div>
 
       {/* Overlays/Popovers */}
       <LocationActionSheet

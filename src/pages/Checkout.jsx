@@ -123,6 +123,7 @@ export default function Checkout() {
           dates: currentRequest.dates,
           timestamp: new Date().toISOString(),
           contact: { ...formData },
+          source: currentRequest.source || 'autoaccept',
         };
         const requests = JSON.parse(sessionStorage.getItem('availabilityRequests') || '[]');
         const updatedRequests = [...requests, newRequest];

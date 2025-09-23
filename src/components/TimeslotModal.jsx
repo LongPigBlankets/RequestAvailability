@@ -1,8 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const isAutoAccept = pathname === '/autoaccept';
   const [dates, setDates] = useState([]); // [{ iso, formatted }]
   const [selectedTimesByIso, setSelectedTimesByIso] = useState({}); // { [iso]: 'HH:MM' }
   const popoverRef = useRef(null);
@@ -74,6 +76,19 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
         initial[item.iso] = item.time || timeOptions[0];
       });
       setSelectedTimesByIso(initial);
+      // also persist immediately so desktop CTA gating can enable
+      try {
+        const draft = JSON.parse(sessionStorage.getItem('availabilityDraft') || 'null') || {};
+        const updatedDraft = {
+          ...draft,
+          dates: normalized.map(d => ({ ...d, time: initial[d.iso] })),
+          source: isAutoAccept ? 'autoaccept' : (draft.source || 'regular'),
+        };
+        sessionStorage.setItem('availabilityDraft', JSON.stringify(updatedDraft));
+        window.dispatchEvent(new Event('draftUpdated'));
+      } catch (e) {
+        // no-op
+      }
     } catch (e) {
       setDates([]);
       setSelectedTimesByIso({});
@@ -143,6 +158,24 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
 
   if (!isOpen) return null;
 
+  // Persist times on every change to selectedTimesByIso
+  useEffect(() => {
+    if (!isOpen) return;
+    try {
+      const draft = JSON.parse(sessionStorage.getItem('availabilityDraft') || 'null') || {};
+      const nextDates = (dates || []).map(d => ({ ...d, time: selectedTimesByIso[d.iso] || d.time || timeOptions[0] }));
+      const updatedDraft = {
+        ...draft,
+        dates: nextDates,
+        source: isAutoAccept ? 'autoaccept' : (draft.source || 'regular'),
+      };
+      sessionStorage.setItem('availabilityDraft', JSON.stringify(updatedDraft));
+      window.dispatchEvent(new Event('draftUpdated'));
+    } catch (e) {
+      // no-op
+    }
+  }, [selectedTimesByIso, dates, isOpen, isAutoAccept, timeOptions]);
+
   function persistTimesAndGoToCheckout() {
     try {
       // update draft if present; otherwise update the latest availability request
@@ -173,7 +206,7 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
             next[lastIndex] = updatedLast;
             sessionStorage.setItem('availabilityRequests', JSON.stringify(next));
             // Also set a draft so checkout reads it first
-            sessionStorage.setItem('availabilityDraft', JSON.stringify({ ...updatedLast, id: 'draft' }));
+            sessionStorage.setItem('availabilityDraft', JSON.stringify({ ...updatedLast, id: 'draft', source: isAutoAccept ? 'autoaccept' : 'regular' }));
           }
         }
       }
@@ -216,15 +249,17 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
           ))}
         </div>
       )}
-      <div className="booking-cta">
-        <button
-          type="button"
-          className={`cta-button cta-button--pill`}
-          onClick={persistTimesAndGoToCheckout}
-        >
-          Continue to checkout
-        </button>
-      </div>
+      {!isAutoAccept && (
+        <div className="booking-cta">
+          <button
+            type="button"
+            className={`cta-button cta-button--pill`}
+            onClick={persistTimesAndGoToCheckout}
+          >
+            Continue to checkout
+          </button>
+        </div>
+      )}
     </>
   );
 
