@@ -68,6 +68,7 @@ export default function Checkout() {
   };
 
   const hasSelectedDates = Array.isArray(currentRequest?.dates) && currentRequest.dates.length > 0;
+  const hasMultipleDates = Array.isArray(currentRequest?.dates) && currentRequest.dates.length > 1;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -243,9 +244,11 @@ export default function Checkout() {
             
             <div className="summary-dates">
               <span className="summary-label"><span className="chip-icon chip-icon--calendar" aria-hidden="true"></span> Selected Dates:</span>
-              <p className="description" style={{ marginTop: 8 }}>
-                Mark one Top Preference so the supplier knows which date to prioritise.
-              </p>
+              {hasMultipleDates && (
+                <p className="description" style={{ marginTop: 8 }}>
+                  Mark one Top Preference so the supplier knows which date to prioritise.
+                </p>
+              )}
               <div className="dates-summary-list">
                 {currentRequest.dates.map((date) => (
                   <div key={date.iso} className="date-summary-item">
@@ -255,7 +258,7 @@ export default function Checkout() {
                         <div className="date-summary-time">Selected time: {date.time}</div>
                       )}
                     </div>
-                    {(!anyFavourited || date.isFavourite) && (
+                    {hasMultipleDates && (!anyFavourited || date.isFavourite) && (
                       <button
                         type="button"
                         className={`favorite-btn ${date.isFavourite ? 'active' : ''}`}

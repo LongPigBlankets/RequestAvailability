@@ -370,7 +370,7 @@ body {
   font-family: 'Droid Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .chip-icon { display: inline-block; margin-right: 10px; width: 18px; height: 18px; background-color: #0f172a; }
@@ -402,6 +402,15 @@ body {
     color: #0f172a;
     border: none;
     box-shadow: none;
+  }
+  /* Left-align icon + text within desktop selector CTAs */
+  .future-cta-card .cta-button--date,
+  .future-cta-card .cta-button--timeslot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: left;
+    padding-left: 16px; /* ensure 16px from edge */
   }
 }
 
@@ -651,7 +660,7 @@ body {
   color: #334155;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   cursor: pointer;
 }
 .location-select::before {
@@ -713,7 +722,7 @@ body {
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   padding: 14px 18px 14px 44px;
   border-radius: 9999px;
   border: none;
