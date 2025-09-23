@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
-export default function CalendarPopover({ anchorRef, onClose, selectedLocation, onProceed, onSelectedCountChange }) {
+export default function CalendarPopover({ anchorRef, onClose, selectedLocation, onProceed, onSelectedCountChange, onDatesChange }) {
   const popoverRef = useRef(null);
   const [isDesktop, setIsDesktop] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0, width: 0, maxHeight: 0 });
@@ -107,12 +107,20 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
     }
   }, [selectedDates, isAutoAccept]);
 
-  // Notify parent about selected dates count changes
+  // Notify parent about selected dates count and list changes
   useEffect(() => {
     if (typeof onSelectedCountChange === 'function') {
       onSelectedCountChange(selectedDates.size);
     }
-  }, [selectedDates, onSelectedCountChange]);
+    if (typeof onDatesChange === 'function') {
+      const arr = Array.from(selectedDates).map(iso => ({
+        iso,
+        formatted: formatHuman(new Date(iso)),
+        isFavourite: false,
+      }));
+      onDatesChange(arr);
+    }
+  }, [selectedDates, onSelectedCountChange, onDatesChange]);
 
   // Auto-persist draft on selection change for autoaccept (no internal CTA on desktop)
   useEffect(() => {

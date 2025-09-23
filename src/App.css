@@ -242,9 +242,9 @@ body {
   grid-template-columns: 1fr 1fr;
 }
 
-/* Fixed CTA removed on Future Version for mobile; hide bar and remove extra padding */
+/* Show sticky CTA bar on Future Version for mobile */
 @media (max-width: 1023px) {
-  .future-version .ctaBar { display: none; }
+  .future-version .ctaBar { display: block; }
   .future-version { padding-bottom: 0; }
 }
 
@@ -286,6 +286,7 @@ body {
   background: #94a3b8;
   box-shadow: none;
   cursor: not-allowed;
+  color: #334155; /* darker grey text when disabled */
 }
 
 /* Secondary CTA style: white fill, green text and border */

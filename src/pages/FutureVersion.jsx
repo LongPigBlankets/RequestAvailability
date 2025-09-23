@@ -18,13 +18,15 @@ export default function FutureVersion() {
   const [isDesktop, setIsDesktop] = useState(false);
   const [selectedDatesCount, setSelectedDatesCount] = useState(0);
   const [hasAllTimesSelected, setHasAllTimesSelected] = useState(false);
+  const [selectedDates, setSelectedDates] = useState([]);
   const ctaDesktopRef = useRef(null);
   const ctaMobileRef = useRef(null);
   const timeslotDesktopRef = useRef(null);
   const timeslotMobileRef = useRef(null);
   const locationChipInlineRef = useRef(null);
   const locationChipCardRef = useRef(null);
-  const { search } = useLocation();
+  const { search, pathname } = useLocation();
+  const isAutoAcceptPath = pathname === '/autoaccept';
   const hasTimeslotParam = new URLSearchParams(search).has('timeslot');
 
   useEffect(() => {
@@ -124,6 +126,24 @@ export default function FutureVersion() {
               </div>
               <div className="divider"></div>
             </div>
+            {/* Mobile sticky CTA for both flows */}
+            <div className="ctaBar future-version">
+              <div className="ctaInner">
+                <button
+                  className="cta-button"
+                  type="button"
+                  onClick={() => {
+                    sessionStorage.setItem('availabilityDraft', JSON.stringify({ location: selectedLocation || 'Port Lympne Kent', dates: selectedDates, timestamp: new Date().toISOString() }));
+                    sessionStorage.setItem('cameFromAutoAccept', isAutoAcceptPath ? 'true' : 'false');
+                    navigate('/checkout');
+                  }}
+                  disabled={!(selectedLocation && selectedDatesCount > 0 && (!hasTimeslotParam || hasAllTimesSelected))}
+                  aria-disabled={!(selectedLocation && selectedDatesCount > 0 && (!hasTimeslotParam || hasAllTimesSelected))}
+                >
+                  Continue to checkout
+                </button>
+              </div>
+            </div>
 
             <h2 className="section-title">About the experience</h2>
             <p className="description">
@@ -207,7 +227,7 @@ export default function FutureVersion() {
                 type="button"
                 className="cta-button cta-button--pill"
                 onClick={() => {
-                  sessionStorage.setItem('cameFromAutoAccept', 'true');
+                  sessionStorage.setItem('cameFromAutoAccept', isAutoAcceptPath ? 'true' : 'false');
                   navigate('/checkout');
                 }}
                 disabled={!(selectedLocation && selectedDatesCount > 0 && (!hasTimeslotParam || hasAllTimesSelected))}
@@ -237,6 +257,7 @@ export default function FutureVersion() {
           onClose={() => setIsCalendarOpen(false)} 
           selectedLocation={selectedLocation}
           onSelectedCountChange={(n) => setSelectedDatesCount(n)}
+          onDatesChange={(arr) => setSelectedDates(arr)}
           onProceed={hasTimeslotParam ? () => setIsTimeslotOpen(true) : undefined}
         />
       )}
