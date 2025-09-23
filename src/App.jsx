@@ -12,6 +12,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<FutureVersion />} />
+      <Route path="/autoaccept" element={<FutureVersion />} />
       <Route path="/future-version" element={<FutureVersion />} />
       <Route path="/legacy" element={<Home />} />
       <Route path="/request-to-book" element={<RequestToBook />} />
