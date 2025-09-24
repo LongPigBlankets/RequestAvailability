@@ -106,23 +106,32 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
 
   // Position popover near anchor on desktop
   useEffect(() => {
-    if (!isOpen || !anchorRef?.current) return;
+    if (!isOpen) return;
 
     function updatePosition() {
-      if (!anchorRef.current) return;
-      const rect = anchorRef.current.getBoundingClientRect();
-      const desiredTop = rect.bottom + 8; // small offset
       const RIGHT_MARGIN = 48;
       const LEFT_MARGIN = 24;
       const BOTTOM_MARGIN = 128; // leave space for CTA area
-      const availableRight = window.innerWidth - rect.left - RIGHT_MARGIN;
-      const availableLeft = rect.right - LEFT_MARGIN;
       const MAX_WIDTH = 700;
       const MIN_WIDTH = 420;
+      const winW = typeof window !== 'undefined' ? window.innerWidth : 1024;
+      const winH = typeof window !== 'undefined' ? window.innerHeight : 768;
+      if (!anchorRef?.current) {
+        const width = Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, Math.floor(winW * 0.8)));
+        const left = Math.max(LEFT_MARGIN, winW - width - RIGHT_MARGIN);
+        const desiredTop = 120;
+        const maxHeight = Math.max(240, winH - desiredTop - BOTTOM_MARGIN);
+        setPosition({ top: desiredTop, left, width, maxHeight });
+        return;
+      }
+      const rect = anchorRef.current.getBoundingClientRect();
+      const desiredTop = rect.bottom + 8; // small offset
+      const availableRight = winW - rect.left - RIGHT_MARGIN;
+      const availableLeft = rect.right - LEFT_MARGIN;
       const candidate = Math.max(availableLeft, availableRight);
       const width = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, candidate));
       const left = Math.max(LEFT_MARGIN, rect.right - width);
-      const maxHeight = Math.max(240, window.innerHeight - desiredTop - BOTTOM_MARGIN);
+      const maxHeight = Math.max(240, winH - desiredTop - BOTTOM_MARGIN);
       setPosition({ top: desiredTop, left, width, maxHeight });
     }
 
@@ -267,7 +276,7 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
     <div
       ref={popoverRef}
       className="cta-popover"
-      style={{ top: `${position.top}px`, left: `${position.left}px`, width: `${position.width}px` }}
+      style={{ top: `${position.top || 120}px`, left: `${position.left || 24}px`, width: `${position.width || 520}px` }}
       role="dialog"
       aria-modal="false"
     >
