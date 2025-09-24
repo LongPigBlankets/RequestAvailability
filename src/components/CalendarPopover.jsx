@@ -114,6 +114,41 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
     }
   }, [selectedDates, onSelectedCountChange]);
 
+  // Persist draft automatically when dates change so outer CTAs can read state
+  useEffect(() => {
+    if (selectedDates.size === 0) {
+      // Clear draft on zero selection to prevent stale gating
+      try {
+        const draft = JSON.parse(sessionStorage.getItem('availabilityDraft') || 'null');
+        if (draft) {
+          const next = { ...draft, dates: [] };
+          sessionStorage.setItem('availabilityDraft', JSON.stringify(next));
+          window.dispatchEvent(new Event('draftUpdated'));
+        }
+      } catch (e) {
+        // no-op
+      }
+      return;
+    }
+    try {
+      const dates = Array.from(selectedDates).map(iso => ({
+        iso,
+        formatted: formatHuman(new Date(iso)),
+        isFavourite: false,
+      }));
+      const draft = {
+        location: selectedLocation || 'Port Lympne Kent',
+        dates,
+        timestamp: new Date().toISOString(),
+        source: isAutoAccept ? 'autoaccept' : 'regular',
+      };
+      sessionStorage.setItem('availabilityDraft', JSON.stringify(draft));
+      window.dispatchEvent(new Event('draftUpdated'));
+    } catch (e) {
+      // no-op
+    }
+  }, [selectedDates, selectedLocation, isAutoAccept]);
+
   // Track viewport type and open behavior
   useEffect(() => {
     const mql = window.matchMedia('(min-width: 1024px)');
@@ -339,15 +374,17 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
                 Please select a maximum of 5 dates
               </div>
             )}
-            <div className="booking-cta">
-              <button
-                type="button"
-                className="cta-button cta-button--pill"
-                onClick={handleProceedClick}
-              >
-                {ctaLabel}
-              </button>
-            </div>
+            {!isAutoAccept && (
+              <div className="booking-cta">
+                <button
+                  type="button"
+                  className="cta-button cta-button--pill"
+                  onClick={handleProceedClick}
+                >
+                  {ctaLabel}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       ) : (
@@ -414,15 +451,17 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
                     Please select a maximum of 5 dates
                   </div>
                 )}
-                <div className="booking-cta">
-                  <button
-                    type="button"
-                    className="cta-button cta-button--pill"
-                    onClick={handleProceedClick}
-                  >
-                    {ctaLabel}
-                  </button>
-                </div>
+                {!isAutoAccept && (
+                  <div className="booking-cta">
+                    <button
+                      type="button"
+                      className="cta-button cta-button--pill"
+                      onClick={handleProceedClick}
+                    >
+                      {ctaLabel}
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

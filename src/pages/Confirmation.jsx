@@ -15,6 +15,7 @@ export default function Confirmation() {
 
   const requestedDates = lastRequest?.dates ?? [];
   const location = lastRequest?.location || 'Port Lympne, Kent';
+  const isAutoAcceptJourney = lastRequest?.source === 'autoaccept';
 
   return (
     <div className="app has-footer">
@@ -32,9 +33,11 @@ export default function Confirmation() {
       <div className="content">
         <div className="confirmation-hero" role="status" aria-live="polite">
           <div className="confetti-icon" aria-hidden>🎉</div>
-          <h1 className="title">Request sent</h1>
+          <h1 className="title">{isAutoAcceptJourney ? 'Booking successful' : 'Request sent'}</h1>
           <p className="confirmation-message">
-            Your booking request has been sent to Port Lympne. Expect a response confirming or rejecting the dates in the next 24 hours.
+            {isAutoAcceptJourney
+              ? 'Your booking with the experience provider is confirmed. Please enjoy your experience.'
+              : "Your booking request has been sent to Port Lympne. Expect a response confirming or rejecting the dates in the next 24 hours."}
           </p>
           <div className="request-id">Request ID: 1234567890</div>
         </div>

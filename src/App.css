@@ -242,9 +242,8 @@ body {
   grid-template-columns: 1fr 1fr;
 }
 
-/* Fixed CTA removed on Future Version for mobile; hide bar and remove extra padding */
+/* Ensure Future Version shows mobile sticky CTA */
 @media (max-width: 1023px) {
-  .future-version .ctaBar { display: none; }
   .future-version { padding-bottom: 0; }
 }
 
@@ -373,7 +372,7 @@ body {
   justify-content: center;
 }
 
-.chip-icon { display: inline-block; margin-right: 10px; width: 18px; height: 18px; background-color: #0f172a; }
+.chip-icon { display: inline-block; margin-right: 10px; width: 18px; height: 18px; background-color: #0f172a; vertical-align: middle; }
 .chip-icon--pin { -webkit-mask: url('./assets/pin.svg') no-repeat center / contain; mask: url('./assets/pin.svg') no-repeat center / contain; }
 .chip-icon--calendar { -webkit-mask: url('./assets/calendar.svg') no-repeat center / contain; mask: url('./assets/calendar.svg') no-repeat center / contain; }
 .chip-icon--clock { -webkit-mask: url('./assets/clock.svg') no-repeat center / contain; mask: url('./assets/clock.svg') no-repeat center / contain; }
