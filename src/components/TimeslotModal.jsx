@@ -165,8 +165,6 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
     };
   }, [isOpen, anchorRef, onClose]);
 
-  if (!isOpen) return null;
-
   // Persist times on every change to selectedTimesByIso
   useEffect(() => {
     if (!isOpen) return;
@@ -184,6 +182,8 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
       // no-op
     }
   }, [selectedTimesByIso, dates, isOpen, isAutoAccept, timeOptions]);
+
+  if (!isOpen) return null;
 
   function persistTimesAndGoToCheckout() {
     try {
