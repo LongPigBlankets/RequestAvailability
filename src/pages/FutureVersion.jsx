@@ -111,7 +111,7 @@ export default function FutureVersion() {
               <span className="extend" role="button" tabIndex={0}>Extend</span>
             </div>
             <div className="flexibility">
-              <img src="/assets/fully-flexible-arrows.png" alt="" aria-hidden="true" className="flex-icon-img" />
+              <img src="/assets/flexible_exchange.png" alt="" aria-hidden="true" className="flex-icon-img" />
               <span className="flexible-text">Fully Flexible</span>
             </div>
 
@@ -256,7 +256,7 @@ export default function FutureVersion() {
       <div className="ctaBar">
         <div className="ctaInner">
           <button
-            className="cta-button"
+            className="cta-button cta-button--pill"
             type="button"
             onClick={() => navigate('/checkout')}
           >

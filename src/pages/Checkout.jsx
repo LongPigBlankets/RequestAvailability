@@ -282,7 +282,7 @@ export default function Checkout() {
             Expect an email with the response within 24h of requesting.
           </div>
           <button 
-            className="cta-button" 
+            className="cta-button cta-button--pill" 
             type="button" 
             onClick={handleSendRequest}
             disabled={!hasSelectedDates}

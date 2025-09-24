@@ -282,10 +282,10 @@ body {
 
 .cta-button[disabled],
 .cta-button[aria-disabled="true"] {
-  background: #94a3b8;
+  background: #f3f3f3;
   box-shadow: none;
   cursor: not-allowed;
-  color: #e2e8f0;
+  color: #c2c4c5;
 }
 
 /* Secondary CTA style: white fill, green text and border */

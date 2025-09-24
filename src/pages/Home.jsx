@@ -68,7 +68,7 @@ export default function Home() {
               <span className="extend" role="button" tabIndex={0}>Extend</span>
             </div>
         <div className="flexibility">
-          <img src="/assets/fully-flexible-arrows.png" alt="" aria-hidden="true" className="flex-icon-img" />
+          <img src="/assets/flexible_exchange.png" alt="" aria-hidden="true" className="flex-icon-img" />
           <span className="flexible-text">Fully Flexible</span>
         </div>
           </div>

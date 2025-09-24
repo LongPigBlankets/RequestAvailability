@@ -99,6 +99,9 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
       next.add(iso);
       return next;
     });
+    if (isAutoAccept && isDesktop) {
+      onClose?.();
+    }
   }
 
   useEffect(() => {
