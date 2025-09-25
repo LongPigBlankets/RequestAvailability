@@ -18,6 +18,10 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
   const MAX_SELECTED_DATES = 5;
   const [selectedDates, setSelectedDates] = useState(() => new Set());
   const [showMaxWarning, setShowMaxWarning] = useState(false);
+  // Time selection for autoaccept flow
+  const [timeHour, setTimeHour] = useState('09');
+  const [timeMinute, setTimeMinute] = useState('00');
+  const [timeAmPm, setTimeAmPm] = useState('AM');
 
   function addMonths(baseDate, delta) {
     return new Date(baseDate.getFullYear(), baseDate.getMonth() + delta, 1);
@@ -77,6 +81,11 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
     return `${day}${suffix} of ${month}`;
   }
 
+  function getSelectedTimeLabel() {
+    // On desktop there is no AM/PM and inputs are freeform
+    return isDesktop ? `${timeHour}:${timeMinute}` : `${timeHour}:${timeMinute} ${timeAmPm}`;
+  }
+
   function toggleDate(iso, isDisabled) {
     if (isDisabled) return;
     setSelectedDates((prev) => {
@@ -100,13 +109,14 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
       return next;
     });
 
-    // For autoaccept, persist immediately so timeslot modal reads it
+    // For autoaccept, persist immediately so next pages can read it
     if (isAutoAccept) {
       try {
         const dates = [{
           iso,
           formatted: formatHuman(new Date(iso)),
           isFavourite: false,
+          time: hasTimeslotParam ? getSelectedTimeLabel() : undefined,
         }];
         const draft = {
           location: selectedLocation || 'Port Lympne Kent',
@@ -120,15 +130,9 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
         // no-op
       }
     }
-    // Close calendar after a selection in autoaccept, and if timeslots are available, open the timeslot modal
-    if (isAutoAccept) {
+    // Auto-close only if on autoaccept WITHOUT ?timeslot
+    if (isAutoAccept && !hasTimeslotParam) {
       onClose?.();
-      if (hasTimeslotParam) {
-        // delegate to parent to open timeslot modal if provided
-        if (typeof onProceed === 'function') {
-          onProceed();
-        }
-      }
     }
   }
 
@@ -166,6 +170,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
         iso,
         formatted: formatHuman(new Date(iso)),
         isFavourite: false,
+        time: (isAutoAccept && hasTimeslotParam) ? getSelectedTimeLabel() : undefined,
       }));
       const draft = {
         location: selectedLocation || 'Port Lympne Kent',
@@ -178,7 +183,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
     } catch (e) {
       // no-op
     }
-  }, [selectedDates, selectedLocation, isAutoAccept]);
+  }, [selectedDates, selectedLocation, isAutoAccept, timeHour, timeMinute, timeAmPm, isDesktop]);
 
   // Track viewport type and open behavior
   useEffect(() => {
@@ -253,6 +258,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
         iso,
         formatted: formatHuman(new Date(iso)),
         isFavourite: false,
+        time: (isAutoAccept && hasTimeslotParam) ? getSelectedTimeLabel() : undefined,
       }));
       const draft = {
         location: selectedLocation || "Port Lympne Kent",
@@ -273,6 +279,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
         iso,
         formatted: formatHuman(new Date(iso)),
         isFavourite: false,
+        time: (isAutoAccept && hasTimeslotParam) ? getSelectedTimeLabel() : undefined,
       }));
       const draft = {
         location: selectedLocation || "Port Lympne Kent",
@@ -399,6 +406,40 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
                 </div>
               </div>
             </div>
+            {/* Extra space for time selector on desktop in autoaccept (only when ?timeslot) */}
+            {(isAutoAccept && hasTimeslotParam) && (
+              <div className="desktop-time-selector">
+                <div className="time-inputs" aria-label="Select time">
+                  <input
+                    className="time-input"
+                    inputMode="numeric"
+                    aria-label="Hour"
+                    value={timeHour}
+                    onChange={(e) => setTimeHour(e.target.value.replace(/[^0-9]/g, ''))}
+                  />
+                  <span className="time-sep">:</span>
+                  <input
+                    className="time-input"
+                    inputMode="numeric"
+                    aria-label="Minute"
+                    value={timeMinute}
+                    onChange={(e) => setTimeMinute(e.target.value.replace(/[^0-9]/g, ''))}
+                  />
+                </div>
+                <div className="time-helper">Selected time: {getSelectedTimeLabel()}</div>
+              </div>
+            )}
+            {(isAutoAccept && hasTimeslotParam) && (
+              <div className="booking-cta" style={{ marginTop: '12px' }}>
+                <button
+                  type="button"
+                  className="cta-button cta-button--pill"
+                  onClick={persistDraftAndGoToCheckout}
+                >
+                  Book now
+                </button>
+              </div>
+            )}
             <div className="calendar-microcopy">Note: This voucher cannot be booked on Saturdays</div>
             {(!isAutoAccept && showMaxWarning) && (
               <div className="calendar-warning" role="alert" aria-live="assertive">
@@ -423,7 +464,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
           <div className="booking-backdrop"></div>
           <div className="booking-panel" onClick={(e) => e.stopPropagation()}>
             <div className="booking-header">
-              <h3 className="booking-title">Choose Dates</h3>
+              <h3 className="booking-title">Choose Date{isAutoAccept ? ' & Time' : 's'}</h3>
               <button className="booking-close" aria-label="Close" onClick={onClose}>×</button>
             </div>
             <div className="booking-body">
@@ -476,6 +517,40 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
                     );
                   })}
                 </div>
+                {/* Mobile time wheel inside action sheet for autoaccept (only when ?timeslot) */}
+                {(isAutoAccept && hasTimeslotParam) && (
+                  <div className="mobile-time-wheel" aria-label="Select time">
+                    <div className="time-wheel-columns">
+                      <select
+                        className="wheel hour"
+                        value={timeHour}
+                        onChange={(e) => setTimeHour(e.target.value)}
+                      >
+                        {Array.from({ length: 23 }, (_, i) => String(i + 1).padStart(2, '0')).map(h => (
+                          <option key={h} value={h}>{h}</option>
+                        ))}
+                      </select>
+                      <div className="wheel-sep">:</div>
+                      <select
+                        className="wheel minute"
+                        value={timeMinute}
+                        onChange={(e) => setTimeMinute(e.target.value)}
+                      >
+                        <option value="00">00</option>
+                        <option value="30">30</option>
+                      </select>
+                      <select
+                        className="wheel ampm"
+                        value={timeAmPm}
+                        onChange={(e) => setTimeAmPm(e.target.value === 'PM' ? 'PM' : 'AM')}
+                      >
+                        <option value="AM">AM</option>
+                        <option value="PM">PM</option>
+                      </select>
+                    </div>
+                    <div className="time-helper" aria-live="polite">Selected time: {getSelectedTimeLabel()}</div>
+                  </div>
+                )}
                 <div className="calendar-microcopy">Note: This voucher cannot be booked on Saturdays</div>
                 {showMaxWarning && (
                   <div className="calendar-warning" role="alert" aria-live="assertive">
@@ -490,6 +565,28 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
                       onClick={handleProceedClick}
                     >
                       {ctaLabel}
+                    </button>
+                  </div>
+                )}
+                {(isAutoAccept && !hasTimeslotParam) && (
+                  <div className="booking-cta">
+                    <button
+                      type="button"
+                      className="cta-button cta-button--pill"
+                      onClick={persistDraftAndGoToCheckout}
+                    >
+                      Continue to checkout
+                    </button>
+                  </div>
+                )}
+                {(isAutoAccept && hasTimeslotParam) && (
+                  <div className="booking-cta">
+                    <button
+                      type="button"
+                      className="cta-button cta-button--pill"
+                      onClick={persistDraftAndGoToCheckout}
+                    >
+                      Book now
                     </button>
                   </div>
                 )}

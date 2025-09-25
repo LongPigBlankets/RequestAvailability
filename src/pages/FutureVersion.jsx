@@ -18,6 +18,7 @@ export default function FutureVersion() {
   const [isDesktop, setIsDesktop] = useState(false);
   const [selectedDatesCount, setSelectedDatesCount] = useState(0);
   const [hasAllTimesSelected, setHasAllTimesSelected] = useState(false);
+  const [selectedDateTimeLabel, setSelectedDateTimeLabel] = useState('');
   const ctaDesktopRef = useRef(null);
   const ctaMobileRef = useRef(null);
   const timeslotDesktopRef = useRef(null);
@@ -59,8 +60,18 @@ export default function FutureVersion() {
         if (dates.length === 0) { setHasAllTimesSelected(false); return; }
         const allHaveTimes = dates.every(d => !!d.time);
         setHasAllTimesSelected(allHaveTimes);
+
+        // Build selected date+time label for pills (autoaccept)
+        if (isAutoAccept && dates.length > 0) {
+          const first = dates[0];
+          const label = `${first.formatted}${first.time ? `, ${first.time}` : ''}`;
+          setSelectedDateTimeLabel(label);
+        } else {
+          setSelectedDateTimeLabel('');
+        }
       } catch (e) {
         setHasAllTimesSelected(false);
+        setSelectedDateTimeLabel('');
       }
     }
     recompute();
@@ -136,26 +147,28 @@ export default function FutureVersion() {
                 {/* Dates pill */}
                 <button
                   type="button"
-                  className="chip-button"
+                  className={`chip-button${isAutoAccept ? ' chip-button--full' : ''}`}
                   ref={ctaMobileRef}
                   onClick={() => setIsCalendarOpen(true)}
                   aria-haspopup="dialog"
                   aria-expanded={isCalendarOpen}
                 >
                   <span className="chip-icon chip-icon--calendar" aria-hidden="true"></span>
-                  <span>Select date</span>
+                  <span>{selectedDateTimeLabel ? selectedDateTimeLabel : 'Select date'}</span>
                 </button>
 
-                {/* Times pill */}
-                <button
-                  type="button"
-                  className="chip-button"
-                  ref={timeslotMobileRef}
-                  onClick={() => setIsTimeslotOpen(true)}
-                >
-                  <span className="chip-icon chip-icon--clock" aria-hidden="true"></span>
-                  <span>Select time</span>
-                </button>
+                {/* Times pill (hidden on autoaccept) */}
+                {!isAutoAccept && (
+                  <button
+                    type="button"
+                    className="chip-button"
+                    ref={timeslotMobileRef}
+                    onClick={() => setIsTimeslotOpen(true)}
+                  >
+                    <span className="chip-icon chip-icon--clock" aria-hidden="true"></span>
+                    <span>Select time</span>
+                  </button>
+                )}
               </div>
               <div className="divider"></div>
             </div>
@@ -211,7 +224,7 @@ export default function FutureVersion() {
               </button>
             </div>
             <div className="future-card-cta">
-              <div className="future-card-cta-row">
+              <div className={`future-card-cta-row${isAutoAccept ? ' single' : ''}`}>
                 <button
                   ref={ctaDesktopRef}
                   className="cta-button cta-button--pill cta-button--date"
@@ -221,9 +234,9 @@ export default function FutureVersion() {
                   aria-expanded={isCalendarOpen}
                 >
                   <span className="chip-icon" aria-hidden="true"></span>
-                  Date
+                  {selectedDateTimeLabel ? selectedDateTimeLabel : 'Date'}
                 </button>
-                {hasTimeslotParam && (
+                {!isAutoAccept && hasTimeslotParam && (
                   <button
                     className="cta-button cta-button--secondary cta-button--pill cta-button--timeslot"
                     type="button"
@@ -277,7 +290,7 @@ export default function FutureVersion() {
           onClose={() => setIsCalendarOpen(false)} 
           selectedLocation={selectedLocation}
           onSelectedCountChange={(n) => setSelectedDatesCount(n)}
-          onProceed={hasTimeslotParam ? () => setIsTimeslotOpen(true) : undefined}
+          onProceed={!isAutoAccept && hasTimeslotParam ? () => setIsTimeslotOpen(true) : undefined}
         />
       )}
       <TimeslotModal 
