@@ -15,6 +15,9 @@ export default function FutureVersion() {
 
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isTimeslotOpen, setIsTimeslotOpen] = useState(false);
+  // Desktop multi-row controls
+  const [openCalendarRowDesktop, setOpenCalendarRowDesktop] = useState(null); // 1 | 2 | 3 | null
+  const [openTimeRowDesktop, setOpenTimeRowDesktop] = useState(null); // 1 | 2 | 3 | null
   const [isDesktop, setIsDesktop] = useState(false);
   const [selectedDatesCount, setSelectedDatesCount] = useState(0);
   const [hasAllTimesSelected, setHasAllTimesSelected] = useState(false);
@@ -22,11 +25,20 @@ export default function FutureVersion() {
   const ctaMobileRef = useRef(null);
   const timeslotDesktopRef = useRef(null);
   const timeslotMobileRef = useRef(null);
+  // Additional desktop refs for row 2 and 3
+  const ctaDesktopRef2 = useRef(null);
+  const ctaDesktopRef3 = useRef(null);
+  const timeslotDesktopRef2 = useRef(null);
+  const timeslotDesktopRef3 = useRef(null);
   const locationChipInlineRef = useRef(null);
   const locationChipCardRef = useRef(null);
   const { search, pathname } = useLocation();
   const hasTimeslotParam = new URLSearchParams(search).has('timeslot');
   const isAutoAccept = pathname === '/autoaccept';
+
+  // Track per-row selected date and time display
+  const [rowDates, setRowDates] = useState({ 1: null, 2: null, 3: null }); // { row: { iso, formatted } }
+  const [rowTimes, setRowTimes] = useState({ 1: null, 2: null, 3: null }); // { row: 'HH:MM' }
 
   useEffect(() => {
     const mql = window.matchMedia('(min-width: 1024px)');
@@ -69,6 +81,74 @@ export default function FutureVersion() {
   }, []);
 
   // Desktop CTA is always enabled per latest requirements
+
+  // Initialize rows from draft (if any) and keep time labels in sync
+  useEffect(() => {
+    function recomputeFromDraft() {
+      try {
+        const draft = JSON.parse(sessionStorage.getItem('availabilityDraft') || 'null');
+        const dates = Array.isArray(draft?.dates) ? draft.dates : [];
+        // Seed row dates from first three entries if not already chosen
+        setRowDates(prev => {
+          const next = { ...prev };
+          for (let i = 0; i < Math.min(3, dates.length); i += 1) {
+            const row = i + 1;
+            if (!next[row]) {
+              next[row] = { iso: dates[i].iso, formatted: dates[i].formatted };
+            }
+          }
+          return next;
+        });
+        // Sync row times based on matching iso
+        setRowTimes(prev => {
+          const next = { ...prev };
+          for (let row = 1; row <= 3; row += 1) {
+            const rd = (rowDates[row] || dates[row - 1]) || null;
+            if (rd && rd.iso) {
+              const found = dates.find(d => d.iso === rd.iso);
+              next[row] = found?.time || null;
+            }
+          }
+          return next;
+        });
+      } catch (e) {
+        // no-op
+      }
+    }
+    recomputeFromDraft();
+    window.addEventListener('draftUpdated', recomputeFromDraft);
+    return () => window.removeEventListener('draftUpdated', recomputeFromDraft);
+  }, [rowDates]);
+
+  function mergeDatesIntoDraft(nextRowDates) {
+    try {
+      const prevDraft = JSON.parse(sessionStorage.getItem('availabilityDraft') || 'null') || {};
+      const prevDates = Array.isArray(prevDraft.dates) ? prevDraft.dates : [];
+      const timeByIso = {};
+      prevDates.forEach(d => { if (d?.iso) timeByIso[d.iso] = d.time || null; });
+      const dates = [1,2,3]
+        .map(r => nextRowDates[r])
+        .filter(Boolean)
+        .map(d => ({ iso: d.iso, formatted: d.formatted, isFavourite: false, time: timeByIso[d.iso] || null }));
+      const draft = {
+        ...prevDraft,
+        location: selectedLocation || prevDraft.location || 'Port Lympne Kent',
+        dates,
+        timestamp: new Date().toISOString(),
+        source: isAutoAccept ? 'autoaccept' : (prevDraft.source || 'regular'),
+      };
+      sessionStorage.setItem('availabilityDraft', JSON.stringify(draft));
+      window.dispatchEvent(new Event('draftUpdated'));
+    } catch (e) {
+      // no-op
+    }
+  }
+
+  function handleDateChosen(row, { iso, formatted }) {
+    const updated = { ...rowDates, [row]: { iso, formatted } };
+    setRowDates(updated);
+    mergeDatesIntoDraft(updated);
+  }
 
   return (
     <div className={`app has-footer future-version${isAutoAccept ? ' autoaccept-journey' : ''}`}>
@@ -211,29 +291,74 @@ export default function FutureVersion() {
               </button>
             </div>
             <div className="future-card-cta">
+              {/* Row 1 */}
               <div className="future-card-cta-row">
                 <button
                   ref={ctaDesktopRef}
                   className="cta-button cta-button--pill cta-button--date"
                   type="button"
-                  onClick={() => setIsCalendarOpen(true)}
+                  onClick={() => setOpenCalendarRowDesktop(1)}
                   aria-haspopup="dialog"
-                  aria-expanded={isCalendarOpen}
+                  aria-expanded={openCalendarRowDesktop === 1}
                 >
                   <span className="chip-icon" aria-hidden="true"></span>
-                  Date
+                  Date 1
                 </button>
-                {hasTimeslotParam && (
-                  <button
-                    className="cta-button cta-button--secondary cta-button--pill cta-button--timeslot"
-                    type="button"
-                    onClick={() => setIsTimeslotOpen(true)}
-                    ref={timeslotDesktopRef}
-                  >
-                    <span className="chip-icon" aria-hidden="true"></span>
-                    Time
-                  </button>
-                )}
+                <button
+                  className="cta-button cta-button--secondary cta-button--pill cta-button--timeslot"
+                  type="button"
+                  onClick={() => setOpenTimeRowDesktop(1)}
+                  ref={timeslotDesktopRef}
+                >
+                  <span className="chip-icon" aria-hidden="true"></span>
+                  Time 1{rowTimes[1] ? ` • ${rowTimes[1]}` : ''}
+                </button>
+              </div>
+              {/* Row 2 */}
+              <div className="future-card-cta-row">
+                <button
+                  ref={ctaDesktopRef2}
+                  className="cta-button cta-button--pill cta-button--date"
+                  type="button"
+                  onClick={() => setOpenCalendarRowDesktop(2)}
+                  aria-haspopup="dialog"
+                  aria-expanded={openCalendarRowDesktop === 2}
+                >
+                  <span className="chip-icon" aria-hidden="true"></span>
+                  Date 2
+                </button>
+                <button
+                  className="cta-button cta-button--secondary cta-button--pill cta-button--timeslot"
+                  type="button"
+                  onClick={() => setOpenTimeRowDesktop(2)}
+                  ref={timeslotDesktopRef2}
+                >
+                  <span className="chip-icon" aria-hidden="true"></span>
+                  Time 2{rowTimes[2] ? ` • ${rowTimes[2]}` : ''}
+                </button>
+              </div>
+              {/* Row 3 */}
+              <div className="future-card-cta-row">
+                <button
+                  ref={ctaDesktopRef3}
+                  className="cta-button cta-button--pill cta-button--date"
+                  type="button"
+                  onClick={() => setOpenCalendarRowDesktop(3)}
+                  aria-haspopup="dialog"
+                  aria-expanded={openCalendarRowDesktop === 3}
+                >
+                  <span className="chip-icon" aria-hidden="true"></span>
+                  Date 3
+                </button>
+                <button
+                  className="cta-button cta-button--secondary cta-button--pill cta-button--timeslot"
+                  type="button"
+                  onClick={() => setOpenTimeRowDesktop(3)}
+                  ref={timeslotDesktopRef3}
+                >
+                  <span className="chip-icon" aria-hidden="true"></span>
+                  Time 3{rowTimes[3] ? ` • ${rowTimes[3]}` : ''}
+                </button>
               </div>
               {/* Desktop proceed CTA for both flows; keep below and full-width */}
               <button
@@ -280,10 +405,25 @@ export default function FutureVersion() {
           onProceed={hasTimeslotParam ? () => setIsTimeslotOpen(true) : undefined}
         />
       )}
+
+      {/* Desktop row-specific date pickers */}
+      {openCalendarRowDesktop !== null && (
+        <CalendarPopover
+          anchorRef={openCalendarRowDesktop === 1 ? ctaDesktopRef : openCalendarRowDesktop === 2 ? ctaDesktopRef2 : ctaDesktopRef3}
+          onClose={() => setOpenCalendarRowDesktop(null)}
+          selectedLocation={selectedLocation}
+          singleSelect={true}
+          suppressPersist={true}
+          onDateChosen={(d) => handleDateChosen(openCalendarRowDesktop, d)}
+          onProceed={openCalendarRowDesktop === 2 ? () => setOpenTimeRowDesktop(2) : undefined}
+          autoProceedOnSelect={openCalendarRowDesktop === 2}
+        />
+      )}
+
       <TimeslotModal 
-        isOpen={isTimeslotOpen} 
-        onClose={() => setIsTimeslotOpen(false)} 
-        anchorRef={isDesktop ? timeslotDesktopRef : timeslotMobileRef}
+        isOpen={isTimeslotOpen || openTimeRowDesktop !== null} 
+        onClose={() => { setIsTimeslotOpen(false); setOpenTimeRowDesktop(null); }} 
+        anchorRef={isDesktop ? (openTimeRowDesktop === 1 ? timeslotDesktopRef : openTimeRowDesktop === 2 ? timeslotDesktopRef2 : openTimeRowDesktop === 3 ? timeslotDesktopRef3 : timeslotDesktopRef) : timeslotMobileRef}
       />
     </div>
   );

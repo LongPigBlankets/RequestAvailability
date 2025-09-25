@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
-export default function CalendarPopover({ anchorRef, onClose, selectedLocation, onProceed, onSelectedCountChange }) {
+export default function CalendarPopover({ anchorRef, onClose, selectedLocation, onProceed, onSelectedCountChange, singleSelect = false, onDateChosen, autoProceedOnSelect = false, suppressPersist = false }) {
   const popoverRef = useRef(null);
   const [isDesktop, setIsDesktop] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0, width: 0, maxHeight: 0 });
@@ -79,12 +79,11 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
 
   function toggleDate(iso, isDisabled) {
     if (isDisabled) return;
+    const shouldSingle = isAutoAccept || singleSelect;
     setSelectedDates((prev) => {
-      if (isAutoAccept) {
+      if (shouldSingle) {
         const next = new Set();
-        if (!prev.has(iso)) {
-          next.add(iso);
-        }
+        next.add(iso);
         return next;
       }
       const next = new Set(prev);
@@ -120,14 +119,25 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
         // no-op
       }
     }
-    // Close calendar after a selection in autoaccept, and if timeslots are available, open the timeslot modal
+
+    // For single-select mode (non-autoaccept), delegate selection to parent and close
+    if (singleSelect && !isAutoAccept) {
+      const formatted = formatHuman(new Date(iso));
+      if (typeof onDateChosen === 'function') {
+        onDateChosen({ iso, formatted });
+      }
+      onClose?.();
+      if (autoProceedOnSelect && typeof onProceed === 'function') {
+        onProceed();
+      }
+      return;
+    }
+
+    // Close calendar after a selection in autoaccept, and optionally open the timeslot modal
     if (isAutoAccept) {
       onClose?.();
-      if (hasTimeslotParam) {
-        // delegate to parent to open timeslot modal if provided
-        if (typeof onProceed === 'function') {
-          onProceed();
-        }
+      if (hasTimeslotParam && typeof onProceed === 'function') {
+        onProceed();
       }
     }
   }
@@ -147,6 +157,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
 
   // Persist draft automatically when dates change so outer CTAs can read state
   useEffect(() => {
+    if (suppressPersist || singleSelect) return;
     if (selectedDates.size === 0) {
       // Clear draft on zero selection to prevent stale gating
       try {
@@ -178,7 +189,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
     } catch (e) {
       // no-op
     }
-  }, [selectedDates, selectedLocation, isAutoAccept]);
+  }, [selectedDates, selectedLocation, isAutoAccept, suppressPersist, singleSelect]);
 
   // Track viewport type and open behavior
   useEffect(() => {
