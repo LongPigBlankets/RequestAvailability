@@ -71,7 +71,7 @@ export default function FutureVersion() {
   // Desktop CTA is always enabled per latest requirements
 
   return (
-    <div className="app has-footer future-version">
+    <div className={`app has-footer future-version${isAutoAccept ? ' autoaccept-journey' : ''}`}>
       <div className="header" role="banner">
         <button className="nav-button" aria-label="Go back">
           <span className="arrow-left">←</span>
@@ -211,33 +211,31 @@ export default function FutureVersion() {
               </button>
             </div>
             <div className="future-card-cta">
-              <button
-                ref={ctaDesktopRef}
-                className="cta-button cta-button--pill cta-button--date"
-                type="button"
-                onClick={() => setIsCalendarOpen(true)}
-                aria-haspopup="dialog"
-                aria-expanded={isCalendarOpen}
-              >
-                <span className="chip-icon" aria-hidden="true"></span>
-                {selectedDatesCount === 0
-                  ? "Choose date"
-                  : selectedDatesCount === 1
-                    ? "1 date selected"
-                    : `${selectedDatesCount} dates selected`}
-              </button>
-              {hasTimeslotParam && (
+              <div className="future-card-cta-row">
                 <button
-                  className="cta-button cta-button--secondary cta-button--pill cta-button--timeslot"
+                  ref={ctaDesktopRef}
+                  className="cta-button cta-button--pill cta-button--date"
                   type="button"
-                  onClick={() => setIsTimeslotOpen(true)}
-                  ref={timeslotDesktopRef}
+                  onClick={() => setIsCalendarOpen(true)}
+                  aria-haspopup="dialog"
+                  aria-expanded={isCalendarOpen}
                 >
                   <span className="chip-icon" aria-hidden="true"></span>
-                  Select timeslots
+                  Date
                 </button>
-              )}
-              {/* Desktop proceed CTA for both flows; gating applied for autoaccept rules */}
+                {hasTimeslotParam && (
+                  <button
+                    className="cta-button cta-button--secondary cta-button--pill cta-button--timeslot"
+                    type="button"
+                    onClick={() => setIsTimeslotOpen(true)}
+                    ref={timeslotDesktopRef}
+                  >
+                    <span className="chip-icon" aria-hidden="true"></span>
+                    Time
+                  </button>
+                )}
+              </div>
+              {/* Desktop proceed CTA for both flows; keep below and full-width */}
               <button
                 className="cta-button cta-button--pill"
                 type="button"

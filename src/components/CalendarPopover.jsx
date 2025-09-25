@@ -100,7 +100,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
       return next;
     });
 
-    // For autoaccept on desktop, persist immediately before closing so timeslot modal reads it
+    // For autoaccept, persist immediately so timeslot modal reads it
     if (isAutoAccept) {
       try {
         const dates = [{
@@ -120,9 +120,15 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
         // no-op
       }
     }
-
-    if (isAutoAccept && isDesktop) {
+    // Close calendar after a selection in autoaccept, and if timeslots are available, open the timeslot modal
+    if (isAutoAccept) {
       onClose?.();
+      if (hasTimeslotParam) {
+        // delegate to parent to open timeslot modal if provided
+        if (typeof onProceed === 'function') {
+          onProceed();
+        }
+      }
     }
   }
 

@@ -383,6 +383,8 @@ body {
 .future-cta-card { gap: 10px; }
 .future-card-fields { display: grid; grid-template-columns: 1fr; gap: 10px; }
 .future-card-cta { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 0; }
+/* Row holding date + timeslot side-by-side */
+.future-card-cta-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
 /* Pill variant for primary CTA to match rounded style */
 .cta-button--pill {
@@ -430,6 +432,15 @@ body {
     font-weight: 400; /* Droid Sans regular */
     font-size: 16px;
   }
+}
+
+/* Ensure autoaccept CTAs use Droid Sans everywhere in the journey */
+.autoaccept-journey .cta-button,
+.autoaccept-journey .chip-button,
+.autoaccept-journey .cta-button--date,
+.autoaccept-journey .cta-button--timeslot {
+  font-family: 'Droid Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-weight: 400;
 }
 
 /* Mobile inline controls between title/location and description */
