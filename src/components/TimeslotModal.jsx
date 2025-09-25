@@ -185,7 +185,7 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
 
   if (!isOpen) return null;
 
-  function persistTimesAndGoToCheckout() {
+  function persistTimesAndClose() {
     try {
       // update draft if present; otherwise update the latest availability request
       const draft = JSON.parse(sessionStorage.getItem('availabilityDraft') || 'null');
@@ -223,7 +223,6 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
       // no-op
     }
     onClose?.();
-    navigate('/checkout');
   }
 
   const content = (
@@ -266,9 +265,9 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
           <button
             type="button"
             className={`cta-button cta-button--pill`}
-            onClick={persistTimesAndGoToCheckout}
+            onClick={persistTimesAndClose}
           >
-            Continue to checkout
+            Select timeslots
           </button>
         </div>
       )}
