@@ -109,14 +109,14 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
       return next;
     });
 
-    // For autoaccept, persist immediately so timeslot modal reads it
+    // For autoaccept, persist immediately so next pages can read it
     if (isAutoAccept) {
       try {
         const dates = [{
           iso,
           formatted: formatHuman(new Date(iso)),
           isFavourite: false,
-          time: getSelectedTimeLabel(),
+          time: hasTimeslotParam ? getSelectedTimeLabel() : undefined,
         }];
         const draft = {
           location: selectedLocation || 'Port Lympne Kent',
@@ -170,7 +170,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
         iso,
         formatted: formatHuman(new Date(iso)),
         isFavourite: false,
-        time: isAutoAccept ? getSelectedTimeLabel() : undefined,
+        time: (isAutoAccept && hasTimeslotParam) ? getSelectedTimeLabel() : undefined,
       }));
       const draft = {
         location: selectedLocation || 'Port Lympne Kent',
@@ -258,7 +258,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
         iso,
         formatted: formatHuman(new Date(iso)),
         isFavourite: false,
-        time: isAutoAccept ? getSelectedTimeLabel() : undefined,
+        time: (isAutoAccept && hasTimeslotParam) ? getSelectedTimeLabel() : undefined,
       }));
       const draft = {
         location: selectedLocation || "Port Lympne Kent",
@@ -279,7 +279,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
         iso,
         formatted: formatHuman(new Date(iso)),
         isFavourite: false,
-        time: isAutoAccept ? getSelectedTimeLabel() : undefined,
+        time: (isAutoAccept && hasTimeslotParam) ? getSelectedTimeLabel() : undefined,
       }));
       const draft = {
         location: selectedLocation || "Port Lympne Kent",
@@ -406,8 +406,8 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
                 </div>
               </div>
             </div>
-            {/* Extra space for time selector on desktop in autoaccept */}
-            {isAutoAccept && (
+            {/* Extra space for time selector on desktop in autoaccept (only when ?timeslot) */}
+            {(isAutoAccept && hasTimeslotParam) && (
               <div className="desktop-time-selector">
                 <div className="time-inputs" aria-label="Select time">
                   <input
@@ -427,6 +427,17 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
                   />
                 </div>
                 <div className="time-helper">Selected time: {getSelectedTimeLabel()}</div>
+              </div>
+            )}
+            {(isAutoAccept && hasTimeslotParam) && (
+              <div className="booking-cta" style={{ marginTop: '12px' }}>
+                <button
+                  type="button"
+                  className="cta-button cta-button--pill"
+                  onClick={persistDraftAndGoToCheckout}
+                >
+                  Book now
+                </button>
               </div>
             )}
             <div className="calendar-microcopy">Note: This voucher cannot be booked on Saturdays</div>
@@ -506,8 +517,8 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
                     );
                   })}
                 </div>
-                {/* Mobile time wheel inside action sheet for autoaccept */}
-                {isAutoAccept && (
+                {/* Mobile time wheel inside action sheet for autoaccept (only when ?timeslot) */}
+                {(isAutoAccept && hasTimeslotParam) && (
                   <div className="mobile-time-wheel" aria-label="Select time">
                     <div className="time-wheel-columns">
                       <select
@@ -557,7 +568,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
                     </button>
                   </div>
                 )}
-                {isAutoAccept && (
+                {(isAutoAccept && !hasTimeslotParam) && (
                   <div className="booking-cta">
                     <button
                       type="button"
@@ -565,6 +576,17 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
                       onClick={persistDraftAndGoToCheckout}
                     >
                       Continue to checkout
+                    </button>
+                  </div>
+                )}
+                {(isAutoAccept && hasTimeslotParam) && (
+                  <div className="booking-cta">
+                    <button
+                      type="button"
+                      className="cta-button cta-button--pill"
+                      onClick={persistDraftAndGoToCheckout}
+                    >
+                      Book now
                     </button>
                   </div>
                 )}

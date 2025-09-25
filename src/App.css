@@ -1638,8 +1638,8 @@ textarea.form-input,
 }
 
 /* Time selector styles (Droid Sans Regular, 14px) */
-.desktop-time-selector { margin-top: 12px; padding-top: 8px; border-top: 1px solid #f1f5f9; }
-.time-inputs { display: inline-flex; align-items: center; gap: 8px; }
+.desktop-time-selector { margin-top: 12px; padding-top: 8px; border-top: 1px solid #f1f5f9; display: flex; flex-direction: column; align-items: center; }
+.time-inputs { display: inline-flex; align-items: center; gap: 8px; justify-content: center; }
 .time-input {
   width: 54px;
   padding: 8px 10px;
