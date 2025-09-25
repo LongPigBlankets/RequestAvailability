@@ -27,6 +27,22 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
   const hoursRef = useRef(null);
   const minutesRef = useRef(null);
 
+  function incrementHour(delta) {
+    const idx = hourOptions.indexOf(selectedHour);
+    const nextIdx = Math.max(0, Math.min(hourOptions.length - 1, idx + delta));
+    const nextHour = hourOptions[nextIdx];
+    setSelectedHour(nextHour);
+    if (hoursRef.current) {
+      hoursRef.current.scrollTo({ top: nextIdx * 36, behavior: 'smooth' });
+    }
+  }
+  function onMinuteKeyDown(e) {
+    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      setSelectedMinute((m) => (m === 0 ? 30 : 0));
+    }
+  }
+
   function addMonths(baseDate, delta) {
     return new Date(baseDate.getFullYear(), baseDate.getMonth() + delta, 1);
   }
