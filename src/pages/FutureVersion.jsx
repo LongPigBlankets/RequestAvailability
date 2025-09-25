@@ -133,7 +133,7 @@ export default function FutureVersion() {
                   <span>{selectedLocation ? selectedLocation : "Choose location"}</span>
                 </button>
 
-                {/* Dates pill */}
+                {/* Unified Date & Time pill (autoaccept) */}
                 <button
                   type="button"
                   className="chip-button"
@@ -143,19 +143,9 @@ export default function FutureVersion() {
                   aria-expanded={isCalendarOpen}
                 >
                   <span className="chip-icon chip-icon--calendar" aria-hidden="true"></span>
-                  <span>Select date</span>
+                  <span>{isAutoAccept ? 'Select date and time' : 'Select date'}</span>
                 </button>
-
-                {/* Times pill */}
-                <button
-                  type="button"
-                  className="chip-button"
-                  ref={timeslotMobileRef}
-                  onClick={() => setIsTimeslotOpen(true)}
-                >
-                  <span className="chip-icon chip-icon--clock" aria-hidden="true"></span>
-                  <span>Select time</span>
-                </button>
+                {/* Separate time pill removed for unified flow */}
               </div>
               <div className="divider"></div>
             </div>
@@ -221,19 +211,8 @@ export default function FutureVersion() {
                   aria-expanded={isCalendarOpen}
                 >
                   <span className="chip-icon" aria-hidden="true"></span>
-                  Date
+                  {isAutoAccept ? 'Select date and time' : 'Date'}
                 </button>
-                {hasTimeslotParam && (
-                  <button
-                    className="cta-button cta-button--secondary cta-button--pill cta-button--timeslot"
-                    type="button"
-                    onClick={() => setIsTimeslotOpen(true)}
-                    ref={timeslotDesktopRef}
-                  >
-                    <span className="chip-icon" aria-hidden="true"></span>
-                    Time
-                  </button>
-                )}
               </div>
               {/* Desktop proceed CTA for both flows; keep below and full-width */}
               <button

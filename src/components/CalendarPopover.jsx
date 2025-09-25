@@ -19,6 +19,14 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
   const [selectedDates, setSelectedDates] = useState(() => new Set());
   const [showMaxWarning, setShowMaxWarning] = useState(false);
 
+  // Time wheel state for unified autoaccept modal when ?timeslot is present
+  const hourOptions = useMemo(() => Array.from({ length: 22 - 9 + 1 }, (_, i) => 9 + i), []);
+  const minuteOptions = useMemo(() => [0, 30], []);
+  const [selectedHour, setSelectedHour] = useState(9);
+  const [selectedMinute, setSelectedMinute] = useState(0);
+  const hoursRef = useRef(null);
+  const minutesRef = useRef(null);
+
   function addMonths(baseDate, delta) {
     return new Date(baseDate.getFullYear(), baseDate.getMonth() + delta, 1);
   }
@@ -120,15 +128,9 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
         // no-op
       }
     }
-    // Close calendar after a selection in autoaccept, and if timeslots are available, open the timeslot modal
-    if (isAutoAccept) {
+    // For unified modal: if timeslot is required, keep open; otherwise close as before
+    if (isAutoAccept && !hasTimeslotParam) {
       onClose?.();
-      if (hasTimeslotParam) {
-        // delegate to parent to open timeslot modal if provided
-        if (typeof onProceed === 'function') {
-          onProceed();
-        }
-      }
     }
   }
 
@@ -145,7 +147,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
     }
   }, [selectedDates, onSelectedCountChange]);
 
-  // Persist draft automatically when dates change so outer CTAs can read state
+  // Persist draft automatically when dates or time change so outer CTAs can read state
   useEffect(() => {
     if (selectedDates.size === 0) {
       // Clear draft on zero selection to prevent stale gating
@@ -162,10 +164,12 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
       return;
     }
     try {
+      const timeString = `${String(selectedHour).padStart(2, '0')}:${String(selectedMinute).padStart(2, '0')}`;
       const dates = Array.from(selectedDates).map(iso => ({
         iso,
         formatted: formatHuman(new Date(iso)),
         isFavourite: false,
+        ...(isAutoAccept && hasTimeslotParam ? { time: timeString } : {}),
       }));
       const draft = {
         location: selectedLocation || 'Port Lympne Kent',
@@ -178,7 +182,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
     } catch (e) {
       // no-op
     }
-  }, [selectedDates, selectedLocation, isAutoAccept]);
+  }, [selectedDates, selectedLocation, isAutoAccept, hasTimeslotParam, selectedHour, selectedMinute]);
 
   // Track viewport type and open behavior
   useEffect(() => {
@@ -249,15 +253,18 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
 
   function persistDraftAndGoToCheckout() {
     try {
+      const timeString = `${String(selectedHour).padStart(2, '0')}:${String(selectedMinute).padStart(2, '0')}`;
       const dates = Array.from(selectedDates).map(iso => ({
         iso,
         formatted: formatHuman(new Date(iso)),
         isFavourite: false,
+        ...(isAutoAccept && hasTimeslotParam ? { time: timeString } : {}),
       }));
       const draft = {
         location: selectedLocation || "Port Lympne Kent",
         dates,
         timestamp: new Date().toISOString(),
+        source: isAutoAccept ? 'autoaccept' : 'regular',
       };
       sessionStorage.setItem('availabilityDraft', JSON.stringify(draft));
     } catch (e) {
@@ -269,15 +276,18 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
 
   function persistDraftWithoutNavigation() {
     try {
+      const timeString = `${String(selectedHour).padStart(2, '0')}:${String(selectedMinute).padStart(2, '0')}`;
       const dates = Array.from(selectedDates).map(iso => ({
         iso,
         formatted: formatHuman(new Date(iso)),
         isFavourite: false,
+        ...(isAutoAccept && hasTimeslotParam ? { time: timeString } : {}),
       }));
       const draft = {
         location: selectedLocation || "Port Lympne Kent",
         dates,
         timestamp: new Date().toISOString(),
+        source: isAutoAccept ? 'autoaccept' : 'regular',
       };
       sessionStorage.setItem('availabilityDraft', JSON.stringify(draft));
     } catch (e) {
@@ -286,18 +296,11 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
   }
 
   function handleProceedClick() {
-    if (typeof onProceed === 'function') {
-      // Persist draft for timeslot modal to consume, close calendar, then delegate
-      persistDraftWithoutNavigation();
-      onClose?.();
-      onProceed();
-      return;
-    }
-    // Default behaviour: go to checkout
+    // Unified behaviour: go to checkout
     persistDraftAndGoToCheckout();
   }
 
-  const ctaLabel = isAutoAccept ? (hasTimeslotParam ? 'Select times' : 'Book now') : 'Check availability';
+  const ctaLabel = isAutoAccept ? 'Continue to checkout' : 'Check availability';
 
   return (
     <>
