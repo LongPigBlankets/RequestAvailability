@@ -24,8 +24,9 @@ export default function FutureVersion() {
   const timeslotMobileRef = useRef(null);
   const locationChipInlineRef = useRef(null);
   const locationChipCardRef = useRef(null);
-  const { search } = useLocation();
+  const { search, pathname } = useLocation();
   const hasTimeslotParam = new URLSearchParams(search).has('timeslot');
+  const isAutoAccept = pathname === '/autoaccept';
 
   useEffect(() => {
     const mql = window.matchMedia('(min-width: 1024px)');
@@ -67,7 +68,9 @@ export default function FutureVersion() {
     return () => window.removeEventListener('draftUpdated', recompute);
   }, []);
 
-  const isDesktopContinueEnabled = Boolean(selectedLocation) && selectedDatesCount > 0 && (!hasTimeslotParam || hasAllTimesSelected);
+  const isDesktopContinueEnabled = isAutoAccept
+    ? (selectedDatesCount > 0 && (!hasTimeslotParam || hasAllTimesSelected))
+    : (Boolean(selectedLocation) && selectedDatesCount > 0 && (!hasTimeslotParam || hasAllTimesSelected));
 
   return (
     <div className="app has-footer future-version">
