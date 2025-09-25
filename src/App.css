@@ -1635,3 +1635,38 @@ textarea.form-input,
   max-height: none;
   overflow: visible;
 }
+
+/* Time wheel styles */
+.time-wheel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+.wheel-column {
+  height: 144px; /* 4 visible items (36px each) */
+  width: 72px;
+  overflow-y: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #ffffff;
+  scroll-behavior: smooth;
+}
+.wheel-item {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 400; /* Droid Sans regular */
+  font-family: 'Droid Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+.wheel-item.selected {
+  background: #0f766e;
+  color: #ffffff;
+}
+.wheel-separator {
+  font-weight: 700;
+  color: #0f172a;
+}

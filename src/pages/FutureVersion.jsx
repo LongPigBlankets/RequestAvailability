@@ -136,7 +136,7 @@ export default function FutureVersion() {
                 {/* Unified Date & Time pill (autoaccept) */}
                 <button
                   type="button"
-                  className="chip-button"
+                  className="chip-button chip-button--full"
                   ref={ctaMobileRef}
                   onClick={() => setIsCalendarOpen(true)}
                   aria-haspopup="dialog"

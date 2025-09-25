@@ -313,7 +313,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
           aria-modal="false"
         >
           <div className="calendar open">
-            <div className="calendar-caption">{isAutoAccept ? 'Select a date' : 'Select dates (you can choose up to 5)'}</div>
+            <div className="calendar-caption">{isAutoAccept ? (hasTimeslotParam ? 'Select a date and time' : 'Select a date') : 'Select dates (you can choose up to 5)'}</div>
             <div className="calendar-desktop-container">
               <div className="calendar-month">
                 <div className="calendar-header">
@@ -408,17 +408,72 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
                 Please select a maximum of 5 dates
               </div>
             )}
-            {!isAutoAccept && (
-              <div className="booking-cta">
-                <button
-                  type="button"
-                  className="cta-button cta-button--pill"
-                  onClick={handleProceedClick}
+            {(isAutoAccept && hasTimeslotParam) && (
+              <div className="time-wheel" aria-label="Select time">
+                <div
+                  className="wheel-column"
+                  role="listbox"
+                  aria-label="Hours"
+                  tabIndex={0}
+                  ref={hoursRef}
+                  onKeyDown={(e) => {
+                    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                      e.preventDefault();
+                      const delta = e.key === 'ArrowUp' ? -1 : 1;
+                      const idx = hourOptions.indexOf(selectedHour);
+                      const nextIdx = Math.max(0, Math.min(hourOptions.length - 1, idx + delta));
+                      setSelectedHour(hourOptions[nextIdx]);
+                    }
+                  }}
+                  onScroll={(e) => {
+                    const idx = Math.round(e.currentTarget.scrollTop / 36);
+                    const bounded = Math.max(0, Math.min(hourOptions.length - 1, idx));
+                    setSelectedHour(hourOptions[bounded]);
+                  }}
                 >
-                  {ctaLabel}
-                </button>
+                  {hourOptions.map(h => (
+                    <div key={h} role="option" aria-selected={selectedHour === h} className={`wheel-item${selectedHour === h ? ' selected' : ''}`}>{String(h).padStart(2, '0')}</div>
+                  ))}
+                </div>
+                <div className="wheel-separator">:</div>
+                <div
+                  className="wheel-column"
+                  role="listbox"
+                  aria-label="Minutes"
+                  tabIndex={0}
+                  ref={minutesRef}
+                  onKeyDown={(e) => {
+                    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                      e.preventDefault();
+                      const delta = e.key === 'ArrowUp' ? -1 : 1;
+                      const idx = minuteOptions.indexOf(selectedMinute);
+                      const nextIdx = Math.max(0, Math.min(minuteOptions.length - 1, idx + delta));
+                      setSelectedMinute(minuteOptions[nextIdx]);
+                    }
+                  }}
+                  onScroll={(e) => {
+                    const idx = Math.round(e.currentTarget.scrollTop / 36);
+                    const bounded = Math.max(0, Math.min(minuteOptions.length - 1, idx));
+                    setSelectedMinute(minuteOptions[bounded]);
+                  }}
+                >
+                  {minuteOptions.map(m => (
+                    <div key={m} role="option" aria-selected={selectedMinute === m} className={`wheel-item${selectedMinute === m ? ' selected' : ''}`}>{String(m).padStart(2, '0')}</div>
+                  ))}
+                </div>
               </div>
             )}
+            <div className="booking-cta">
+              <button
+                type="button"
+                className="cta-button cta-button--pill"
+                onClick={handleProceedClick}
+                disabled={isAutoAccept ? selectedDates.size === 0 : false}
+                aria-disabled={isAutoAccept ? selectedDates.size === 0 : false}
+              >
+                {ctaLabel}
+              </button>
+            </div>
           </div>
         </div>
       ) : (
@@ -485,17 +540,72 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
                     Please select a maximum of 5 dates
                   </div>
                 )}
-                {!isAutoAccept && (
-                  <div className="booking-cta">
-                    <button
-                      type="button"
-                      className="cta-button cta-button--pill"
-                      onClick={handleProceedClick}
+                {(isAutoAccept && hasTimeslotParam) && (
+                  <div className="time-wheel" aria-label="Select time">
+                    <div
+                      className="wheel-column"
+                      role="listbox"
+                      aria-label="Hours"
+                      tabIndex={0}
+                      ref={hoursRef}
+                      onKeyDown={(e) => {
+                        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                          e.preventDefault();
+                          const delta = e.key === 'ArrowUp' ? -1 : 1;
+                          const idx = hourOptions.indexOf(selectedHour);
+                          const nextIdx = Math.max(0, Math.min(hourOptions.length - 1, idx + delta));
+                          setSelectedHour(hourOptions[nextIdx]);
+                        }
+                      }}
+                      onScroll={(e) => {
+                        const idx = Math.round(e.currentTarget.scrollTop / 36);
+                        const bounded = Math.max(0, Math.min(hourOptions.length - 1, idx));
+                        setSelectedHour(hourOptions[bounded]);
+                      }}
                     >
-                      {ctaLabel}
-                    </button>
+                      {hourOptions.map(h => (
+                        <div key={h} role="option" aria-selected={selectedHour === h} className={`wheel-item${selectedHour === h ? ' selected' : ''}`}>{String(h).padStart(2, '0')}</div>
+                      ))}
+                    </div>
+                    <div className="wheel-separator">:</div>
+                    <div
+                      className="wheel-column"
+                      role="listbox"
+                      aria-label="Minutes"
+                      tabIndex={0}
+                      ref={minutesRef}
+                      onKeyDown={(e) => {
+                        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                          e.preventDefault();
+                          const delta = e.key === 'ArrowUp' ? -1 : 1;
+                          const idx = minuteOptions.indexOf(selectedMinute);
+                          const nextIdx = Math.max(0, Math.min(minuteOptions.length - 1, idx + delta));
+                          setSelectedMinute(minuteOptions[nextIdx]);
+                        }
+                      }}
+                      onScroll={(e) => {
+                        const idx = Math.round(e.currentTarget.scrollTop / 36);
+                        const bounded = Math.max(0, Math.min(minuteOptions.length - 1, idx));
+                        setSelectedMinute(minuteOptions[bounded]);
+                      }}
+                    >
+                      {minuteOptions.map(m => (
+                        <div key={m} role="option" aria-selected={selectedMinute === m} className={`wheel-item${selectedMinute === m ? ' selected' : ''}`}>{String(m).padStart(2, '0')}</div>
+                      ))}
+                    </div>
                   </div>
                 )}
+                <div className="booking-cta">
+                  <button
+                    type="button"
+                    className="cta-button cta-button--pill"
+                    onClick={handleProceedClick}
+                    disabled={isAutoAccept ? selectedDates.size === 0 : false}
+                    aria-disabled={isAutoAccept ? selectedDates.size === 0 : false}
+                  >
+                    {ctaLabel}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
