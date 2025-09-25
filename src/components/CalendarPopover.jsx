@@ -19,8 +19,8 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
   const [selectedDates, setSelectedDates] = useState(() => new Set());
   const [showMaxWarning, setShowMaxWarning] = useState(false);
   // Time selection for autoaccept flow
-  const [timeHour, setTimeHour] = useState('08');
-  const [timeMinute, setTimeMinute] = useState('30');
+  const [timeHour, setTimeHour] = useState('09');
+  const [timeMinute, setTimeMinute] = useState('00');
   const [timeAmPm, setTimeAmPm] = useState('AM');
 
   function addMonths(baseDate, delta) {
@@ -81,24 +81,9 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
     return `${day}${suffix} of ${month}`;
   }
 
-  function clampHourInput(value) {
-    const num = Number(value);
-    if (Number.isNaN(num)) return '';
-    let clamped = Math.max(1, Math.min(23, num));
-    return String(clamped).padStart(2, '0');
-  }
-
-  function normalizeMinuteInput(value) {
-    if (value === '00' || value === '0') return '00';
-    if (value === '30') return '30';
-    // Snap to nearest allowed (00 or 30)
-    const num = Number(value);
-    if (Number.isNaN(num)) return '00';
-    return num < 15 ? '00' : '30';
-  }
-
   function getSelectedTimeLabel() {
-    return `${timeHour}:${timeMinute} ${timeAmPm}`;
+    // On desktop there is no AM/PM and inputs are freeform
+    return isDesktop ? `${timeHour}:${timeMinute}` : `${timeHour}:${timeMinute} ${timeAmPm}`;
   }
 
   function toggleDate(iso, isDisabled) {
@@ -145,15 +130,9 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
         // no-op
       }
     }
-    // Close calendar after a selection in autoaccept, and if timeslots are available, open the timeslot modal
-    if (isAutoAccept) {
+    // Auto-close only if on autoaccept WITHOUT ?timeslot
+    if (isAutoAccept && !hasTimeslotParam) {
       onClose?.();
-      if (hasTimeslotParam) {
-        // delegate to parent to open timeslot modal if provided
-        if (typeof onProceed === 'function') {
-          onProceed();
-        }
-      }
     }
   }
 
@@ -204,7 +183,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
     } catch (e) {
       // no-op
     }
-  }, [selectedDates, selectedLocation, isAutoAccept, timeHour, timeMinute, timeAmPm]);
+  }, [selectedDates, selectedLocation, isAutoAccept, timeHour, timeMinute, timeAmPm, isDesktop]);
 
   // Track viewport type and open behavior
   useEffect(() => {
@@ -279,6 +258,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
         iso,
         formatted: formatHuman(new Date(iso)),
         isFavourite: false,
+        time: isAutoAccept ? getSelectedTimeLabel() : undefined,
       }));
       const draft = {
         location: selectedLocation || "Port Lympne Kent",
@@ -299,6 +279,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
         iso,
         formatted: formatHuman(new Date(iso)),
         isFavourite: false,
+        time: isAutoAccept ? getSelectedTimeLabel() : undefined,
       }));
       const draft = {
         location: selectedLocation || "Port Lympne Kent",
@@ -434,8 +415,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
                     inputMode="numeric"
                     aria-label="Hour"
                     value={timeHour}
-                    onChange={(e) => setTimeHour(clampHourInput(e.target.value.replace(/[^0-9]/g, '')))}
-                    onBlur={(e) => setTimeHour(clampHourInput(e.target.value.replace(/[^0-9]/g, '')))}
+                    onChange={(e) => setTimeHour(e.target.value.replace(/[^0-9]/g, ''))}
                   />
                   <span className="time-sep">:</span>
                   <input
@@ -443,18 +423,8 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
                     inputMode="numeric"
                     aria-label="Minute"
                     value={timeMinute}
-                    onChange={(e) => setTimeMinute(normalizeMinuteInput(e.target.value.replace(/[^0-9]/g, '')))}
-                    onBlur={(e) => setTimeMinute(normalizeMinuteInput(e.target.value.replace(/[^0-9]/g, '')))}
+                    onChange={(e) => setTimeMinute(e.target.value.replace(/[^0-9]/g, ''))}
                   />
-                  <select
-                    className="time-ampm"
-                    aria-label="AM or PM"
-                    value={timeAmPm}
-                    onChange={(e) => setTimeAmPm(e.target.value === 'PM' ? 'PM' : 'AM')}
-                  >
-                    <option value="AM">AM</option>
-                    <option value="PM">PM</option>
-                  </select>
                 </div>
                 <div className="time-helper">Selected time: {getSelectedTimeLabel()}</div>
               </div>
@@ -543,7 +513,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
                       <select
                         className="wheel hour"
                         value={timeHour}
-                        onChange={(e) => setTimeHour(clampHourInput(e.target.value))}
+                        onChange={(e) => setTimeHour(e.target.value)}
                       >
                         {Array.from({ length: 23 }, (_, i) => String(i + 1).padStart(2, '0')).map(h => (
                           <option key={h} value={h}>{h}</option>
@@ -553,7 +523,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
                       <select
                         className="wheel minute"
                         value={timeMinute}
-                        onChange={(e) => setTimeMinute(normalizeMinuteInput(e.target.value))}
+                        onChange={(e) => setTimeMinute(e.target.value)}
                       >
                         <option value="00">00</option>
                         <option value="30">30</option>
@@ -584,6 +554,17 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
                       onClick={handleProceedClick}
                     >
                       {ctaLabel}
+                    </button>
+                  </div>
+                )}
+                {isAutoAccept && (
+                  <div className="booking-cta">
+                    <button
+                      type="button"
+                      className="cta-button cta-button--pill"
+                      onClick={persistDraftAndGoToCheckout}
+                    >
+                      Continue to checkout
                     </button>
                   </div>
                 )}
