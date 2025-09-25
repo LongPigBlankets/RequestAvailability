@@ -18,6 +18,10 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
   const MAX_SELECTED_DATES = 5;
   const [selectedDates, setSelectedDates] = useState(() => new Set());
   const [showMaxWarning, setShowMaxWarning] = useState(false);
+  // Time selection for autoaccept flow
+  const [timeHour, setTimeHour] = useState('08');
+  const [timeMinute, setTimeMinute] = useState('30');
+  const [timeAmPm, setTimeAmPm] = useState('AM');
 
   function addMonths(baseDate, delta) {
     return new Date(baseDate.getFullYear(), baseDate.getMonth() + delta, 1);
@@ -77,6 +81,26 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
     return `${day}${suffix} of ${month}`;
   }
 
+  function clampHourInput(value) {
+    const num = Number(value);
+    if (Number.isNaN(num)) return '';
+    let clamped = Math.max(1, Math.min(23, num));
+    return String(clamped).padStart(2, '0');
+  }
+
+  function normalizeMinuteInput(value) {
+    if (value === '00' || value === '0') return '00';
+    if (value === '30') return '30';
+    // Snap to nearest allowed (00 or 30)
+    const num = Number(value);
+    if (Number.isNaN(num)) return '00';
+    return num < 15 ? '00' : '30';
+  }
+
+  function getSelectedTimeLabel() {
+    return `${timeHour}:${timeMinute} ${timeAmPm}`;
+  }
+
   function toggleDate(iso, isDisabled) {
     if (isDisabled) return;
     setSelectedDates((prev) => {
@@ -107,6 +131,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
           iso,
           formatted: formatHuman(new Date(iso)),
           isFavourite: false,
+          time: getSelectedTimeLabel(),
         }];
         const draft = {
           location: selectedLocation || 'Port Lympne Kent',
@@ -166,6 +191,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
         iso,
         formatted: formatHuman(new Date(iso)),
         isFavourite: false,
+        time: isAutoAccept ? getSelectedTimeLabel() : undefined,
       }));
       const draft = {
         location: selectedLocation || 'Port Lympne Kent',
@@ -178,7 +204,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
     } catch (e) {
       // no-op
     }
-  }, [selectedDates, selectedLocation, isAutoAccept]);
+  }, [selectedDates, selectedLocation, isAutoAccept, timeHour, timeMinute, timeAmPm]);
 
   // Track viewport type and open behavior
   useEffect(() => {
@@ -399,6 +425,40 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
                 </div>
               </div>
             </div>
+            {/* Extra space for time selector on desktop in autoaccept */}
+            {isAutoAccept && (
+              <div className="desktop-time-selector">
+                <div className="time-inputs" aria-label="Select time">
+                  <input
+                    className="time-input"
+                    inputMode="numeric"
+                    aria-label="Hour"
+                    value={timeHour}
+                    onChange={(e) => setTimeHour(clampHourInput(e.target.value.replace(/[^0-9]/g, '')))}
+                    onBlur={(e) => setTimeHour(clampHourInput(e.target.value.replace(/[^0-9]/g, '')))}
+                  />
+                  <span className="time-sep">:</span>
+                  <input
+                    className="time-input"
+                    inputMode="numeric"
+                    aria-label="Minute"
+                    value={timeMinute}
+                    onChange={(e) => setTimeMinute(normalizeMinuteInput(e.target.value.replace(/[^0-9]/g, '')))}
+                    onBlur={(e) => setTimeMinute(normalizeMinuteInput(e.target.value.replace(/[^0-9]/g, '')))}
+                  />
+                  <select
+                    className="time-ampm"
+                    aria-label="AM or PM"
+                    value={timeAmPm}
+                    onChange={(e) => setTimeAmPm(e.target.value === 'PM' ? 'PM' : 'AM')}
+                  >
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                  </select>
+                </div>
+                <div className="time-helper">Selected time: {getSelectedTimeLabel()}</div>
+              </div>
+            )}
             <div className="calendar-microcopy">Note: This voucher cannot be booked on Saturdays</div>
             {(!isAutoAccept && showMaxWarning) && (
               <div className="calendar-warning" role="alert" aria-live="assertive">
@@ -423,7 +483,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
           <div className="booking-backdrop"></div>
           <div className="booking-panel" onClick={(e) => e.stopPropagation()}>
             <div className="booking-header">
-              <h3 className="booking-title">Choose Dates</h3>
+              <h3 className="booking-title">Choose Date{isAutoAccept ? ' & Time' : 's'}</h3>
               <button className="booking-close" aria-label="Close" onClick={onClose}>×</button>
             </div>
             <div className="booking-body">
@@ -476,6 +536,40 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
                     );
                   })}
                 </div>
+                {/* Mobile time wheel inside action sheet for autoaccept */}
+                {isAutoAccept && (
+                  <div className="mobile-time-wheel" aria-label="Select time">
+                    <div className="time-wheel-columns">
+                      <select
+                        className="wheel hour"
+                        value={timeHour}
+                        onChange={(e) => setTimeHour(clampHourInput(e.target.value))}
+                      >
+                        {Array.from({ length: 23 }, (_, i) => String(i + 1).padStart(2, '0')).map(h => (
+                          <option key={h} value={h}>{h}</option>
+                        ))}
+                      </select>
+                      <div className="wheel-sep">:</div>
+                      <select
+                        className="wheel minute"
+                        value={timeMinute}
+                        onChange={(e) => setTimeMinute(normalizeMinuteInput(e.target.value))}
+                      >
+                        <option value="00">00</option>
+                        <option value="30">30</option>
+                      </select>
+                      <select
+                        className="wheel ampm"
+                        value={timeAmPm}
+                        onChange={(e) => setTimeAmPm(e.target.value === 'PM' ? 'PM' : 'AM')}
+                      >
+                        <option value="AM">AM</option>
+                        <option value="PM">PM</option>
+                      </select>
+                    </div>
+                    <div className="time-helper" aria-live="polite">Selected time: {getSelectedTimeLabel()}</div>
+                  </div>
+                )}
                 <div className="calendar-microcopy">Note: This voucher cannot be booked on Saturdays</div>
                 {showMaxWarning && (
                   <div className="calendar-warning" role="alert" aria-live="assertive">
