@@ -221,11 +221,7 @@ export default function FutureVersion() {
                   aria-expanded={isCalendarOpen}
                 >
                   <span className="chip-icon" aria-hidden="true"></span>
-                  {selectedDatesCount === 0
-                    ? "Choose date"
-                    : selectedDatesCount === 1
-                      ? "1 date selected"
-                      : `${selectedDatesCount} dates selected`}
+                  Date
                 </button>
                 {hasTimeslotParam && (
                   <button
@@ -235,7 +231,7 @@ export default function FutureVersion() {
                     ref={timeslotDesktopRef}
                   >
                     <span className="chip-icon" aria-hidden="true"></span>
-                    Select timeslots
+                    Time
                   </button>
                 )}
               </div>
