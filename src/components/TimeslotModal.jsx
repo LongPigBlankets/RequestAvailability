@@ -246,7 +246,10 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
                       role="radio"
                       aria-checked={isSelected}
                       className={`timeslot-pill${isSelected ? ' selected' : ''}`}
-                      onClick={() => setSelectedTimesByIso(prev => ({ ...prev, [d.iso]: t }))}
+                      onClick={() => {
+                        setSelectedTimesByIso(prev => ({ ...prev, [d.iso]: t }));
+                        if (isAutoAccept && isDesktop) onClose?.();
+                      }}
                     >
                       {t}
                     </button>

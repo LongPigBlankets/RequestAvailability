@@ -99,6 +99,31 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
       next.add(iso);
       return next;
     });
+
+    // For autoaccept on desktop, persist immediately before closing so timeslot modal reads it
+    if (isAutoAccept) {
+      try {
+        const dates = [{
+          iso,
+          formatted: formatHuman(new Date(iso)),
+          isFavourite: false,
+        }];
+        const draft = {
+          location: selectedLocation || 'Port Lympne Kent',
+          dates,
+          timestamp: new Date().toISOString(),
+          source: 'autoaccept',
+        };
+        sessionStorage.setItem('availabilityDraft', JSON.stringify(draft));
+        window.dispatchEvent(new Event('draftUpdated'));
+      } catch (e) {
+        // no-op
+      }
+    }
+
+    if (isAutoAccept && isDesktop) {
+      onClose?.();
+    }
   }
 
   useEffect(() => {

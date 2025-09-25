@@ -24,8 +24,9 @@ export default function FutureVersion() {
   const timeslotMobileRef = useRef(null);
   const locationChipInlineRef = useRef(null);
   const locationChipCardRef = useRef(null);
-  const { search } = useLocation();
+  const { search, pathname } = useLocation();
   const hasTimeslotParam = new URLSearchParams(search).has('timeslot');
+  const isAutoAccept = pathname === '/autoaccept';
 
   useEffect(() => {
     const mql = window.matchMedia('(min-width: 1024px)');
@@ -67,7 +68,7 @@ export default function FutureVersion() {
     return () => window.removeEventListener('draftUpdated', recompute);
   }, []);
 
-  const isDesktopContinueEnabled = Boolean(selectedLocation) && selectedDatesCount > 0 && (!hasTimeslotParam || hasAllTimesSelected);
+  // Desktop CTA is always enabled per latest requirements
 
   return (
     <div className="app has-footer future-version">
@@ -111,7 +112,7 @@ export default function FutureVersion() {
               <span className="extend" role="button" tabIndex={0}>Extend</span>
             </div>
             <div className="flexibility">
-              <img src="/assets/fully-flexible-arrows.png" alt="" aria-hidden="true" className="flex-icon-img" />
+              <img src="/assets/flexible_exchange.png" alt="" aria-hidden="true" className="flex-icon-img" />
               <span className="flexible-text">Fully Flexible</span>
             </div>
 
@@ -241,8 +242,6 @@ export default function FutureVersion() {
                 className="cta-button cta-button--pill"
                 type="button"
                 onClick={() => navigate('/checkout')}
-                disabled={!isDesktopContinueEnabled}
-                aria-disabled={!isDesktopContinueEnabled}
                 style={{ marginTop: '8px' }}
               >
                 Continue to checkout
@@ -256,7 +255,7 @@ export default function FutureVersion() {
       <div className="ctaBar">
         <div className="ctaInner">
           <button
-            className="cta-button"
+            className="cta-button cta-button--pill"
             type="button"
             onClick={() => navigate('/checkout')}
           >
