@@ -68,9 +68,7 @@ export default function FutureVersion() {
     return () => window.removeEventListener('draftUpdated', recompute);
   }, []);
 
-  const isDesktopContinueEnabled = isAutoAccept
-    ? (selectedDatesCount > 0 && (!hasTimeslotParam || hasAllTimesSelected))
-    : (Boolean(selectedLocation) && selectedDatesCount > 0 && (!hasTimeslotParam || hasAllTimesSelected));
+  // Desktop CTA is always enabled per latest requirements
 
   return (
     <div className="app has-footer future-version">
@@ -244,8 +242,6 @@ export default function FutureVersion() {
                 className="cta-button cta-button--pill"
                 type="button"
                 onClick={() => navigate('/checkout')}
-                disabled={!isDesktopContinueEnabled}
-                aria-disabled={!isDesktopContinueEnabled}
                 style={{ marginTop: '8px' }}
               >
                 Continue to checkout
