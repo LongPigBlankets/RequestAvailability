@@ -1644,6 +1644,12 @@ textarea.form-input,
   gap: 8px;
   margin-top: 12px;
 }
+.hour-stepper { display: grid; grid-template-areas: 'up' 'display' 'down' 'grid'; justify-items: center; gap: 8px; }
+.hour-arrow { appearance: none; border: 1px solid #e5e7eb; background: #ffffff; padding: 6px 10px; border-radius: 8px; cursor: pointer; }
+.hour-display { font-size: 22px; font-weight: 800; padding: 4px 8px; }
+.hour-quick-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; max-width: 320px; }
+.hour-chip { padding: 6px 8px; border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; cursor: pointer; }
+.hour-chip.selected { background: #0f766e; color: #ffffff; border-color: #0f766e; }
 .wheel-column {
   height: 144px; /* 4 visible items (36px each) */
   width: 72px;
@@ -1670,3 +1676,6 @@ textarea.form-input,
   font-weight: 700;
   color: #0f172a;
 }
+.minute-toggle { display: grid; grid-template-columns: 1fr 1fr; width: 144px; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; }
+.minute-half { appearance: none; border: none; background: #ffffff; padding: 10px 0; cursor: pointer; font-size: 16px; font-weight: 600; }
+.minute-half.selected { background: #0f766e; color: #ffffff; }

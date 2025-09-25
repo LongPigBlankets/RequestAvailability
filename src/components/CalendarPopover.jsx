@@ -42,6 +42,10 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
       setSelectedMinute((m) => (m === 0 ? 30 : 0));
     }
   }
+  function onHoursKeyDown(e) {
+    if (e.key === 'ArrowUp') { e.preventDefault(); incrementHour(1); }
+    if (e.key === 'ArrowDown') { e.preventDefault(); incrementHour(-1); }
+  }
 
   function addMonths(baseDate, delta) {
     return new Date(baseDate.getFullYear(), baseDate.getMonth() + delta, 1);
@@ -426,56 +430,58 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
             )}
             {(isAutoAccept && hasTimeslotParam) && (
               <div className="time-wheel" aria-label="Select time">
-                <div
-                  className="wheel-column"
-                  role="listbox"
-                  aria-label="Hours"
-                  tabIndex={0}
-                  ref={hoursRef}
-                  onKeyDown={(e) => {
-                    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-                      e.preventDefault();
-                      const delta = e.key === 'ArrowUp' ? -1 : 1;
-                      const idx = hourOptions.indexOf(selectedHour);
-                      const nextIdx = Math.max(0, Math.min(hourOptions.length - 1, idx + delta));
-                      setSelectedHour(hourOptions[nextIdx]);
-                    }
-                  }}
-                  onScroll={(e) => {
-                    const idx = Math.round(e.currentTarget.scrollTop / 36);
-                    const bounded = Math.max(0, Math.min(hourOptions.length - 1, idx));
-                    setSelectedHour(hourOptions[bounded]);
-                  }}
-                >
-                  {hourOptions.map(h => (
-                    <div key={h} role="option" aria-selected={selectedHour === h} className={`wheel-item${selectedHour === h ? ' selected' : ''}`}>{String(h).padStart(2, '0')}</div>
-                  ))}
-                </div>
+                {/* Desktop: single hour with arrows + quick pick grid */}
+                {isDesktop ? (
+                  <div className="hour-stepper" role="group" aria-label="Select hour">
+                    <button type="button" className="hour-arrow" aria-label="Increase hour" onClick={() => incrementHour(1)}>▲</button>
+                    <div className="hour-display" tabIndex={0} onKeyDown={onHoursKeyDown}>{String(selectedHour).padStart(2, '0')}</div>
+                    <button type="button" className="hour-arrow" aria-label="Decrease hour" onClick={() => incrementHour(-1)}>▼</button>
+                    <div className="hour-quick-grid" aria-label="Quick select hour">
+                      {hourOptions.map(h => (
+                        <button
+                          key={h}
+                          type="button"
+                          className={`hour-chip${selectedHour === h ? ' selected' : ''}`}
+                          onClick={() => setSelectedHour(h)}
+                        >
+                          {String(h).padStart(2, '0')}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  // Mobile: keep small scrollable hour list
+                  <div
+                    className="wheel-column"
+                    role="listbox"
+                    aria-label="Hours"
+                    tabIndex={0}
+                    ref={hoursRef}
+                    onKeyDown={(e) => {
+                      if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        const delta = e.key === 'ArrowUp' ? -1 : 1;
+                        const idx = hourOptions.indexOf(selectedHour);
+                        const nextIdx = Math.max(0, Math.min(hourOptions.length - 1, idx + delta));
+                        setSelectedHour(hourOptions[nextIdx]);
+                      }
+                    }}
+                    onScroll={(e) => {
+                      const idx = Math.round(e.currentTarget.scrollTop / 36);
+                      const bounded = Math.max(0, Math.min(hourOptions.length - 1, idx));
+                      setSelectedHour(hourOptions[bounded]);
+                    }}
+                  >
+                    {hourOptions.map(h => (
+                      <div key={h} role="option" aria-selected={selectedHour === h} className={`wheel-item${selectedHour === h ? ' selected' : ''}`} onClick={() => setSelectedHour(h)}>{String(h).padStart(2, '0')}</div>
+                    ))}
+                  </div>
+                )}
                 <div className="wheel-separator">:</div>
-                <div
-                  className="wheel-column"
-                  role="listbox"
-                  aria-label="Minutes"
-                  tabIndex={0}
-                  ref={minutesRef}
-                  onKeyDown={(e) => {
-                    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-                      e.preventDefault();
-                      const delta = e.key === 'ArrowUp' ? -1 : 1;
-                      const idx = minuteOptions.indexOf(selectedMinute);
-                      const nextIdx = Math.max(0, Math.min(minuteOptions.length - 1, idx + delta));
-                      setSelectedMinute(minuteOptions[nextIdx]);
-                    }
-                  }}
-                  onScroll={(e) => {
-                    const idx = Math.round(e.currentTarget.scrollTop / 36);
-                    const bounded = Math.max(0, Math.min(minuteOptions.length - 1, idx));
-                    setSelectedMinute(minuteOptions[bounded]);
-                  }}
-                >
-                  {minuteOptions.map(m => (
-                    <div key={m} role="option" aria-selected={selectedMinute === m} className={`wheel-item${selectedMinute === m ? ' selected' : ''}`}>{String(m).padStart(2, '0')}</div>
-                  ))}
+                {/* Minute: two halves toggle (00 / 30) across desktop and mobile */}
+                <div className="minute-toggle" role="radiogroup" aria-label="Minutes" tabIndex={0} onKeyDown={onMinuteKeyDown}>
+                  <button type="button" role="radio" aria-checked={selectedMinute === 0} className={`minute-half${selectedMinute === 0 ? ' selected' : ''}`} onClick={() => setSelectedMinute(0)}>00</button>
+                  <button type="button" role="radio" aria-checked={selectedMinute === 30} className={`minute-half${selectedMinute === 30 ? ' selected' : ''}`} onClick={() => setSelectedMinute(30)}>30</button>
                 </div>
               </div>
             )}
@@ -558,56 +564,55 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
                 )}
                 {(isAutoAccept && hasTimeslotParam) && (
                   <div className="time-wheel" aria-label="Select time">
-                    <div
-                      className="wheel-column"
-                      role="listbox"
-                      aria-label="Hours"
-                      tabIndex={0}
-                      ref={hoursRef}
-                      onKeyDown={(e) => {
-                        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-                          e.preventDefault();
-                          const delta = e.key === 'ArrowUp' ? -1 : 1;
-                          const idx = hourOptions.indexOf(selectedHour);
-                          const nextIdx = Math.max(0, Math.min(hourOptions.length - 1, idx + delta));
-                          setSelectedHour(hourOptions[nextIdx]);
-                        }
-                      }}
-                      onScroll={(e) => {
-                        const idx = Math.round(e.currentTarget.scrollTop / 36);
-                        const bounded = Math.max(0, Math.min(hourOptions.length - 1, idx));
-                        setSelectedHour(hourOptions[bounded]);
-                      }}
-                    >
-                      {hourOptions.map(h => (
-                        <div key={h} role="option" aria-selected={selectedHour === h} className={`wheel-item${selectedHour === h ? ' selected' : ''}`}>{String(h).padStart(2, '0')}</div>
-                      ))}
-                    </div>
+                    {isDesktop ? (
+                      <div className="hour-stepper" role="group" aria-label="Select hour">
+                        <button type="button" className="hour-arrow" aria-label="Increase hour" onClick={() => incrementHour(1)}>▲</button>
+                        <div className="hour-display" tabIndex={0} onKeyDown={onHoursKeyDown}>{String(selectedHour).padStart(2, '0')}</div>
+                        <button type="button" className="hour-arrow" aria-label="Decrease hour" onClick={() => incrementHour(-1)}>▼</button>
+                        <div className="hour-quick-grid" aria-label="Quick select hour">
+                          {hourOptions.map(h => (
+                            <button
+                              key={h}
+                              type="button"
+                              className={`hour-chip${selectedHour === h ? ' selected' : ''}`}
+                              onClick={() => setSelectedHour(h)}
+                            >
+                              {String(h).padStart(2, '0')}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <div
+                        className="wheel-column"
+                        role="listbox"
+                        aria-label="Hours"
+                        tabIndex={0}
+                        ref={hoursRef}
+                        onKeyDown={(e) => {
+                          if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                            e.preventDefault();
+                            const delta = e.key === 'ArrowUp' ? -1 : 1;
+                            const idx = hourOptions.indexOf(selectedHour);
+                            const nextIdx = Math.max(0, Math.min(hourOptions.length - 1, idx + delta));
+                            setSelectedHour(hourOptions[nextIdx]);
+                          }
+                        }}
+                        onScroll={(e) => {
+                          const idx = Math.round(e.currentTarget.scrollTop / 36);
+                          const bounded = Math.max(0, Math.min(hourOptions.length - 1, idx));
+                          setSelectedHour(hourOptions[bounded]);
+                        }}
+                      >
+                        {hourOptions.map(h => (
+                          <div key={h} role="option" aria-selected={selectedHour === h} className={`wheel-item${selectedHour === h ? ' selected' : ''}`} onClick={() => setSelectedHour(h)}>{String(h).padStart(2, '0')}</div>
+                        ))}
+                      </div>
+                    )}
                     <div className="wheel-separator">:</div>
-                    <div
-                      className="wheel-column"
-                      role="listbox"
-                      aria-label="Minutes"
-                      tabIndex={0}
-                      ref={minutesRef}
-                      onKeyDown={(e) => {
-                        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-                          e.preventDefault();
-                          const delta = e.key === 'ArrowUp' ? -1 : 1;
-                          const idx = minuteOptions.indexOf(selectedMinute);
-                          const nextIdx = Math.max(0, Math.min(minuteOptions.length - 1, idx + delta));
-                          setSelectedMinute(minuteOptions[nextIdx]);
-                        }
-                      }}
-                      onScroll={(e) => {
-                        const idx = Math.round(e.currentTarget.scrollTop / 36);
-                        const bounded = Math.max(0, Math.min(minuteOptions.length - 1, idx));
-                        setSelectedMinute(minuteOptions[bounded]);
-                      }}
-                    >
-                      {minuteOptions.map(m => (
-                        <div key={m} role="option" aria-selected={selectedMinute === m} className={`wheel-item${selectedMinute === m ? ' selected' : ''}`}>{String(m).padStart(2, '0')}</div>
-                      ))}
+                    <div className="minute-toggle" role="radiogroup" aria-label="Minutes" tabIndex={0} onKeyDown={onMinuteKeyDown}>
+                      <button type="button" role="radio" aria-checked={selectedMinute === 0} className={`minute-half${selectedMinute === 0 ? ' selected' : ''}`} onClick={() => setSelectedMinute(0)}>00</button>
+                      <button type="button" role="radio" aria-checked={selectedMinute === 30} className={`minute-half${selectedMinute === 30 ? ' selected' : ''}`} onClick={() => setSelectedMinute(30)}>30</button>
                     </div>
                   </div>
                 )}
