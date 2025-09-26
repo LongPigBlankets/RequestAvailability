@@ -145,6 +145,8 @@ export default function Checkout() {
     }
   };
 
+  const isAutoAcceptJourney = (currentRequest?.source || (isDraft ? 'autoaccept' : 'regular')) === 'autoaccept';
+
   return (
     <div className="app has-footer checkout-page">
       <div className="header" role="banner">
@@ -277,10 +279,12 @@ export default function Checkout() {
 
       <div className="ctaBar">
         <div className="ctaInner">
-          <div className="cta-microcopy">
-            This will send a request to check these dates' availability with the experience provider. 
-            Expect an email with the response within 24h of requesting.
-          </div>
+          {!isAutoAcceptJourney && (
+            <div className="cta-microcopy">
+              This will send a request to check these dates' availability with the experience provider. 
+              Expect an email with the response within 24h of requesting.
+            </div>
+          )}
           <button 
             className="cta-button cta-button--pill" 
             type="button" 
@@ -288,7 +292,7 @@ export default function Checkout() {
             disabled={!hasSelectedDates}
             aria-disabled={!hasSelectedDates}
           >
-            Send Request
+            {isAutoAcceptJourney ? 'Book now' : 'Send Request'}
           </button>
         </div>
       </div>

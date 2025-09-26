@@ -264,6 +264,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
         location: selectedLocation || "Port Lympne Kent",
         dates,
         timestamp: new Date().toISOString(),
+        source: isAutoAccept ? 'autoaccept' : 'regular',
       };
       sessionStorage.setItem('availabilityDraft', JSON.stringify(draft));
     } catch (e) {
@@ -285,6 +286,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
         location: selectedLocation || "Port Lympne Kent",
         dates,
         timestamp: new Date().toISOString(),
+        source: isAutoAccept ? 'autoaccept' : 'regular',
       };
       sessionStorage.setItem('availabilityDraft', JSON.stringify(draft));
     } catch (e) {

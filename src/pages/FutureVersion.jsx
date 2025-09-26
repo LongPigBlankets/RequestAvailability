@@ -207,8 +207,10 @@ export default function FutureVersion() {
           {/* Desktop: remade container with Date, Location and Check availability */}
           <aside className="cta-card future-cta-card" aria-label="Availability actions">
             <div className="cta-card-header">
-              <div className="cta-card-title">Limited Availability.</div>
-              <div className="cta-card-subtitle">Select your dates to check</div>
+              <div className="cta-card-title">{isAutoAccept ? 'Book a date for your experience' : 'Select up to 5 dates'}</div>
+              {!isAutoAccept && (
+                <div className="cta-card-subtitle">Checking availability can take up to 24h</div>
+              )}
             </div>
             <div className="future-card-fields">
               <button
