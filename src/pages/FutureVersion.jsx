@@ -28,6 +28,12 @@ export default function FutureVersion() {
   const { search, pathname } = useLocation();
   const hasTimeslotParam = new URLSearchParams(search).has('timeslot');
   const isAutoAccept = pathname === '/autoaccept' || pathname === '/product/autoaccept';
+  const params = new URLSearchParams(search);
+  const imageParamOrder = ['hotel', 'racing', 'zoo', 'dinner', 'elephant'];
+  const selectedImageKey = imageParamOrder.find(k => params.has(k));
+  const autoacceptImageSrc = selectedImageKey
+    ? (selectedImageKey === 'elephant' ? elephant : `/assets/${selectedImageKey}.png`)
+    : elephant;
 
   useEffect(() => {
     const mql = window.matchMedia('(min-width: 1024px)');
@@ -96,7 +102,7 @@ export default function FutureVersion() {
       </div>
 
       <div className="main-image">
-        <img src={elephant} alt="Giraffes and safari trucks at Port Lympne" />
+        <img src={isAutoAccept ? autoacceptImageSrc : elephant} alt="Giraffes and safari trucks at Port Lympne" onError={(e) => { if (e.currentTarget.src !== elephant) { e.currentTarget.src = elephant; } }} />
         <div className="carousel-dots" aria-hidden="true">
           <span className="dot active"></span>
           <span className="dot"></span>
