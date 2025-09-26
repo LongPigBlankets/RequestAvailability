@@ -75,8 +75,8 @@ export default function Home() {
 
           <aside className="cta-card" aria-label="Availability actions">
             <div className="cta-card-header">
-              <div className="cta-card-title">Limited Availability.</div>
-              <div className="cta-card-subtitle">Select your dates to check</div>
+              <div className="cta-card-title">Select up to 5 dates</div>
+              <div className="cta-card-subtitle">Checking availability can take up to 24h</div>
             </div>
             <div className="cta-card-actions">
               <button
