@@ -5,6 +5,8 @@ import { PRODUCT_TITLE } from "../constants";
 export default function Breadcrumbs() {
   const location = useLocation();
   const isRequestPage = location.pathname === "/request-to-book";
+  const isProductAutoaccept = location.pathname === "/product/autoaccept";
+  const currentTitle = isProductAutoaccept ? "Unforgettable Experience for Two" : PRODUCT_TITLE;
 
   return (
     <nav className="breadcrumbs" aria-label="Breadcrumb">
@@ -15,13 +17,13 @@ export default function Breadcrumbs() {
       {isRequestPage ? (
         <>
           <span className="crumb">
-            <Link to="/">{PRODUCT_TITLE}</Link>
+            <Link to="/">{currentTitle}</Link>
           </span>
           <span className="separator">{" -> "}</span>
           <span className="crumb current" aria-current="page">Request Availability</span>
         </>
       ) : (
-        <span className="crumb current" aria-current="page">{PRODUCT_TITLE}</span>
+        <span className="crumb current" aria-current="page">{currentTitle}</span>
       )}
     </nav>
   );

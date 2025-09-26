@@ -315,6 +315,7 @@ export default function FutureVersion() {
         onClose={() => setIsLocationOpen(false)}
         onSelect={(loc) => setSelectedLocation(loc)}
         selected={selectedLocation}
+        locations={pathname === '/product/autoaccept' ? ['London', 'Manchester', 'Glasgow', 'Bristol'] : undefined}
       />
 
       {isCalendarOpen && (
