@@ -124,6 +124,7 @@ export default function Checkout() {
           timestamp: new Date().toISOString(),
           contact: { ...formData },
           source: currentRequest.source || 'autoaccept',
+          isProductAutoAccept: Boolean(currentRequest.isProductAutoAccept),
         };
         const requests = JSON.parse(sessionStorage.getItem('availabilityRequests') || '[]');
         const updatedRequests = [...requests, newRequest];
@@ -146,9 +147,13 @@ export default function Checkout() {
   };
 
   const isAutoAcceptJourney = (currentRequest?.source || (isDraft ? 'autoaccept' : 'regular')) === 'autoaccept';
+  const journeyOrigin = (() => {
+    try { return sessionStorage.getItem('journeyOrigin') || 'regular'; } catch (e) { return 'regular'; }
+  })();
+  const isProductAutoAcceptJourney = Boolean(currentRequest?.isProductAutoAccept) || journeyOrigin === 'product-autoaccept';
 
   return (
-    <div className="app has-footer checkout-page">
+    <div className={`app has-footer checkout-page${isProductAutoAcceptJourney ? ' product-autoaccept' : ''}`}>
       <div className="header" role="banner">
         <BrandLogo />
         <div className="right-actions">
@@ -162,7 +167,9 @@ export default function Checkout() {
       <div className="content">
         <h1 className="title">Complete Your Request</h1>
         <p className="description">
-          Please provide your contact details to send the availability request for {PRODUCT_TITLE}.
+          {isProductAutoAcceptJourney
+            ? 'Please provide your contact details to book your experience.'
+            : <>Please provide your contact details to send the availability request for {PRODUCT_TITLE}.</>}
         </p>
       </div>
 
@@ -246,9 +253,11 @@ export default function Checkout() {
             
             <div className="summary-dates">
               <span className="summary-label"><span className="chip-icon chip-icon--calendar" aria-hidden="true"></span> Selected Dates:</span>
-              <p className="description" style={{ marginTop: 8 }}>
-                Mark one Top Preference so the supplier knows which date to prioritise.
-              </p>
+              {!isProductAutoAcceptJourney && (
+                <p className="description" style={{ marginTop: 8 }}>
+                  Mark one Top Preference so the supplier knows which date to prioritise.
+                </p>
+              )}
               <div className="dates-summary-list">
                 {currentRequest.dates.map((date) => (
                   <div key={date.iso} className="date-summary-item">
@@ -258,7 +267,7 @@ export default function Checkout() {
                         <div className="date-summary-time">Selected time: {date.time}</div>
                       )}
                     </div>
-                    {(!anyFavourited || date.isFavourite) && (
+                    {!isProductAutoAcceptJourney && (!anyFavourited || date.isFavourite) && (
                       <button
                         type="button"
                         className={`favorite-btn ${date.isFavourite ? 'active' : ''}`}

@@ -5,6 +5,7 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const isAutoAccept = pathname === '/autoaccept' || pathname === '/product/autoaccept';
+  const isProductAutoAccept = pathname === '/product/autoaccept';
   const [dates, setDates] = useState([]); // [{ iso, formatted }]
   const [selectedTimesByIso, setSelectedTimesByIso] = useState({}); // { [iso]: 'HH:MM' }
   const popoverRef = useRef(null);
@@ -83,6 +84,7 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
           ...draft,
           dates: normalized.map(d => ({ ...d, time: initial[d.iso] })),
           source: isAutoAccept ? 'autoaccept' : (draft.source || 'regular'),
+          isProductAutoAccept,
         };
         sessionStorage.setItem('availabilityDraft', JSON.stringify(updatedDraft));
         window.dispatchEvent(new Event('draftUpdated'));
@@ -175,6 +177,7 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
         ...draft,
         dates: nextDates,
         source: isAutoAccept ? 'autoaccept' : (draft.source || 'regular'),
+        isProductAutoAccept,
       };
       sessionStorage.setItem('availabilityDraft', JSON.stringify(updatedDraft));
       window.dispatchEvent(new Event('draftUpdated'));
@@ -215,7 +218,7 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
             next[lastIndex] = updatedLast;
             sessionStorage.setItem('availabilityRequests', JSON.stringify(next));
             // Also set a draft so checkout reads it first
-            sessionStorage.setItem('availabilityDraft', JSON.stringify({ ...updatedLast, id: 'draft', source: isAutoAccept ? 'autoaccept' : 'regular' }));
+            sessionStorage.setItem('availabilityDraft', JSON.stringify({ ...updatedLast, id: 'draft', source: isAutoAccept ? 'autoaccept' : 'regular', isProductAutoAccept }));
           }
         }
       }
