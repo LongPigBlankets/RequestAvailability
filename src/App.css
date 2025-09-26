@@ -1450,6 +1450,8 @@ textarea.form-input,
 
 /* Mobile form adjustments */
 @media (max-width: 767px) {
+  /* Push first content block down on checkout so header (logo/back/logout/help) stays in view */
+  .checkout-page .content:first-of-type { padding-top: 88px; }
   .checkout-form {
     gap: 16px;
   }

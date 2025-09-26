@@ -124,6 +124,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
           dates,
           timestamp: new Date().toISOString(),
           source: 'autoaccept',
+          isProductAutoAccept,
         };
         sessionStorage.setItem('availabilityDraft', JSON.stringify(draft));
         window.dispatchEvent(new Event('draftUpdated'));
@@ -178,6 +179,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
         dates,
         timestamp: new Date().toISOString(),
         source: isAutoAccept ? 'autoaccept' : 'regular',
+        isProductAutoAccept,
       };
       sessionStorage.setItem('availabilityDraft', JSON.stringify(draft));
       window.dispatchEvent(new Event('draftUpdated'));
@@ -266,6 +268,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
         dates,
         timestamp: new Date().toISOString(),
         source: isAutoAccept ? 'autoaccept' : 'regular',
+        isProductAutoAccept,
       };
       sessionStorage.setItem('availabilityDraft', JSON.stringify(draft));
     } catch (e) {
@@ -288,6 +291,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
         dates,
         timestamp: new Date().toISOString(),
         source: isAutoAccept ? 'autoaccept' : 'regular',
+        isProductAutoAccept,
       };
       sessionStorage.setItem('availabilityDraft', JSON.stringify(draft));
     } catch (e) {
