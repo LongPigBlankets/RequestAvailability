@@ -1,15 +1,16 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
-const LOCATIONS = [
+const DEFAULT_LOCATIONS = [
   "Port Lympne Kent",
   "Port Lympne Hampshire",
   "Port Lympne Essex",
 ];
 
-export default function LocationActionSheet({ anchorRef, isOpen, onClose, onSelect, selected }) {
+export default function LocationActionSheet({ anchorRef, isOpen, onClose, onSelect, selected, locations }) {
   const panelRef = useRef(null);
   const [isDesktop, setIsDesktop] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
+  const options = Array.isArray(locations) && locations.length > 0 ? locations : DEFAULT_LOCATIONS;
 
   useEffect(() => {
     const mql = window.matchMedia('(min-width: 1024px)');
@@ -67,7 +68,7 @@ export default function LocationActionSheet({ anchorRef, isOpen, onClose, onSele
           </div>
           <div className="booking-body">
             <div role="listbox" aria-label="Choose location" className="location-dropdown" style={{ position: 'static', border: 'none', boxShadow: 'none' }}>
-              {LOCATIONS.map((loc) => (
+              {options.map((loc) => (
                 <button
                   type="button"
                   key={loc}
@@ -88,7 +89,7 @@ export default function LocationActionSheet({ anchorRef, isOpen, onClose, onSele
 
   return (
     <div ref={panelRef} className="location-popover" style={{ top: `${position.top}px`, left: `${position.left}px`, width: `${position.width}px` }} role="listbox" aria-label="Choose location">
-      {LOCATIONS.map((loc) => (
+      {options.map((loc) => (
         <button
           type="button"
           key={loc}
