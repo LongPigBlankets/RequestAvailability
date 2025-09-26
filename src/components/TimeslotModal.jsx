@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const isAutoAccept = pathname === '/autoaccept';
+  const isAutoAccept = pathname === '/autoaccept' || pathname === '/product/autoaccept';
   const [dates, setDates] = useState([]); // [{ iso, formatted }]
   const [selectedTimesByIso, setSelectedTimesByIso] = useState({}); // { [iso]: 'HH:MM' }
   const popoverRef = useRef(null);
