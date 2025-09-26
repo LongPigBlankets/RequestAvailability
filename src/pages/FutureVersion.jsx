@@ -28,6 +28,9 @@ export default function FutureVersion() {
   const { search, pathname } = useLocation();
   const hasTimeslotParam = new URLSearchParams(search).has('timeslot');
   const isAutoAccept = pathname === '/autoaccept' || pathname === '/product/autoaccept';
+  const headerImageSrc = pathname === '/product/autoaccept'
+    ? (hasTimeslotParam ? '/assets/dinner.jpg' : '/assets/zoo.jpg')
+    : elephant;
 
   useEffect(() => {
     const mql = window.matchMedia('(min-width: 1024px)');
@@ -96,7 +99,7 @@ export default function FutureVersion() {
       </div>
 
       <div className="main-image">
-        <img src={elephant} alt="Giraffes and safari trucks at Port Lympne" />
+        <img src={headerImageSrc} alt="Giraffes and safari trucks at Port Lympne" />
         <div className="carousel-dots" aria-hidden="true">
           <span className="dot active"></span>
           <span className="dot"></span>
