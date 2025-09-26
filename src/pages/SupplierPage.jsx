@@ -6,7 +6,7 @@ export default function SupplierPage() {
   const [availabilityRequests, setAvailabilityRequests] = useState([]);
   const [requestStates, setRequestStates] = useState({});
   const [cancelModalRequestId, setCancelModalRequestId] = useState(null);
-  const [activeFilter, setActiveFilter] = useState('Pending requests');
+  const [activeFilter, setActiveFilter] = useState('All');
 
   // Predefined user names for the first 5 users
   const getUserName = (index) => {
