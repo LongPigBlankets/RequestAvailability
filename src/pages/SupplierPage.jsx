@@ -6,7 +6,7 @@ export default function SupplierPage() {
   const [availabilityRequests, setAvailabilityRequests] = useState([]);
   const [requestStates, setRequestStates] = useState({});
   const [cancelModalRequestId, setCancelModalRequestId] = useState(null);
-  const [activeTab, setActiveTab] = useState('Pending Requests');
+  const [activeFilter, setActiveFilter] = useState('All');
 
   // Predefined user names for the first 5 users
   const getUserName = (index) => {
@@ -169,18 +169,32 @@ export default function SupplierPage() {
     setAvailabilityRequests(requests);
   }, []);
 
-  // Derived lists for tabs
-  const allPendingBase = [...hardcodedRequests, ...availabilityRequests];
-  const cancelledList = allPendingBase.filter(r => requestStates[r.id]?.status === 'cancelled');
-  const pendingList = allPendingBase.filter(r => requestStates[r.id]?.status !== 'cancelled');
+  // Auto-accept for single-date autoaccept flow
+  useEffect(() => {
+    if (!Array.isArray(availabilityRequests) || availabilityRequests.length === 0) return;
+    setRequestStates(prev => {
+      const next = { ...prev };
+      availabilityRequests.forEach(req => {
+        if ((req.source === 'autoaccept' || req.source === 'autoAccept') && Array.isArray(req.dates) && req.dates.length === 1) {
+          if (!next[req.id] || !next[req.id].status) {
+            next[req.id] = { status: 'accepted', selectedDateIndex: 0 };
+          }
+        }
+      });
+      return next;
+    });
+  }, [availabilityRequests]);
 
-  const getTabData = () => {
-    if (activeTab === 'Completed Bookings') return completedPlaceholders;
-    if (activeTab === 'Expired') return expiredPlaceholders;
-    if (activeTab === 'Cancelled') return cancelledList;
-    return pendingList; // Pending Requests
-  };
-  const listToRender = getTabData();
+  // Build combined list and apply top-level filters
+  const allPendingBase = [...hardcodedRequests, ...availabilityRequests];
+  const combinedAll = [...allPendingBase, ...completedPlaceholders, ...expiredPlaceholders];
+  const listToRender = (
+    activeFilter === 'Rejected Requests'
+      ? combinedAll.filter(r => requestStates[r.id]?.status === 'rejected')
+      : activeFilter === 'Accepted Bookings'
+        ? combinedAll.filter(r => r.isCompleted === true || requestStates[r.id]?.status === 'accepted')
+        : combinedAll
+  );
 
   return (
     <div className="app has-footer supplier-page">
@@ -199,16 +213,16 @@ export default function SupplierPage() {
         <h1 className="title">Supplier Dashboard</h1>
         <h2 className="section-title">Availability Requests</h2>
         <div className="requests-tabs" role="tablist" aria-label="Filter requests">
-          {['Completed Bookings', 'Pending Requests', 'Cancelled', 'Expired'].map(tab => (
+          {['All', 'Rejected Requests', 'Accepted Bookings'].map(pill => (
             <button
-              key={tab}
+              key={pill}
               type="button"
               role="tab"
-              aria-selected={activeTab === tab}
-              className={`requests-tab ${activeTab === tab ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab)}
+              aria-selected={activeFilter === pill}
+              className={`requests-tab ${activeFilter === pill ? 'active' : ''}`}
+              onClick={() => setActiveFilter(pill)}
             >
-              {tab}
+              {pill}
             </button>
           ))}
         </div>
