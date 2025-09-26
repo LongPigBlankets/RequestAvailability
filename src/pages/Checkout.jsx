@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import BrandLogo from "../components/BrandLogo";
 import Footer from "../components/Footer";
 import { PRODUCT_TITLE } from "../constants";
@@ -9,6 +9,9 @@ export default function Checkout() {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
   const navigate = useNavigate();
+  const { search } = useLocation();
+  const urlParams = new URLSearchParams(search);
+  const hasAutoacceptParam = urlParams.has('autoaccept');
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -146,6 +149,7 @@ export default function Checkout() {
   };
 
   const isAutoAcceptJourney = (currentRequest?.source || (isDraft ? 'autoaccept' : 'regular')) === 'autoaccept';
+  const isProductAutoAcceptParam = hasAutoacceptParam;
 
   return (
     <div className="app has-footer checkout-page">
@@ -162,7 +166,9 @@ export default function Checkout() {
       <div className="content">
         <h1 className="title">Complete Your Request</h1>
         <p className="description">
-          Please provide your contact details to send the availability request for {PRODUCT_TITLE}.
+          {isProductAutoAcceptParam
+            ? 'Please provide your contact details to book your experience.'
+            : <>Please provide your contact details to send the availability request for {PRODUCT_TITLE}.</>}
         </p>
       </div>
 
@@ -246,9 +252,11 @@ export default function Checkout() {
             
             <div className="summary-dates">
               <span className="summary-label"><span className="chip-icon chip-icon--calendar" aria-hidden="true"></span> Selected Dates:</span>
-              <p className="description" style={{ marginTop: 8 }}>
-                Mark one Top Preference so the supplier knows which date to prioritise.
-              </p>
+              {!isProductAutoAcceptParam && (
+                <p className="description" style={{ marginTop: 8 }}>
+                  Mark one Top Preference so the supplier knows which date to prioritise.
+                </p>
+              )}
               <div className="dates-summary-list">
                 {currentRequest.dates.map((date) => (
                   <div key={date.iso} className="date-summary-item">
@@ -258,7 +266,7 @@ export default function Checkout() {
                         <div className="date-summary-time">Selected time: {date.time}</div>
                       )}
                     </div>
-                    {(!anyFavourited || date.isFavourite) && (
+                    {(!isProductAutoAcceptParam && (!anyFavourited || date.isFavourite)) && (
                       <button
                         type="button"
                         className={`favorite-btn ${date.isFavourite ? 'active' : ''}`}
