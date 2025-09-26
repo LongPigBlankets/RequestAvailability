@@ -6,7 +6,7 @@ export default function SupplierPage() {
   const [availabilityRequests, setAvailabilityRequests] = useState([]);
   const [requestStates, setRequestStates] = useState({});
   const [cancelModalRequestId, setCancelModalRequestId] = useState(null);
-  const [activeFilter, setActiveFilter] = useState('All');
+  const [activeFilter, setActiveFilter] = useState('Pending requests');
 
   // Predefined user names for the first 5 users
   const getUserName = (index) => {
@@ -185,16 +185,47 @@ export default function SupplierPage() {
     });
   }, [availabilityRequests]);
 
-  // Build combined list and apply top-level filters
+  // Build combined list and apply top-level filters with multi-membership
   const allPendingBase = [...hardcodedRequests, ...availabilityRequests];
   const combinedAll = [...allPendingBase, ...completedPlaceholders, ...expiredPlaceholders];
-  const listToRender = (
-    activeFilter === 'Rejected Requests'
-      ? combinedAll.filter(r => requestStates[r.id]?.status === 'rejected')
-      : activeFilter === 'Accepted Bookings'
-        ? combinedAll.filter(r => r.isCompleted === true || requestStates[r.id]?.status === 'accepted')
-        : combinedAll
-  );
+
+  function getFlagsForRequest(r) {
+    const state = requestStates[r.id]?.status;
+    const isCompleted = r.isCompleted === true;
+    const isExpired = r.isExpired === true;
+    const isAccepted = isCompleted || state === 'accepted';
+    const isRejected = state === 'rejected';
+    const isCancelled = state === 'cancelled';
+    const isPending = !isCompleted && !isExpired && !isAccepted && !isRejected && !isCancelled;
+    return { isCompleted, isExpired, isAccepted, isRejected, isCancelled, isPending };
+  }
+
+  function filterByActive(list) {
+    switch (activeFilter) {
+      case 'Pending requests':
+        return list.filter(r => getFlagsForRequest(r).isPending);
+      case 'Accepted':
+        return list.filter(r => getFlagsForRequest(r).isAccepted);
+      case 'Rejected':
+        return list.filter(r => getFlagsForRequest(r).isRejected);
+      case 'Completed Bookings':
+        return list.filter(r => getFlagsForRequest(r).isCompleted);
+      case 'Expired':
+        return list.filter(r => getFlagsForRequest(r).isExpired);
+      case 'Cancelled':
+        return list.filter(r => getFlagsForRequest(r).isCancelled);
+      case 'All':
+      default:
+        return list;
+    }
+  }
+
+  function timeOf(r) {
+    const t = Date.parse(r?.timestamp);
+    return Number.isFinite(t) ? t : 0;
+  }
+
+  const listToRender = filterByActive(combinedAll).slice().sort((a, b) => timeOf(b) - timeOf(a));
 
   return (
     <div className="app has-footer supplier-page">
@@ -213,7 +244,7 @@ export default function SupplierPage() {
         <h1 className="title">Supplier Dashboard</h1>
         <h2 className="section-title">Availability Requests</h2>
         <div className="requests-tabs" role="tablist" aria-label="Filter requests">
-          {['All', 'Rejected Requests', 'Accepted Bookings'].map(pill => (
+          {['Pending requests', 'Accepted', 'Rejected', 'Completed Bookings', 'Expired', 'Cancelled', 'All'].map(pill => (
             <button
               key={pill}
               type="button"
