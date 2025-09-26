@@ -40,6 +40,21 @@ export default function FutureVersion() {
     return () => mql.removeEventListener('change', sync);
   }, []);
 
+  // Persist journey origin so Checkout can detect /product/autoaccept even if no draft exists
+  useEffect(() => {
+    try {
+      if (pathname === '/product/autoaccept') {
+        sessionStorage.setItem('journeyOrigin', 'product-autoaccept');
+      } else if (pathname === '/autoaccept') {
+        sessionStorage.setItem('journeyOrigin', 'autoaccept');
+      } else {
+        sessionStorage.setItem('journeyOrigin', 'regular');
+      }
+    } catch (e) {
+      // no-op
+    }
+  }, [pathname]);
+
   // Keep draft's location in sync so checkout summary is accurate
   useEffect(() => {
     try {

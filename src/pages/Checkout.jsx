@@ -147,7 +147,10 @@ export default function Checkout() {
   };
 
   const isAutoAcceptJourney = (currentRequest?.source || (isDraft ? 'autoaccept' : 'regular')) === 'autoaccept';
-  const isProductAutoAcceptJourney = Boolean(currentRequest?.isProductAutoAccept);
+  const journeyOrigin = (() => {
+    try { return sessionStorage.getItem('journeyOrigin') || 'regular'; } catch (e) { return 'regular'; }
+  })();
+  const isProductAutoAcceptJourney = Boolean(currentRequest?.isProductAutoAccept) || journeyOrigin === 'product-autoaccept';
 
   return (
     <div className={`app has-footer checkout-page${isProductAutoAcceptJourney ? ' product-autoaccept' : ''}`}>
