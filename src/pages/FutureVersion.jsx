@@ -28,6 +28,7 @@ export default function FutureVersion() {
   const { search, pathname } = useLocation();
   const hasTimeslotParam = new URLSearchParams(search).has('timeslot');
   const isAutoAccept = pathname === '/autoaccept' || pathname === '/product/autoaccept';
+  const isProductAutoAccept = pathname === '/product/autoaccept';
   const headerImageSrc = pathname === '/product/autoaccept'
     ? (hasTimeslotParam ? '/assets/dinner.jpg' : '/assets/zoo.jpg')
     : elephant;
@@ -285,7 +286,7 @@ export default function FutureVersion() {
               <button
                 className="cta-button cta-button--pill"
                 type="button"
-                onClick={() => navigate('/checkout')}
+                onClick={() => navigate(isProductAutoAccept ? '/checkout?autoaccept' : '/checkout')}
                 style={{ marginTop: '8px' }}
               >
                 Continue to checkout
@@ -301,7 +302,7 @@ export default function FutureVersion() {
           <button
             className="cta-button cta-button--pill"
             type="button"
-            onClick={() => navigate('/checkout')}
+            onClick={() => navigate(isProductAutoAccept ? '/checkout?autoaccept' : '/checkout')}
           >
             Continue to Checkout
           </button>

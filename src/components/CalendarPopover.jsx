@@ -272,7 +272,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
       // no-op
     }
     onClose?.();
-    navigate('/checkout');
+    navigate(isProductAutoAccept ? '/checkout?autoaccept' : '/checkout');
   }
 
   function persistDraftWithoutNavigation() {
