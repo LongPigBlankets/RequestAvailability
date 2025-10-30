@@ -606,27 +606,76 @@ body {
 
 
 /* Timeslot Modal sections */
-.timeslot-sections { display: flex; flex-direction: column; gap: 12px; }
-.timeslot-section { padding: 8px 0; }
-.timeslot-date { font-weight: 700; margin-bottom: 8px; }
-.timeslot-carousel {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: max-content;
-  gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 6px; /* breathing room under chips */
+.timeslot-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  max-height: 100%;
+  padding-right: 4px; /* room for scrollbar */
 }
-.timeslot-carousel::-webkit-scrollbar { height: 8px; }
-.timeslot-carousel::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 9999px; }
+
+.timeslot-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.timeslot-sections--grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.timeslot-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  background: #f8fafc;
+}
+
+.timeslot-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.timeslot-date {
+  font-weight: 700;
+  margin-bottom: 0;
+}
+
+.timeslot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 8px;
+}
+
+@media (min-width: 1024px) {
+  .timeslot-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
 .timeslot-pill {
-  padding: 8px 12px;
-  border-radius: 9999px;
+  padding: 10px 12px;
+  border-radius: 12px;
   border: 1px solid #e5e7eb;
   background: #ffffff;
   font-size: 14px;
   cursor: pointer;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
 .timeslot-pill.selected {
   background: #0f766e;
@@ -1636,6 +1685,12 @@ textarea.form-input,
   box-shadow: 0 12px 28px rgba(0,0,0,0.12);
   overflow: visible; /* allow content to spill past viewport */
   padding: 16px 16px 20px 16px; /* extra padding for CTA space */
+}
+
+.timeslot-popover {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 /* Ensure calendar fully expands inside action sheets */
