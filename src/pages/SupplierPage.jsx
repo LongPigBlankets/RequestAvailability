@@ -6,7 +6,7 @@ export default function SupplierPage() {
   const [availabilityRequests, setAvailabilityRequests] = useState([]);
   const [requestStates, setRequestStates] = useState({});
   const [cancelModalRequestId, setCancelModalRequestId] = useState(null);
-  const [activeTab, setActiveTab] = useState('Pending Requests');
+  const [activeFilter, setActiveFilter] = useState('All');
 
   // Predefined user names for the first 5 users
   const getUserName = (index) => {
@@ -169,18 +169,63 @@ export default function SupplierPage() {
     setAvailabilityRequests(requests);
   }, []);
 
-  // Derived lists for tabs
-  const allPendingBase = [...hardcodedRequests, ...availabilityRequests];
-  const cancelledList = allPendingBase.filter(r => requestStates[r.id]?.status === 'cancelled');
-  const pendingList = allPendingBase.filter(r => requestStates[r.id]?.status !== 'cancelled');
+  // Auto-accept for single-date autoaccept flow
+  useEffect(() => {
+    if (!Array.isArray(availabilityRequests) || availabilityRequests.length === 0) return;
+    setRequestStates(prev => {
+      const next = { ...prev };
+      availabilityRequests.forEach(req => {
+        if ((req.source === 'autoaccept' || req.source === 'autoAccept') && Array.isArray(req.dates) && req.dates.length === 1) {
+          if (!next[req.id] || !next[req.id].status) {
+            next[req.id] = { status: 'accepted', selectedDateIndex: 0 };
+          }
+        }
+      });
+      return next;
+    });
+  }, [availabilityRequests]);
 
-  const getTabData = () => {
-    if (activeTab === 'Completed Bookings') return completedPlaceholders;
-    if (activeTab === 'Expired') return expiredPlaceholders;
-    if (activeTab === 'Cancelled') return cancelledList;
-    return pendingList; // Pending Requests
-  };
-  const listToRender = getTabData();
+  // Build combined list and apply top-level filters with multi-membership
+  const allPendingBase = [...hardcodedRequests, ...availabilityRequests];
+  const combinedAll = [...allPendingBase, ...completedPlaceholders, ...expiredPlaceholders];
+
+  function getFlagsForRequest(r) {
+    const state = requestStates[r.id]?.status;
+    const isCompleted = r.isCompleted === true;
+    const isExpired = r.isExpired === true;
+    const isAccepted = isCompleted || state === 'accepted';
+    const isRejected = state === 'rejected';
+    const isCancelled = state === 'cancelled';
+    const isPending = !isCompleted && !isExpired && !isAccepted && !isRejected && !isCancelled;
+    return { isCompleted, isExpired, isAccepted, isRejected, isCancelled, isPending };
+  }
+
+  function filterByActive(list) {
+    switch (activeFilter) {
+      case 'Pending requests':
+        return list.filter(r => getFlagsForRequest(r).isPending);
+      case 'Accepted':
+        return list.filter(r => getFlagsForRequest(r).isAccepted);
+      case 'Rejected':
+        return list.filter(r => getFlagsForRequest(r).isRejected);
+      case 'Completed Bookings':
+        return list.filter(r => getFlagsForRequest(r).isCompleted);
+      case 'Expired':
+        return list.filter(r => getFlagsForRequest(r).isExpired);
+      case 'Cancelled':
+        return list.filter(r => getFlagsForRequest(r).isCancelled);
+      case 'All':
+      default:
+        return list;
+    }
+  }
+
+  function timeOf(r) {
+    const t = Date.parse(r?.timestamp);
+    return Number.isFinite(t) ? t : 0;
+  }
+
+  const listToRender = filterByActive(combinedAll).slice().sort((a, b) => timeOf(b) - timeOf(a));
 
   return (
     <div className="app has-footer supplier-page">
@@ -199,16 +244,16 @@ export default function SupplierPage() {
         <h1 className="title">Supplier Dashboard</h1>
         <h2 className="section-title">Availability Requests</h2>
         <div className="requests-tabs" role="tablist" aria-label="Filter requests">
-          {['Completed Bookings', 'Pending Requests', 'Cancelled', 'Expired'].map(tab => (
+          {['Pending requests', 'Accepted', 'Rejected', 'Completed Bookings', 'Expired', 'Cancelled', 'All'].map(pill => (
             <button
-              key={tab}
+              key={pill}
               type="button"
               role="tab"
-              aria-selected={activeTab === tab}
-              className={`requests-tab ${activeTab === tab ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab)}
+              aria-selected={activeFilter === pill}
+              className={`requests-tab ${activeFilter === pill ? 'active' : ''}`}
+              onClick={() => setActiveFilter(pill)}
             >
-              {tab}
+              {pill}
             </button>
           ))}
         </div>
