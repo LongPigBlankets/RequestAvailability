@@ -25,11 +25,11 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
     return `${day}${suffix} of ${month}`;
   }
 
-  function generateTimeOptions(startHour = 9, startMinute = 30, endHour = 17, endMinute = 0, stepMinutes = 30) {
+  function generateTimeOptions(startHour = 9, startMinute = 0, endHour = 17, endMinute = 0, stepMinutes = 30) {
     const options = [];
     const startTotal = startHour * 60 + startMinute;
     const endTotal = endHour * 60 + endMinute;
-    for (let t = startTotal; t <= endTotal; t += stepMinutes) {
+    for (let t = startTotal; t < endTotal; t += stepMinutes) {
       const h = Math.floor(t / 60);
       const m = t % 60;
       options.push(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`);
@@ -37,7 +37,8 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
     return options;
   }
 
-  const timeOptions = useMemo(() => generateTimeOptions(9, 30, 17, 0, 30), []);
+  const timeOptions = useMemo(() => generateTimeOptions(9, 0, 17, 0, 30), []);
+  const ensureValidTime = (value) => (value && timeOptions.includes(value) ? value : null);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -61,7 +62,7 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
           return {
             iso: d.iso,
             formatted: d.formatted || (!isNaN(dt.getTime()) ? formatHuman(dt) : String(d.iso)),
-            time: d.time || null,
+            time: ensureValidTime(d.time),
           };
         }
         const asDate = new Date(d);
@@ -73,7 +74,7 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
       // initialize selected times from stored values or default to first option
       const initial = {};
       normalized.forEach(item => {
-        initial[item.iso] = item.time || timeOptions[0];
+        initial[item.iso] = ensureValidTime(item.time) || timeOptions[0];
       });
       setSelectedTimesByIso(initial);
       // also persist immediately so desktop CTA gating can enable
@@ -170,7 +171,10 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
     if (!isOpen) return;
     try {
       const draft = JSON.parse(sessionStorage.getItem('availabilityDraft') || 'null') || {};
-      const nextDates = (dates || []).map(d => ({ ...d, time: selectedTimesByIso[d.iso] || d.time || timeOptions[0] }));
+      const nextDates = (dates || []).map(d => {
+        const selected = ensureValidTime(selectedTimesByIso[d.iso]) || ensureValidTime(d.time) || timeOptions[0];
+        return { ...d, time: selected };
+      });
       const updatedDraft = {
         ...draft,
         dates: nextDates,
@@ -194,7 +198,7 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
           ...draft,
           dates: draft.dates.map(d => ({
             ...d,
-            time: selectedTimesByIso[d.iso] || d.time || timeOptions[0],
+            time: ensureValidTime(selectedTimesByIso[d.iso]) || ensureValidTime(d.time) || timeOptions[0],
           }))
         };
         sessionStorage.setItem('availabilityDraft', JSON.stringify(updatedDraft));
@@ -208,7 +212,7 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
               ...last,
               dates: last.dates.map(d => ({
                 ...d,
-                time: selectedTimesByIso[d.iso] || d.time || timeOptions[0],
+                time: ensureValidTime(selectedTimesByIso[d.iso]) || ensureValidTime(d.time) || timeOptions[0],
               }))
             };
             const next = [...requests];
@@ -225,17 +229,31 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
     onClose?.();
   }
 
+  const showGridLayout = isDesktop && dates.length > 1;
+  const gridRows = showGridLayout ? Math.ceil(dates.length / 2) : Math.max(dates.length, 1);
+  const estimatedHeaderHeight = 112;
+  const estimatedCardHeight = 240;
+  const dynamicMaxHeight = isDesktop
+    ? Math.min(position.maxHeight || 720, estimatedHeaderHeight + gridRows * estimatedCardHeight)
+    : undefined;
+
   const content = (
     <>
-      <div className="booking-details-heading">Select timeslots</div>
+      {isDesktop && <div className="booking-details-heading">Select timeslots</div>}
       {dates.length === 0 ? (
         <p className="booking-description">No dates selected yet.</p>
       ) : (
-        <div className="timeslot-sections">
-          {dates.map((d, idx) => (
-            <div key={d.iso} className="timeslot-section">
-              <div className="timeslot-date">{d.formatted}</div>
-              <div className="timeslot-carousel" role="radiogroup" aria-label={`Select time for ${d.formatted}`}>
+        <div className={`timeslot-sections${showGridLayout ? ' timeslot-sections--grid' : ''}`}>
+          {dates.map((d) => (
+            <div key={d.iso} className="timeslot-card">
+              <div className="timeslot-card-header">
+                <div className="timeslot-date">{d.formatted}</div>
+              </div>
+              <div
+                className="timeslot-grid"
+                role="radiogroup"
+                aria-label={`Select time for ${d.formatted}`}
+              >
                 {timeOptions.map((t) => {
                   const isSelected = selectedTimesByIso[d.iso] === t;
                   return (
@@ -255,7 +273,6 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
                   );
                 })}
               </div>
-              {idx < dates.length - 1 && <div className="divider"></div>}
             </div>
           ))}
         </div>
@@ -277,13 +294,17 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
   return isDesktop ? (
     <div
       ref={popoverRef}
-      className="cta-popover"
-      style={{ top: `${position.top || 120}px`, left: `${position.left || 24}px`, width: `${position.width || 520}px` }}
+      className="cta-popover timeslot-popover"
+      style={{
+        top: `${position.top || 120}px`,
+        left: `${position.left || 24}px`,
+        width: `${position.width || 520}px`,
+        maxHeight: dynamicMaxHeight ? `${dynamicMaxHeight}px` : undefined
+      }}
       role="dialog"
       aria-modal="false"
     >
-      <div className="calendar open">
-        <div className="calendar-caption">Select timeslots</div>
+      <div className="timeslot-modal-content">
         {content}
       </div>
     </div>
