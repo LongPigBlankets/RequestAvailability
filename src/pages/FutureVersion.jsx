@@ -258,7 +258,7 @@ export default function FutureVersion() {
               </button>
             </div>
             <div className="future-card-cta">
-              <div className={`future-card-cta-row${isAutoAccept ? ' single' : ''}`}>
+              <div className={`future-card-cta-row${isAutoAccept || !hasTimeslotParam ? ' single' : ''}`}>
                 <button
                   ref={ctaDesktopRef}
                   className="cta-button cta-button--pill cta-button--date"
