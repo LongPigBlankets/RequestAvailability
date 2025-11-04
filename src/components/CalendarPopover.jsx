@@ -8,7 +8,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
   const navigate = useNavigate();
   const { pathname, search } = useLocation();
   const isAutoAccept = pathname === '/autoaccept' || pathname === '/product/autoaccept';
-  const isProductAutoAccept = pathname === '/product/autoaccept';
+  const isProductAutoAccept = pathname === '/product/autoaccept' || pathname === '/product';
   const hasTimeslotParam = new URLSearchParams(search).has('timeslot');
 
   const [currentMonth, setCurrentMonth] = useState(() => {

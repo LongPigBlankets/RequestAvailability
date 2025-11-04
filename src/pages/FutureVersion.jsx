@@ -27,9 +27,13 @@ export default function FutureVersion() {
   const locationChipCardRef = useRef(null);
   const { search, pathname } = useLocation();
   const hasTimeslotParam = new URLSearchParams(search).has('timeslot');
-  const isAutoAccept = pathname === '/autoaccept' || pathname === '/product/autoaccept';
+  const isAutoAcceptRoute = pathname === '/autoaccept' || pathname === '/product/autoaccept';
+  const isProductClone = pathname === '/product';
+  const isAutoAccept = isAutoAcceptRoute || isProductClone;
   const isProductAutoAccept = pathname === '/product/autoaccept';
-  const headerImageSrc = pathname === '/product/autoaccept'
+  const isProductVariant = isProductAutoAccept || isProductClone;
+  const shouldUseAutoAcceptCheckout = isProductVariant;
+  const headerImageSrc = isProductVariant
     ? (hasTimeslotParam ? '/assets/dinner.jpg' : '/assets/zoo.jpg')
     : elephant;
 
@@ -118,9 +122,9 @@ export default function FutureVersion() {
         <div className="product-layout">
           <div className="product-main">
             <div className="product-id">118107722</div>
-            <h1 className="title">{isAutoAccept && pathname === '/product/autoaccept' ? 'Unforgettable Experience for Two' : PRODUCT_TITLE}</h1>
+            <h1 className="title">{isAutoAccept && isProductVariant ? 'Unforgettable Experience for Two' : PRODUCT_TITLE}</h1>
             <div className="location">
-              <span className="chip-icon chip-icon--pin" aria-hidden="true"></span> {isAutoAccept && pathname === '/product/autoaccept' ? 'Multiple venues across the UK' : 'The Aspinall Foundation, Nr Ashford Kent, Lympne Hythe, CT21 4PD'}
+              <span className="chip-icon chip-icon--pin" aria-hidden="true"></span> {isAutoAccept && isProductVariant ? 'Multiple venues across the UK' : 'The Aspinall Foundation, Nr Ashford Kent, Lympne Hythe, CT21 4PD'}
             </div>
             <div className="validity">
               <span className="use-by">Use by 19th Aug 2026</span>
@@ -178,20 +182,20 @@ export default function FutureVersion() {
             </div>
 
             <h2 className="section-title">About the experience</h2>
-            {isAutoAccept && pathname === '/product/autoaccept' ? (
+            {isAutoAccept && isProductVariant ? (
               <p className="description">
                 Enjoy a memorable day out with this experience, combining relaxation, discovery and the chance to do something a little different. Whether you’re looking to explore, unwind or try something new, this is the perfect way to spend your time.
               </p>
             ) : (
               <p className="description">
                 Explore the vast 600-acre expanse of Port Lympne Reserve and its historic landscape,
-                then unwind with a relaxing afternoon tea. Meet incredible animals up close and enjoy 
+                then unwind with a relaxing afternoon tea. Meet incredible animals up close and enjoy
                 a memorable day out in nature.
               </p>
             )}
             <div className="divider"></div>
             <h2 className="section-title">What's included?</h2>
-            {isAutoAccept && pathname === '/product/autoaccept' ? (
+            {isAutoAccept && isProductVariant ? (
               <div className="description">
                 <ul>
                   <li>A main activity designed to give you an unforgettable experience</li>
@@ -211,7 +215,7 @@ export default function FutureVersion() {
 
             <div className="divider"></div>
             <h2 className="section-title">What do I need to know?</h2>
-            {isAutoAccept && pathname === '/product/autoaccept' ? (
+            {isAutoAccept && isProductVariant ? (
               <div className="description">
                 <ul>
                   <li>The core experience lasts around 60 minutes (may vary depending on activity)</li>
@@ -286,7 +290,7 @@ export default function FutureVersion() {
               <button
                 className="cta-button cta-button--pill"
                 type="button"
-                onClick={() => navigate(isProductAutoAccept ? '/checkout?autoaccept' : '/checkout')}
+                onClick={() => navigate(shouldUseAutoAcceptCheckout ? '/checkout?autoaccept' : '/checkout')}
                 style={{ marginTop: '8px' }}
               >
                 Continue to checkout
@@ -302,7 +306,7 @@ export default function FutureVersion() {
           <button
             className="cta-button cta-button--pill"
             type="button"
-            onClick={() => navigate(isProductAutoAccept ? '/checkout?autoaccept' : '/checkout')}
+            onClick={() => navigate(shouldUseAutoAcceptCheckout ? '/checkout?autoaccept' : '/checkout')}
           >
             Continue to Checkout
           </button>
@@ -316,21 +320,21 @@ export default function FutureVersion() {
         onClose={() => setIsLocationOpen(false)}
         onSelect={(loc) => setSelectedLocation(loc)}
         selected={selectedLocation}
-        locations={pathname === '/product/autoaccept' ? ['London', 'Manchester', 'Glasgow', 'Bristol'] : undefined}
+        locations={isProductVariant ? ['London', 'Manchester', 'Glasgow', 'Bristol'] : undefined}
       />
 
       {isCalendarOpen && (
-        <CalendarPopover 
-          anchorRef={isDesktop ? ctaDesktopRef : ctaMobileRef} 
-          onClose={() => setIsCalendarOpen(false)} 
+        <CalendarPopover
+          anchorRef={isDesktop ? ctaDesktopRef : ctaMobileRef}
+          onClose={() => setIsCalendarOpen(false)}
           selectedLocation={selectedLocation}
           onSelectedCountChange={(n) => setSelectedDatesCount(n)}
-          onProceed={!isAutoAccept && hasTimeslotParam ? () => setIsTimeslotOpen(true) : undefined}
+          onProceed={!isAutoAcceptRoute && hasTimeslotParam ? () => setIsTimeslotOpen(true) : undefined}
         />
       )}
-      <TimeslotModal 
-        isOpen={isTimeslotOpen} 
-        onClose={() => setIsTimeslotOpen(false)} 
+      <TimeslotModal
+        isOpen={isTimeslotOpen}
+        onClose={() => setIsTimeslotOpen(false)}
         anchorRef={isDesktop ? timeslotDesktopRef : timeslotMobileRef}
       />
     </div>
