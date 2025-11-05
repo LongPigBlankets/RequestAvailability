@@ -230,12 +230,6 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
   }
 
   const showGridLayout = isDesktop && dates.length > 1;
-  const gridRows = showGridLayout ? Math.ceil(dates.length / 2) : Math.max(dates.length, 1);
-  const estimatedHeaderHeight = 112;
-  const estimatedCardHeight = 240;
-  const dynamicMaxHeight = isDesktop
-    ? Math.min(position.maxHeight || 720, estimatedHeaderHeight + gridRows * estimatedCardHeight)
-    : undefined;
 
   const content = (
     <>
@@ -298,8 +292,7 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
       style={{
         top: `${position.top || 120}px`,
         left: `${position.left || 24}px`,
-        width: `${position.width || 520}px`,
-        maxHeight: dynamicMaxHeight ? `${dynamicMaxHeight}px` : undefined
+        width: `${position.width || 520}px`
       }}
       role="dialog"
       aria-modal="false"
