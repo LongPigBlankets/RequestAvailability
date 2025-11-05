@@ -16,7 +16,7 @@ export default function FutureVersion() {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isTimeslotOpen, setIsTimeslotOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
-  const [, setSelectedDatesCount] = useState(0);
+  const [selectedDatesCount, setSelectedDatesCount] = useState(0);
   const [hasAllTimesSelected, setHasAllTimesSelected] = useState(false);
   const [selectedDateTimeLabel, setSelectedDateTimeLabel] = useState('');
   const ctaDesktopRef = useRef(null);
@@ -41,6 +41,24 @@ export default function FutureVersion() {
   const ctaCopy = isAutoAccept
     ? { title: 'Book a date for your experience', subtitle: null }
     : { title: 'Select up to 5 dates', subtitle: 'Checking availability can take up to 24h' };
+
+  const formatSelectedDatesLabel = (count) => `${count} date${count === 1 ? '' : 's'} selected`;
+
+  const mobileDateChipLabel = (() => {
+    if (selectedDateTimeLabel) return selectedDateTimeLabel;
+    if (isProductJourney) {
+      if (selectedDatesCount > 0) return formatSelectedDatesLabel(selectedDatesCount);
+    }
+    return 'Select date';
+  })();
+
+  const desktopDateChipLabel = (() => {
+    if (selectedDateTimeLabel) return selectedDateTimeLabel;
+    if (isProductJourney) {
+      if (selectedDatesCount > 0) return formatSelectedDatesLabel(selectedDatesCount);
+    }
+    return 'Date';
+  })();
 
   useEffect(() => {
     const mql = window.matchMedia('(min-width: 1024px)');
@@ -70,12 +88,19 @@ export default function FutureVersion() {
       try {
         const draft = JSON.parse(sessionStorage.getItem('availabilityDraft') || 'null');
         const dates = Array.isArray(draft?.dates) ? draft.dates : [];
-        if (dates.length === 0) { setHasAllTimesSelected(false); return; }
+        setSelectedDatesCount(dates.length);
+
+        if (dates.length === 0) {
+          setHasAllTimesSelected(false);
+          setSelectedDateTimeLabel('');
+          return;
+        }
+
         const allHaveTimes = dates.every(d => !!d.time);
         setHasAllTimesSelected(allHaveTimes);
 
         // Build selected date+time label for pills (autoaccept)
-        if (isAutoAccept && dates.length > 0) {
+        if (isAutoAccept) {
           const first = dates[0];
           const label = `${first.formatted}${first.time ? `, ${first.time}` : ''}`;
           setSelectedDateTimeLabel(label);
@@ -83,6 +108,7 @@ export default function FutureVersion() {
           setSelectedDateTimeLabel('');
         }
       } catch (e) {
+        setSelectedDatesCount(0);
         setHasAllTimesSelected(false);
         setSelectedDateTimeLabel('');
       }
@@ -90,7 +116,7 @@ export default function FutureVersion() {
     recompute();
     window.addEventListener('draftUpdated', recompute);
     return () => window.removeEventListener('draftUpdated', recompute);
-  }, []);
+  }, [isAutoAccept]);
 
   // Desktop CTA is always enabled per latest requirements
 
@@ -167,7 +193,7 @@ export default function FutureVersion() {
                     aria-expanded={isCalendarOpen}
                   >
                     <span className="chip-icon chip-icon--calendar" aria-hidden="true"></span>
-                    <span>{selectedDateTimeLabel ? selectedDateTimeLabel : 'Select date'}</span>
+                    <span>{mobileDateChipLabel}</span>
                   </button>
 
                   {/* Times pill (hidden on autoaccept) */}
@@ -179,7 +205,7 @@ export default function FutureVersion() {
                       onClick={() => setIsTimeslotOpen(true)}
                     >
                       <span className="chip-icon chip-icon--clock" aria-hidden="true"></span>
-                      <span>Select time</span>
+                      <span>time</span>
                     </button>
                   )}
                 </div>
@@ -277,7 +303,7 @@ export default function FutureVersion() {
                     aria-expanded={isCalendarOpen}
                   >
                     <span className="chip-icon" aria-hidden="true"></span>
-                    {selectedDateTimeLabel ? selectedDateTimeLabel : 'Date'}
+                    {desktopDateChipLabel}
                   </button>
                   {shouldShowTimeslotSelector && (
                     <button
@@ -287,7 +313,7 @@ export default function FutureVersion() {
                       ref={timeslotDesktopRef}
                     >
                       <span className="chip-icon" aria-hidden="true"></span>
-                      Select time
+                      time
                     </button>
                   )}
                 </div>
