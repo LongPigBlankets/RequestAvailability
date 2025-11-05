@@ -5,8 +5,8 @@ import { PRODUCT_TITLE } from "../constants";
 export default function Breadcrumbs() {
   const location = useLocation();
   const isRequestPage = location.pathname === "/request-to-book";
-  const isProductAutoaccept = location.pathname === "/product/autoaccept";
-  const currentTitle = isProductAutoaccept ? "Unforgettable Experience for Two" : PRODUCT_TITLE;
+  const isProductExperience = location.pathname === "/product" || location.pathname === "/product/autoaccept";
+  const currentTitle = isProductExperience ? "Unforgettable Experience for Two" : PRODUCT_TITLE;
 
   return (
     <nav className="breadcrumbs" aria-label="Breadcrumb">

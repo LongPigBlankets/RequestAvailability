@@ -9,6 +9,8 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
   const { pathname, search } = useLocation();
   const isAutoAccept = pathname === '/autoaccept' || pathname === '/product/autoaccept';
   const isProductAutoAccept = pathname === '/product/autoaccept';
+  const isProductJourney = pathname === '/product';
+  const usesNewExperienceContent = isProductJourney || isProductAutoAccept;
   const hasTimeslotParam = new URLSearchParams(search).has('timeslot');
 
   const [currentMonth, setCurrentMonth] = useState(() => {
@@ -120,7 +122,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
           time: hasTimeslotParam ? getSelectedTimeLabel() : undefined,
         }];
         const draft = {
-          location: selectedLocation || (isProductAutoAccept ? 'Multiple venues across the UK' : 'Port Lympne Kent'),
+          location: selectedLocation || (usesNewExperienceContent ? 'Multiple venues across the UK' : 'Port Lympne Kent'),
           dates,
           timestamp: new Date().toISOString(),
           source: 'autoaccept',
@@ -174,7 +176,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
         time: (isAutoAccept && hasTimeslotParam) ? getSelectedTimeLabel() : undefined,
       }));
       const draft = {
-        location: selectedLocation || (isProductAutoAccept ? 'Multiple venues across the UK' : 'Port Lympne Kent'),
+        location: selectedLocation || (usesNewExperienceContent ? 'Multiple venues across the UK' : 'Port Lympne Kent'),
         dates,
         timestamp: new Date().toISOString(),
         source: isAutoAccept ? 'autoaccept' : 'regular',
@@ -262,7 +264,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
         time: (isAutoAccept && hasTimeslotParam) ? getSelectedTimeLabel() : undefined,
       }));
       const draft = {
-        location: selectedLocation || (isProductAutoAccept ? 'Multiple venues across the UK' : "Port Lympne Kent"),
+        location: selectedLocation || (usesNewExperienceContent ? 'Multiple venues across the UK' : "Port Lympne Kent"),
         dates,
         timestamp: new Date().toISOString(),
         source: isAutoAccept ? 'autoaccept' : 'regular',
@@ -284,7 +286,7 @@ export default function CalendarPopover({ anchorRef, onClose, selectedLocation, 
         time: (isAutoAccept && hasTimeslotParam) ? getSelectedTimeLabel() : undefined,
       }));
       const draft = {
-        location: selectedLocation || (isProductAutoAccept ? 'Multiple venues across the UK' : "Port Lympne Kent"),
+        location: selectedLocation || (usesNewExperienceContent ? 'Multiple venues across the UK' : "Port Lympne Kent"),
         dates,
         timestamp: new Date().toISOString(),
         source: isAutoAccept ? 'autoaccept' : 'regular',
