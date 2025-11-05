@@ -29,10 +29,14 @@ export default function FutureVersion() {
   const hasTimeslotParam = new URLSearchParams(search).has('timeslot');
   const isAutoAccept = pathname === '/autoaccept' || pathname === '/product/autoaccept';
   const isProductAutoAccept = pathname === '/product/autoaccept';
-  const headerImageSrc = pathname === '/product/autoaccept'
-    ? (hasTimeslotParam ? '/assets/dinner.jpg' : '/assets/zoo.jpg')
-    : elephant;
-  const shouldShowTimeslotSelector = !isAutoAccept && hasTimeslotParam;
+  const isProductJourney = pathname === '/product';
+  const headerImageSrc = (() => {
+    if (isProductAutoAccept || isProductJourney) {
+      return hasTimeslotParam ? '/assets/dinner.jpg' : '/assets/zoo.jpg';
+    }
+    return elephant;
+  })();
+  const shouldShowTimeslotSelector = isProductJourney && hasTimeslotParam;
   const ctaCopy = isAutoAccept
     ? { title: 'Book a date for your experience', subtitle: null }
     : { title: 'Select up to 5 dates', subtitle: 'Checking availability can take up to 24h' };
@@ -165,18 +169,18 @@ export default function FutureVersion() {
                   <span>{selectedDateTimeLabel ? selectedDateTimeLabel : 'Select date'}</span>
                 </button>
 
-                  {/* Times pill (hidden on autoaccept) */}
-                  {shouldShowTimeslotSelector && (
-                    <button
-                      type="button"
-                      className="chip-button"
-                      ref={timeslotMobileRef}
-                      onClick={() => setIsTimeslotOpen(true)}
-                    >
-                      <span className="chip-icon chip-icon--clock" aria-hidden="true"></span>
-                      <span>Select time</span>
-                    </button>
-                  )}
+                {/* Times pill (hidden on autoaccept) */}
+                {shouldShowTimeslotSelector && (
+                  <button
+                    type="button"
+                    className="chip-button"
+                    ref={timeslotMobileRef}
+                    onClick={() => setIsTimeslotOpen(true)}
+                  >
+                    <span className="chip-icon chip-icon--clock" aria-hidden="true"></span>
+                    <span>Select time</span>
+                  </button>
+                )}
               </div>
               <div className="divider"></div>
             </div>
