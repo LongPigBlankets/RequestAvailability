@@ -16,7 +16,7 @@ export default function FutureVersion() {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isTimeslotOpen, setIsTimeslotOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
-  const [selectedDatesCount, setSelectedDatesCount] = useState(0);
+  const [, setSelectedDatesCount] = useState(0);
   const [hasAllTimesSelected, setHasAllTimesSelected] = useState(false);
   const [selectedDateTimeLabel, setSelectedDateTimeLabel] = useState('');
   const ctaDesktopRef = useRef(null);
@@ -29,9 +29,17 @@ export default function FutureVersion() {
   const hasTimeslotParam = new URLSearchParams(search).has('timeslot');
   const isAutoAccept = pathname === '/autoaccept' || pathname === '/product/autoaccept';
   const isProductAutoAccept = pathname === '/product/autoaccept';
-  const headerImageSrc = pathname === '/product/autoaccept'
-    ? (hasTimeslotParam ? '/assets/dinner.jpg' : '/assets/zoo.jpg')
-    : elephant;
+  const isProductJourney = pathname === '/product';
+  const headerImageSrc = (() => {
+    if (isProductAutoAccept || isProductJourney) {
+      return hasTimeslotParam ? '/assets/dinner.jpg' : '/assets/zoo.jpg';
+    }
+    return elephant;
+  })();
+  const shouldShowTimeslotSelector = isProductJourney && hasTimeslotParam;
+  const ctaCopy = isAutoAccept
+    ? { title: 'Book a date for your experience', subtitle: null }
+    : { title: 'Select up to 5 dates', subtitle: 'Checking availability can take up to 24h' };
 
   useEffect(() => {
     const mql = window.matchMedia('(min-width: 1024px)');
@@ -151,7 +159,7 @@ export default function FutureVersion() {
                 {/* Dates pill */}
                 <button
                   type="button"
-                  className={`chip-button${isAutoAccept ? ' chip-button--full' : ''}`}
+                  className={`chip-button${(isAutoAccept || !shouldShowTimeslotSelector) ? ' chip-button--full' : ''}`}
                   ref={ctaMobileRef}
                   onClick={() => setIsCalendarOpen(true)}
                   aria-haspopup="dialog"
@@ -162,7 +170,7 @@ export default function FutureVersion() {
                 </button>
 
                 {/* Times pill (hidden on autoaccept) */}
-                {!isAutoAccept && (
+                {shouldShowTimeslotSelector && (
                   <button
                     type="button"
                     className="chip-button"
@@ -236,63 +244,63 @@ export default function FutureVersion() {
             <div className="footer" aria-hidden="true"></div>
           </div>
 
-          {/* Desktop: remade container with Date, Location and Check availability */}
-          <aside className="cta-card future-cta-card" aria-label="Availability actions">
-            <div className="cta-card-header">
-              <div className="cta-card-title">{isAutoAccept ? 'Book a date for your experience' : 'Select up to 5 dates'}</div>
-              {!isAutoAccept && (
-                <div className="cta-card-subtitle">Checking availability can take up to 24h</div>
-              )}
-            </div>
-            <div className="future-card-fields">
-              <button
-                type="button"
-                className="chip-button"
-                ref={locationChipCardRef}
-                onClick={() => setIsLocationOpen(true)}
-                aria-haspopup="dialog listbox"
-                aria-expanded={isLocationOpen}
-              >
-                <span className="chip-icon chip-icon--pin" aria-hidden="true"></span>
-                <span>{selectedLocation ? selectedLocation : "Choose location"}</span>
-              </button>
-            </div>
-            <div className="future-card-cta">
-              <div className={`future-card-cta-row${isAutoAccept || !hasTimeslotParam ? ' single' : ''}`}>
-                <button
-                  ref={ctaDesktopRef}
-                  className="cta-button cta-button--pill cta-button--date"
-                  type="button"
-                  onClick={() => setIsCalendarOpen(true)}
-                  aria-haspopup="dialog"
-                  aria-expanded={isCalendarOpen}
-                >
-                  <span className="chip-icon" aria-hidden="true"></span>
-                  {selectedDateTimeLabel ? selectedDateTimeLabel : 'Date'}
-                </button>
-                {!isAutoAccept && hasTimeslotParam && (
-                  <button
-                    className="cta-button cta-button--secondary cta-button--pill cta-button--timeslot"
-                    type="button"
-                    onClick={() => setIsTimeslotOpen(true)}
-                    ref={timeslotDesktopRef}
-                  >
-                    <span className="chip-icon" aria-hidden="true"></span>
-                    Time
-                  </button>
+            {/* Desktop: remade container with Date, Location and Check availability */}
+            <aside className="cta-card future-cta-card" aria-label="Availability actions">
+              <div className="cta-card-header">
+                <div className="cta-card-title">{ctaCopy.title}</div>
+                {ctaCopy.subtitle && (
+                  <div className="cta-card-subtitle">{ctaCopy.subtitle}</div>
                 )}
               </div>
-              {/* Desktop proceed CTA for both flows; keep below and full-width */}
-              <button
-                className="cta-button cta-button--pill"
-                type="button"
-                onClick={() => navigate(isProductAutoAccept ? '/checkout?autoaccept' : '/checkout')}
-                style={{ marginTop: '8px' }}
-              >
-                Continue to checkout
-              </button>
-            </div>
-          </aside>
+              <div className="future-card-fields">
+                <button
+                  type="button"
+                  className="chip-button"
+                  ref={locationChipCardRef}
+                  onClick={() => setIsLocationOpen(true)}
+                  aria-haspopup="dialog listbox"
+                  aria-expanded={isLocationOpen}
+                >
+                  <span className="chip-icon chip-icon--pin" aria-hidden="true"></span>
+                  <span>{selectedLocation ? selectedLocation : "Choose location"}</span>
+                </button>
+              </div>
+              <div className="future-card-cta">
+                <div className={`future-card-cta-row${isAutoAccept || !shouldShowTimeslotSelector ? ' single' : ''}`}>
+                  <button
+                    ref={ctaDesktopRef}
+                    className="cta-button cta-button--pill cta-button--date"
+                    type="button"
+                    onClick={() => setIsCalendarOpen(true)}
+                    aria-haspopup="dialog"
+                    aria-expanded={isCalendarOpen}
+                  >
+                    <span className="chip-icon" aria-hidden="true"></span>
+                    {selectedDateTimeLabel ? selectedDateTimeLabel : 'Date'}
+                  </button>
+                  {shouldShowTimeslotSelector && (
+                    <button
+                      className="cta-button cta-button--secondary cta-button--pill cta-button--timeslot"
+                      type="button"
+                      onClick={() => setIsTimeslotOpen(true)}
+                      ref={timeslotDesktopRef}
+                    >
+                      <span className="chip-icon" aria-hidden="true"></span>
+                      Select time
+                    </button>
+                  )}
+                </div>
+                {/* Desktop proceed CTA for both flows; keep below and full-width */}
+                <button
+                  className="cta-button cta-button--pill"
+                  type="button"
+                  onClick={() => navigate(isProductAutoAccept ? '/checkout?autoaccept' : '/checkout')}
+                  style={{ marginTop: '8px' }}
+                >
+                  Continue to checkout
+                </button>
+              </div>
+            </aside>
         </div>
       </div>
 
@@ -325,7 +333,7 @@ export default function FutureVersion() {
           onClose={() => setIsCalendarOpen(false)} 
           selectedLocation={selectedLocation}
           onSelectedCountChange={(n) => setSelectedDatesCount(n)}
-          onProceed={!isAutoAccept && hasTimeslotParam ? () => setIsTimeslotOpen(true) : undefined}
+          onProceed={shouldShowTimeslotSelector ? () => setIsTimeslotOpen(true) : undefined}
         />
       )}
       <TimeslotModal 

@@ -13,6 +13,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={<FutureVersion />} />
       <Route path="/autoaccept" element={<FutureVersion />} />
+      <Route path="/product" element={<FutureVersion />} />
       <Route path="/product/autoaccept" element={<FutureVersion />} />
       <Route path="/future-version" element={<FutureVersion />} />
       <Route path="/legacy" element={<Home />} />
