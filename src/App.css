@@ -1683,6 +1683,7 @@ textarea.form-input,
 }
 
 .timeslot-popover {
+  position: absolute;
   display: flex;
   flex-direction: column;
   overflow: visible;
