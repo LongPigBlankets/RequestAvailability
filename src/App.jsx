@@ -7,6 +7,7 @@ import SupplierPage from "./pages/SupplierPage";
 import Checkout from "./pages/Checkout";
 import FutureVersion from "./pages/FutureVersion";
 import Confirmation from "./pages/Confirmation";
+import Records from "./pages/Records";
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
       <Route path="/supplier-page" element={<SupplierPage />} />
       <Route path="/checkout" element={<Checkout />} />
       <Route path="/confirmation" element={<Confirmation />} />
+      <Route path="/records" element={<Records />} />
     </Routes>
   );
 }
