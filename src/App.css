@@ -610,11 +610,6 @@ body {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  max-height: 100%;
-  padding-right: 4px; /* room for scrollbar */
 }
 
 .timeslot-sections {
@@ -1688,9 +1683,10 @@ textarea.form-input,
 }
 
 .timeslot-popover {
+  position: absolute;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* Ensure calendar fully expands inside action sheets */

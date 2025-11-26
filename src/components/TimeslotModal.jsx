@@ -9,7 +9,7 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
   const [selectedTimesByIso, setSelectedTimesByIso] = useState({}); // { [iso]: 'HH:MM' }
   const popoverRef = useRef(null);
   const [isDesktop, setIsDesktop] = useState(false);
-  const [position, setPosition] = useState({ top: 0, left: 0, width: 0, maxHeight: 0 });
+  const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
 
   function formatHuman(date) {
     const day = date.getDate();
@@ -112,28 +112,30 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
     function updatePosition() {
       const RIGHT_MARGIN = 48;
       const LEFT_MARGIN = 24;
-      const BOTTOM_MARGIN = 128; // leave space for CTA area
       const MAX_WIDTH = 700;
       const MIN_WIDTH = 420;
       const winW = typeof window !== 'undefined' ? window.innerWidth : 1024;
-      const winH = typeof window !== 'undefined' ? window.innerHeight : 768;
+      const scrollX = typeof window !== 'undefined' ? window.scrollX || window.pageXOffset || 0 : 0;
+      const scrollY = typeof window !== 'undefined' ? window.scrollY || window.pageYOffset || 0 : 0;
+
       if (!anchorRef?.current) {
         const width = Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, Math.floor(winW * 0.8)));
-        const left = Math.max(LEFT_MARGIN, winW - width - RIGHT_MARGIN);
-        const desiredTop = 120;
-        const maxHeight = Math.max(240, winH - desiredTop - BOTTOM_MARGIN);
-        setPosition({ top: desiredTop, left, width, maxHeight });
+        const left = scrollX + Math.max(LEFT_MARGIN, winW - width - RIGHT_MARGIN);
+        const top = scrollY + 120;
+        setPosition({ top, left, width });
         return;
       }
+
       const rect = anchorRef.current.getBoundingClientRect();
-      const desiredTop = rect.bottom + 8; // small offset
+      const viewportTop = rect.bottom + 8; // relative to viewport
       const availableRight = winW - rect.left - RIGHT_MARGIN;
       const availableLeft = rect.right - LEFT_MARGIN;
       const candidate = Math.max(availableLeft, availableRight);
       const width = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, candidate));
-      const left = Math.max(LEFT_MARGIN, rect.right - width);
-      const maxHeight = Math.max(240, winH - desiredTop - BOTTOM_MARGIN);
-      setPosition({ top: desiredTop, left, width, maxHeight });
+      const leftViewport = Math.max(LEFT_MARGIN, rect.right - width);
+      const left = scrollX + leftViewport;
+      const top = scrollY + Math.max(24, viewportTop);
+      setPosition({ top, left, width });
     }
 
     updatePosition();
@@ -230,12 +232,6 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
   }
 
   const showGridLayout = isDesktop && dates.length > 1;
-  const gridRows = showGridLayout ? Math.ceil(dates.length / 2) : Math.max(dates.length, 1);
-  const estimatedHeaderHeight = 112;
-  const estimatedCardHeight = 240;
-  const dynamicMaxHeight = isDesktop
-    ? Math.min(position.maxHeight || 720, estimatedHeaderHeight + gridRows * estimatedCardHeight)
-    : undefined;
 
   const content = (
     <>
@@ -298,8 +294,7 @@ export default function TimeslotModal({ isOpen, onClose, anchorRef }) {
       style={{
         top: `${position.top || 120}px`,
         left: `${position.left || 24}px`,
-        width: `${position.width || 520}px`,
-        maxHeight: dynamicMaxHeight ? `${dynamicMaxHeight}px` : undefined
+        width: `${position.width || 520}px`
       }}
       role="dialog"
       aria-modal="false"
