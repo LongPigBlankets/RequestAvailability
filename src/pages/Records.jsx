@@ -23,26 +23,8 @@ const formatValue = (value) => {
   return value;
 };
 
-const DEFAULT_LOCAL_PORT = 8000;
-const isLocalhost = (hostname) =>
-  ["localhost", "127.0.0.1", "::1"].includes(hostname);
-
 const resolveApiBaseUrl = () => {
-  const configuredBase = import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "");
-  if (configuredBase) {
-    return configuredBase;
-  }
-
-  if (typeof window === "undefined") {
-    return "";
-  }
-
-  const { protocol, hostname } = window.location;
-  if (isLocalhost(hostname)) {
-    return `${protocol}//${hostname}:${DEFAULT_LOCAL_PORT}`;
-  }
-
-  return "";
+  return import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") || "";
 };
 
 const buildApiUrl = (path) => {
