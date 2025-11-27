@@ -23,6 +23,33 @@ const formatValue = (value) => {
   return value;
 };
 
+const DEFAULT_LOCAL_PORT = 8000;
+const isLocalhost = (hostname) =>
+  ["localhost", "127.0.0.1", "::1"].includes(hostname);
+
+const resolveApiBaseUrl = () => {
+  const configuredBase = import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "");
+  if (configuredBase) {
+    return configuredBase;
+  }
+
+  if (typeof window === "undefined") {
+    return "";
+  }
+
+  const { protocol, hostname } = window.location;
+  if (isLocalhost(hostname)) {
+    return `${protocol}//${hostname}:${DEFAULT_LOCAL_PORT}`;
+  }
+
+  return "";
+};
+
+const buildApiUrl = (path) => {
+  const base = resolveApiBaseUrl();
+  return base ? `${base}${path}` : path;
+};
+
 export default function Records() {
   const [statusRows, setStatusRows] = useState([]);
   const [scheduleRows, setScheduleRows] = useState([]);
@@ -30,11 +57,9 @@ export default function Records() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const apiBase = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
-
     async function fetchRecords() {
       try {
-        const response = await fetch(`${apiBase}/api/records`);
+        const response = await fetch(buildApiUrl("/api/records"));
         if (!response.ok) {
           throw new Error("Failed to load records");
         }
